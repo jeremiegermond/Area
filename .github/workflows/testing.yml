@@ -1,0 +1,30 @@
+name: testing
+
+on:
+  push:
+    branches: [ "docker" ]
+  pull_request:
+    branches: [ "docker" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build docker-compose
+        run: docker-compose up -d
+      - name: Sleep for 15 seconds
+        run: sleep 15
+        shell: bash
+  tests:
+    # this should run a Dockerfile launching a test on the services
+    # run: docker run --network container:server-area appropriate/curl -s --retry 2 --retry-connrefused http://localhost:8080/
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Client
+        run: curl localhost:8081
+      - name: Server
+        run: curl localhost:8080
