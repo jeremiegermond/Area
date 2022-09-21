@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,12 +18,8 @@ jobs:
       - name: Sleep for 15 seconds
         run: sleep 15
         shell: bash
-  tests:
     # this should run a Dockerfile launching a test on the services
     # run: docker run --network container:server-area appropriate/curl -s --retry 2 --retry-connrefused http://localhost:8080/
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Client
         run: curl localhost:8081
       - name: Server
