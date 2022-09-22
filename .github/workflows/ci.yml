@@ -33,7 +33,7 @@ jobs:
         id: meta-client
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/area/area-client
+          images: ${{ env.REGISTRY }}/EpitechPromo2025/area-client
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
       - name: Build and push
@@ -66,7 +66,7 @@ jobs:
         id: meta-server
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/area/area-server
+          images: ${{ env.REGISTRY }}/EpitechPromo2025/area-server
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
       - name: Build and push
