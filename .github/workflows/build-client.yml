@@ -66,8 +66,8 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Log infos
-        id: info
-        uses: |
+        id: log-info
+        run: |
           echo ${{ steps.meta.outputs.tags }}
           echo ${{ steps.meta.outputs.labels }}
           echo ${{ github.repository_owner }}
@@ -78,9 +78,6 @@ jobs:
           context: ./client/
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          # tags: |
-          #            ghcr.io/${{ github.repository_owner }}/clang-tidy:latest
-          #            ghcr.io/${{ github.repository_owner }}/clang-tidy:${{ inputs.CLANG_TIDY_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
 
       # Sign the resulting Docker image digest except on PRs.
