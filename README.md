@@ -37,6 +37,8 @@ Compilation only: `docker-compose build`
 
 # About the project
 
+## Goal
+
 The goal of this project is to discover, as a whole, the software platform that you have chosen through the creation of a business application. <br>
 To do this, we implemented a software suite that functions similar to that of IFTTT and/or Zapier.
 
@@ -54,6 +56,61 @@ This software suite can be broken down into three parts:
     - Set a Microsoft Teams status
 - A web client to use the application from your browser by querying the application server
 - A mobile client to use the application from your phone by querying the application server
+
+## Architecture
+
+<!--
+|o 	o| 	Zero or one
+|| 	|| 	Exactly one
+}o 	o{ 	Zero or more (no upper limit)
+}| 	|{ 	One or more (no upper limit)
+
+PK primary key
+FK foreign key
+ -->
+
+Here is a diagram of the architecture of the application. <br>
+
+```mermaid
+%%{init: {'theme':'forest',  'themeVariables':{'darkMode':'true'}}}%%
+erDiagram
+    USER {
+        string id PK
+        string username
+        string email
+        string password
+        string token
+        array action FK
+    }
+    CLIENT {
+        string username
+        string email
+        string password
+        string token
+    }
+    ACTION {
+        string id PK
+        time last_update
+        string api
+        string token
+        element reaction FK
+    }
+    REACTION {
+        string id PK
+        string api
+        string token
+    }
+    CLIENT }o..|| SERVER : connect
+    CLIENT }o..|| SERVER : query
+    SERVER ||..|| DATABASE : query
+    DATABASE ||--o{ USER : has
+    USER ||--o{ ACTION : has
+    ACTION ||--|| REACTION : has
+    SERVER ||..o{ ACTION : run
+    ACTION ||..|| REACTION : trigger
+    ACTION ||..|| EXT_API : query
+    REACTION ||..|| EXT_API : run
+```
 
 <!-- Links -->
 [1]:https://docs.docker.com/get-docker/
