@@ -3,12 +3,26 @@ services:
   client:
     build: ./client
     ports:
-      - 8081:8081
+      - "8081:8081"
     container_name: client-prod
     depends_on:
       - server
   server:
     build: ./server
     ports:
-      - 8080:8080
+      - "8080:8080"
     container_name: server-prod
+    links:
+      - mongo
+    environment:
+      - URL_MONGO=mongodb://user_area:pass_area@mongo
+      - PORT=8080
+
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - "./mongo/data:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user_area
+      MONGO_INITDB_ROOT_PASSWORD: pass_area

@@ -105,3 +105,6 @@ dist
 
 # IdeaJ
 .idea/
+
+# Mongo
+mongo/
