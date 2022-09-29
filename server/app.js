@@ -29,7 +29,7 @@ app.use(function (freq, res, next) {
 })
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port }`)
+    console.log('listening on port ${port}')
 })
 
 module.exports = app
