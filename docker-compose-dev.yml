@@ -10,18 +10,23 @@ services:
     depends_on:
       - server
   server:
-    build: ./server
+    build: ./server/Dockerfile.dev
     ports:
       - "8080:8080"
     container_name: server-dev
+    volumes:
+      - ./server/:/app
     links:
       - mongo
     environment:
       - URL_MONGO=mongodb://user_area:pass_area@mongo
 
   mongo:
+    container_name: mongo-dev
     image: mongo
     restart: always
+    volumes:
+      - "./mongo/data:/data/db"
     environment:
       MONGO_INITDB_ROOT_USERNAME: user_area
       MONGO_INITDB_ROOT_PASSWORD: pass_area

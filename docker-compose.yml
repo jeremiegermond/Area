@@ -19,6 +19,7 @@ services:
       - PORT=8080
 
   mongo:
+    container_name: mongo-prod
     image: mongo
     restart: always
     volumes:
