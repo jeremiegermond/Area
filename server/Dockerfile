@@ -8,4 +8,4 @@ WORKDIR /app
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm install --development
 COPY . .
-RUN npm start
+CMD ["npm", "start"]
