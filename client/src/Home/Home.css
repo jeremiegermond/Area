@@ -14,7 +14,7 @@
     animation: gradient 25s ease infinite;
 }
 
-.register-box {
+.home .register-box {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,13 +26,13 @@
     box-shadow: 1px 1px 20px rgb(0, 0, 0, 0.3);
 }
 
-.title {
+.home .register-box .title {
     display: flex;
 }
 
 /* Buttons */
 
-.register-box-btns {
+.home .register-box .register-box-btns {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -41,7 +41,7 @@
     height: 30vh;
 }
 
-.register-box-btns .btn {
+.home .register-box .register-box-btns .btn {
     width: 50%;
     height: 6vh;
     border: 1px solid black;
@@ -51,20 +51,20 @@
     font-size: 16px;
 }
 
-.register-box-btns .btn::placeholder {
+.home .register-box .register-box-btns .btn::placeholder {
     font-size: 16px;
 }
 
 /* SEPARATOR LINE */ 
 
-.separator {
+.home .register-box .register-box-btns .separator {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
 }
 
-.line {
+.home .register-box .register-box-btns .separator .line {
     width: 50px;
     height: 1px;
     background-color: black;
@@ -93,7 +93,7 @@
 
 /* Login Btn */
 
-.login-btn {
+.home .register-box .login-btn {
     width: 200px;
     height: 6vh;
     border: none;
