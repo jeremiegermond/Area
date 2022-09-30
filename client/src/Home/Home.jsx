@@ -7,8 +7,8 @@ function Home() {
       <div className='register-box'>
         <h1 className='title'>Register</h1>
         <div className='register-box-btns'>
-          <input type='text' placeholder='Username' className='btn'></input>
-          <input type='password' placeholder='Password' className='btn'></input>
+          <input type='text' placeholder='Username' className='btn' />
+          <input type='password' placeholder='Password' className='btn' />
           <div className='separator'>
             <div className='line'></div> 
             <p> or </p> 
@@ -20,6 +20,9 @@ function Home() {
             <FaFacebook className='icon' />
           </div>
         </div>
+        <a href="../connect-api">
+          <input type="submit" value='Register' className='login-btn' />
+        </a>
       </div>
     </div>
   );

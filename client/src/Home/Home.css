@@ -1,7 +1,6 @@
 /* Box */
 
 .home {
-    background-color: #f5f5f5;
     margin: 0;
     padding: 0;
     max-width: 100%;
@@ -10,6 +9,9 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background: linear-gradient(-45deg, rgb(3, 217, 223, 0.85), rgb(79, 151, 232, 0.85), rgb(140, 98, 241, 0.85), rgb(250, 2, 255, 0.85));
+    background-size: 300% 300%;
+    animation: gradient 25s ease infinite;
 }
 
 .register-box {
@@ -17,11 +19,11 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 50%;
+    width: 35%;
     height: 65vh;
     border-radius: 20px;
     background-color: white;
-    box-shadow: 1px 1px 20px rgb(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 20px rgb(0, 0, 0, 0.3);
 }
 
 .title {
@@ -87,4 +89,21 @@
 .register-box-btns .register-box-icons .icon:hover {
     transform: scale(1.7);
     transition: 0.3s ease;
+}
+
+/* Login Btn */
+
+.login-btn {
+    width: 200px;
+    height: 6vh;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    margin-top: 30px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.192);
+    background: linear-gradient(-45deg, rgb(3, 217, 223, 0.85), rgb(79, 151, 232, 0.85), rgb(140, 98, 241, 0.85), rgb(250, 2, 255, 0.85));
+    background-size: 300% 300%;
+    animation: gradient 25s ease infinite;
 }
