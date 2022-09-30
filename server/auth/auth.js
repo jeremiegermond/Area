@@ -5,15 +5,12 @@ const bcrypt = require('bcryptjs')
 
 passport.use( 'signup',
     new localStrategy( {
-        usernameField: 'email',
+        usernameField: 'username',
         passwordField: 'password',
-        passReqToCallback: true
         },
-        async (req, email, password, done) => {
+        async (username, password, done) => {
             try {
-                const name = req.body.name
-                const firstname = req.body.firstname
-                const user = await UserModel.create({ name, firstname, email, password });
+                const user = await UserModel.create({ username, password });
                 return done(null, user);
             } catch (error) {
                 done(error);
@@ -24,12 +21,12 @@ passport.use( 'signup',
 
 passport.use( 'login',
     new localStrategy( {
-        usernameField: 'email',
+        usernameField: 'username',
         passwordField: 'password'
         },
-        async (email, password, done) => {
+        async (username, password, done) => {
             try {
-                const user = await UserModel.findOne({ email });
+                const user = await UserModel.findOne({ username });
                 if (!user)
                     return done(null, false, { message: 'User not found' });
                 const isValidPassword = await user.isValidPassword(password);
@@ -37,7 +34,6 @@ passport.use( 'login',
                     return done(null, false, { message: 'Wrong Password' });
                 return done(null, user, { message: 'Logged in Successfully' });
             } catch (error) {
-                console.log(`error while login ${email} ${password} : ${error}`)
                 return done(error);
             }
         }

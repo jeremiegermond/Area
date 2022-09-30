@@ -30,9 +30,7 @@ exports.add = async (req, res) => {
     const temp = {};
 
     ({
-        name: temp.name,
-        firstname: temp.firstname,
-        email: temp.email,
+        username: temp.username,
         password: temp.password
     } = req.body)
     Object.keys(temp).forEach((key) => (temp[key] == null) && delete temp[key])
@@ -48,14 +46,12 @@ exports.update = async (req, res) => {
     const temp = {};
 
     ({
-        name: temp.name,
-        firstname: temp.firstname,
-        email: temp.email,
+        username: temp.username,
         password: temp.password
     } = req.body)
 
     try {
-        let user = await User.findOne({email: temp.email})
+        let user = await User.findOne({username: temp.username})
         if (user) {
             Object.keys(temp).forEach((key) => {
                 if (!!temp[key]) {
