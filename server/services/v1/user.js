@@ -14,6 +14,18 @@ exports.getById = async (req, res) => {
     }
 }
 
+exports.getAllUsers = async (req, res) => {
+    try {
+        const user = await User.find()
+        if (user)
+            return res.status(200).json(user)
+        return res.status(404).json('no_users_found')
+    } catch (e) {
+        return res.status(501).json(e)
+    }
+}
+
+
 exports.add = async (req, res) => {
     const temp = {};
 
