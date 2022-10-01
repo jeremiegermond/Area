@@ -1,4 +1,4 @@
-import './Home.css';
+import './Register.css';
 import { FaTwitter, FaGoogle, FaFacebook } from 'react-icons/fa';
 
 function Home() {

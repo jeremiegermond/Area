@@ -1,0 +1,109 @@
+/* Box */
+
+.home {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: linear-gradient(-45deg, rgb(3, 217, 223, 0.85), rgb(79, 151, 232, 0.85), rgb(140, 98, 241, 0.85), rgb(250, 2, 255, 0.85));
+    background-size: 300% 300%;
+    animation: gradient 25s ease infinite;
+}
+
+.home .login-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 35%;
+    height: 65vh;
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 1px 1px 20px rgb(0, 0, 0, 0.3);
+}
+
+.home .login-box .title {
+    display: flex;
+}
+
+/* Buttons */
+
+.home .login-box .login-box-btns {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    width: 80%;
+    height: 30vh;
+}
+
+.home .login-box .login-box-btns .btn {
+    width: 50%;
+    height: 6vh;
+    border: 1px solid black;
+    border-radius: 50px;
+    background-color: transparent;
+    padding-left: 20px;
+    font-size: 16px;
+}
+
+.home .login-box .login-box-btns .btn::placeholder {
+    font-size: 16px;
+}
+
+/* SEPARATOR LINE */ 
+
+.home .login-box .login-box-btns .separator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.home .login-box .login-box-btns .separator .line {
+    width: 50px;
+    height: 1px;
+    background-color: black;
+    margin: 0 10px;
+}
+
+/* OAuth2 */
+
+.login-box-btns .login-box-icons {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 50%;
+}
+
+.login-box-btns .login-box-icons .icon {
+    transform: scale(1.5);
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.login-box-btns .login-box-icons .icon:hover {
+    transform: scale(1.7);
+    transition: 0.3s ease;
+}
+
+/* Login Btn */
+
+.home .login-box .login-btn {
+    width: 200px;
+    height: 6vh;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    margin-top: 30px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.192);
+    background: linear-gradient(-45deg, rgb(3, 217, 223, 0.85), rgb(79, 151, 232, 0.85), rgb(140, 98, 241, 0.85), rgb(250, 2, 255, 0.85));
+    background-size: 300% 300%;
+    animation: gradient 25s ease infinite;
+}
