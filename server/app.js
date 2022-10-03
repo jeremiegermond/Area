@@ -20,9 +20,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 app.use(logger('dev'))
 app.use(express.json())
+
 app.use(cors({
-    exposedHeaders: ['Authorization'],
-    origin: '*'
+  credentials: true,
 }))
 
 app.use('/', routes);
