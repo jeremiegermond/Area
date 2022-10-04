@@ -3,7 +3,7 @@ import { FaTwitter, FaGoogle, FaFacebook } from 'react-icons/fa';
 import React from 'react';
 import axios from 'axios';
 
-export default class Home extends React.Component {
+export default class Register extends React.Component {
   state = {
     username: '',
     password: ''
