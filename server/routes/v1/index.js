@@ -1,43 +1,22 @@
-const express = require('express');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
+const express = require('express')
+const router = express.Router()
+const userRoute = require('./user')
+// const actionRoute = require('./action')
+// const reactionRoute = require('./reaction')
 
-const router = express.Router();
+const api = {
+    name: 'expressAPI',
+    version: '0.1',
+    status: 200,
+    message: 'Go to localhost:8081 for the web interface'
+}
 
-router.post( '/signup',
-    passport.authenticate('signup', { session: false }),
-    async (req, res, next) => {
-        res.json({
-            message: 'Signup successful',
-            user: req.user
-        });
-    }
-);
+router.get('/', async (req, res) => {
+    res.status(200).json(api)
+})
 
-router.post( '/login',
-    async (req, res, next) => {
-        passport.authenticate( 'login',
-            async (err, user, info) => {
-                try {
-                    if (err || !user) {
-                        const error = new Error('An error occurred.');
-                        return next(error);
-                    }
-                    req.login( user,
-                    { session: false },
-                    async (error) => {
-                        if (error) return next(error);
-                        const body = { _id: user._id, username: user.username };
-                        const token = jwt.sign({ user: body }, 'TOP_SECRET');
-                        return res.json({ token });
-                    }
-                    );
-                } catch (error) {
-                    return next(error);
-                }
-            }
-        ) (req, res, next);
-    }
-);
-  
-module.exports = router;
+router.use('/users', userRoute)
+// router.use('/actions', actionRoute)
+// router.use('/reactions', reactionRoute)
+
+module.exports = router

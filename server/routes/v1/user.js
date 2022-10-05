@@ -13,4 +13,8 @@ router.patch('/update', service.update)
 
 router.delete('/delete', service.delete)
 
+router.post('/signup', service.signUp)
+
+router.post('/login', service.login)
+
 module.exports = router
