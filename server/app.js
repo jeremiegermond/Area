@@ -6,6 +6,14 @@ const mongodb = require('./db/mongo')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
+const https = require('https');
+const fs = require('fs');
+
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
 require('./auth/auth');
 
 const port = process.env.PORT || 8080
@@ -36,6 +44,7 @@ app.use(function(err, req, res, next) {
   res.json({ error: err });
 });
 
-app.listen(port, () => {
-    console.log(`listening on port ${port}`)
-})
+app.listen(port);
+
+//https.createServer(app).listen(port);
+//console.log(`https istening on port ${port}`)
