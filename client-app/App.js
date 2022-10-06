@@ -1,116 +1,159 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
 import type {Node} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
+  Button,
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
+  TextInput,
+  TouchableHighlight,
   View,
 } from 'react-native';
-
+import LinearGradient from 'react-native-linear-gradient';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-/* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
- * LTI update could not be added via codemod */
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+  faTwitter,
+  faGoogle,
+  faFacebook,
+} from '@fortawesome/free-brands-svg-icons';
 
 const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <>
+      <StatusBar hidden={true} translucent={true} />
+      <LinearGradient
+        useAngle={true}
+        angle={-45}
+        colors={colors.background}
+        style={styles.home}>
+        <View style={styles.loginBox}>
+          <Text style={styles.loginText}>Login</Text>
+          <View style={styles.loginBoxBtn}>
+            <TextInput
+              placeholder="Username"
+              style={styles.loginInput}
+              autoComplete="email"
+            />
+            <TextInput
+              placeholder="Password"
+              style={styles.loginInput}
+              autoComplete="password"
+              secureTextEntry={true}
+            />
+            <View style={styles.loginSeparator}>
+              <View style={styles.loginSeparatorLine} />
+              <Text>or</Text>
+              <View style={styles.loginSeparatorLine} />
+            </View>
+            <View style={styles.loginBoxIcons}>
+              <FontAwesomeIcon icon={faTwitter} style={styles.loginIcon} />
+              <FontAwesomeIcon icon={faGoogle} style={styles.loginIcon} />
+              <FontAwesomeIcon icon={faFacebook} style={styles.loginIcon} />
+            </View>
+          </View>
+          <LinearGradient
+            useAngle={true}
+            angle={-45}
+            colors={colors.background}
+            style={styles.loginBtn}>
+            <Button
+              title="Login"
+              TouchableComponent={TouchableHighlight}
+              color="transparent"
+              activeOpacity={0.0}
+              underlayColor="transparent"
+              containerStyle={styles.loginBtn}
+              buttonStyle={styles.loginBtn}
+            />
+          </LinearGradient>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </LinearGradient>
+    </>
   );
 };
 
+const colors = {
+  background: [
+    'rgb(3, 217, 223)',
+    'rgb(79, 151, 232)',
+    'rgb(140, 98, 241)',
+    'rgb(250, 2, 255)',
+  ],
+};
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  home: {
+    margin: 0,
+    padding: 0,
+    maxWidth: '100%',
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  loginBtn: {
+    backgroundColor: 'transparent',
+    shadowColor: '#000',
+    shadowRadius: 20,
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.3,
+    elevation: 7,
+    width: '50%',
+    borderRadius: 50,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  loginBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    width: '75%',
+    height: '65%',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowRadius: 20,
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.3,
+    elevation: 7,
   },
-  highlight: {
-    fontWeight: '700',
+  loginBoxBtn: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'column',
+    width: '80%',
+    height: '55%',
+  },
+  loginText: {
+    fontSize: 30,
+  },
+  loginInput: {
+    width: '80%',
+    borderRadius: 50,
+    borderWidth: 1,
+    paddingLeft: 20,
+    fontSize: 16,
+  },
+  loginSeparator: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  loginSeparatorLine: {
+    height: 1,
+    width: '25%',
+    backgroundColor: 'black',
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  loginBoxIcons: {
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  loginIcon: {
+    transform: [{scale: 2}],
   },
 });
 
