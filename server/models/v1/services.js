@@ -14,15 +14,21 @@ const Service = new Schema({
         required: [true, 'Description is required'],
     },
     appKeys: {
-        type: Map,
-        of: String
+        public: {
+            type: String,
+            required: [true, 'Public Key is required']
+        },
+        private: {
+            type: String,
+            required: [true, 'Private Key is required']
+        }
     },
-    actions: {
+    actions: [{
         type: Schema.ObjectId, ref: 'Action'
-    },
-    reactions: {
+    }],
+    reactions: [{
         type: Schema.ObjectId, ref: 'Reaction'
-    }
+    }]
 })
 
 module.exports = mongoose.model('Service', Service)
