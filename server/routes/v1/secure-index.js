@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const OAuth = require('oauth')
 
 const consumer = new OAuth.OAuth(
   'https://api.twitter.com/oauth/request_token',
