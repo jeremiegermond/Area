@@ -108,6 +108,3 @@ dist
 
 # Mongo
 mongo/
-
-cert.pem
-key.pem

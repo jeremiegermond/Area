@@ -8,6 +8,7 @@ const logger = require('morgan')
 const cors = require('cors')
 const https = require('https');
 const fs = require('fs');
+
 const options = {
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem')
@@ -43,11 +44,7 @@ app.use(function(err, req, res, next) {
   res.json({ error: err });
 });
 
-app.listen(port, () => {
-    console.log(`listening on port ${port}`)
-})
-
 https.createServer(options, function (req, res) {
   res.writeHead(200);
-  res.end("hello world\n");
-}).listen(8000);
+  res.end("listening on port " + port);
+}).listen(port);
