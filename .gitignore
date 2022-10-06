@@ -108,3 +108,4 @@ dist
 
 # Mongo
 mongo/
+checkdb.sh

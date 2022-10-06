@@ -44,7 +44,7 @@ app.use(function(err, req, res, next) {
   res.json({ error: err });
 });
 
-https.createServer(options, function (req, res) {
-  res.writeHead(200);
-  res.end("listening on port " + port);
-}).listen(port);
+app.listen(port);
+
+//https.createServer(app).listen(port);
+//console.log(`https istening on port ${port}`)
