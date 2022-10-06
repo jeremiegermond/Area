@@ -1,3 +1,12 @@
+# Run guide
+
+Start react-native server `react-native start`
+
+
+Connect an android device and run `export ANDROID_HOME=~/Android/sdk && npm run android` in a separate shell
+
+Reload by hitting `r` on the first shell
+
 # Build guide
 
 Install [Android Studio]() and install android SDK to `~/Android/sdk`
