@@ -1,6 +1,6 @@
 # Run guide
 
-Start react-native server `react-native start`
+Start react-native server `npm run start`
 
 
 Connect an android device and run `export ANDROID_HOME=~/Android/sdk && npm run android` in a separate shell
@@ -17,7 +17,6 @@ cd client-app
 react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res
 cd android
 export ANDROID_HOME=~/Android/sdk && ./gradlew assembleRelease
-
 cp app/build/outputs/apk/release/app-release.apk ../../client/public/base.apk
 ```
 
