@@ -7,6 +7,7 @@ const Reaction = require('../../models/v1/reaction.js')
 const mongodb = require('../../db/mongo');
 const { db } = require('../../models/v1/action.js');
 const { mongo } = require('mongoose');
+const User = require('../../models/v1/user')
 
 mongodb.initDbConnection()
 const router = express.Router();
@@ -143,6 +144,26 @@ router.get('/ping', async (req, res, next) => {
         })
     }
 })
+
+router.get('/ping2', async (req, res, next) => {
+  return res.status(200).json(true);
+})
+
+router.get(
+  '/exist/:name', async (req, res) => {
+    const {name} = req.params;
+    try {
+      console.log(name);
+      const user = await User.findOne({username: name});
+      if (user) {
+        return res.status(200).json(true);
+      }
+      return res.status(201).json(false);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+);
 
 router.post('/addReaction')
 
