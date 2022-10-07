@@ -79,7 +79,9 @@ router.post('/addAction', async (req, res, next)  => {
             {name: service},
             {$push: {actions: newAction._id}},
             {new: true}
-        );
+        ).then((data) => { 
+            newAction.service = data.value._id
+        })
         newAction.save().then(
             () => {
                 res.status(201).json({
@@ -106,7 +108,9 @@ router.post('/addReaction', async (req, res, next)  => {
             {name: service},
             {$push: {reactions: newReaction._id}},
             {new: true}
-        );
+        ).then((data) => { 
+            newReaction.service = data.value._id
+        })
         newReaction.save().then(
             () => {
                 res.status(201).json({

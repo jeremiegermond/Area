@@ -1,17 +1,24 @@
 import './Home.css';
+import HomeBox from '../Component/Home-Box';
+import { FaUser } from 'react-icons/fa';
 
-function Connect() {
+export default function Home() {
   return (
-    <section className='connect-page'>
-      <h1>Connect to your API's</h1>
-      <h3>By doing this, you consent the usage of your data</h3>
-      <div className='api-buttons'>
-          <input type="submit" value='Google' className='api-btn' />
-          <input type="submit" value='Facebook' className='api-btn' />
-          <input type="submit" value='Twitter' className='api-btn' />
+    <section className='home-page'>
+      <div className='home-header'>
+        <a className='home-api' href='../connect-api'>Connect another API</a>
+        <a className='home-username' href='../Home'>
+          <div className='icon'><FaUser /></div>
+          Username
+        </a>
+      </div>
+      <h1>Select or edit your action</h1>
+      <div className='home-container'>
+        <HomeBox />
+        <HomeBox />
+        <HomeBox />
+        <HomeBox />
       </div>
     </section>
   );
 }
-
-export default Connect;

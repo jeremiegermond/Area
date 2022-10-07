@@ -14,6 +14,9 @@ const Action = new Schema({
     },
     expectedResponse: {
         type: String
+    },
+    service: {
+        type: Schema.ObjectId, ref: 'Services'
     }
 })
 

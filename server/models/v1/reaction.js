@@ -11,6 +11,9 @@ const Reaction = new Schema({
     },
     endpointUrl: {
         type: String,
+    },
+    service: {
+        type: Schema.ObjectId, ref: 'Services'
     }
 })
 
