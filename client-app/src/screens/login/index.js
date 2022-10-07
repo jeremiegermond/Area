@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Pressable,
   StatusBar,
@@ -7,31 +7,45 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import IconButton from '../../components/IconButton';
 import {
   faFacebook,
   faGoogle,
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
+import axios from 'axios';
+import Gradient from '../../components/Gradient';
 
 const LoginScreen = ({handleLogin}) => {
+  function isUserExist(user = 'user') {}
+  const [login, setLogin] = useState(false);
+  const [username, onChangeText] = React.useState('');
   return (
     <>
       <StatusBar hidden={true} translucent={true} />
-      <LinearGradient
-        useAngle={true}
-        angle={-45}
-        colors={colors.background}
-        style={styles.home}>
+      <Gradient>
         <View style={styles.loginBox}>
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={styles.loginText}>{login ? 'Login' : 'Register'}</Text>
           <View style={styles.loginBoxBtn}>
             <TextInput
               placeholderTextColor="gray"
               placeholder="Username"
               style={styles.loginInput}
               autoComplete="email"
+              onChangeText={onChangeText}
+              value={username}
+              onKeyPress={() => {
+                isUserExist();
+                axios
+                  .post('http://localhost:8080/exist/' + username)
+                  .then(res => {
+                    console.log(res.data);
+                    setLogin(!login);
+                  })
+                  .catch(e => {
+                    console.log(e);
+                  });
+              }}
             />
             <TextInput
               placeholderTextColor="gray"
@@ -69,10 +83,7 @@ const LoginScreen = ({handleLogin}) => {
               />
             </View>
           </View>
-          <LinearGradient
-            useAngle={true}
-            angle={-45}
-            colors={colors.background}
+          <Gradient
             style={styles.loginBtn}>
             <Pressable
               style={({pressed}) => [
@@ -92,35 +103,20 @@ const LoginScreen = ({handleLogin}) => {
                 console.log('Login pressed');
                 handleLogin();
               }}>
-              <Text style={styles.loginBtnText}>Login</Text>
+              <Text style={styles.loginBtnText}>
+                {login ? 'Login' : 'Register'}
+              </Text>
             </Pressable>
-          </LinearGradient>
+          </Gradient>
         </View>
-      </LinearGradient>
+      </Gradient>
     </>
   );
 };
 
-const colors = {
-  background: [
-    'rgb(3, 217, 223)',
-    'rgb(79, 151, 232)',
-    'rgb(140, 98, 241)',
-    'rgb(250, 2, 255)',
-  ],
-};
 const styles = StyleSheet.create({
-  home: {
-    margin: 0,
-    padding: 0,
-    maxWidth: '100%',
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
   loginBtn: {
+    flex: 0,
     height: '7%',
     backgroundColor: 'red',
     shadowColor: '#000',

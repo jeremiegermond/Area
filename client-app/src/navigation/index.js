@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
+import ConnectScreen from '../screens/connect';
 import LoginScreen from '../screens/login';
 import HomeScreen from '../screens/home';
 import {NavigationContainer} from '@react-navigation/native';
@@ -16,7 +17,7 @@ const AppNavigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Awesome app"
+        initialRouteName="Server"
         screenOptions={{headerShown: connected}}>
         {connected ? (
           <>
@@ -26,6 +27,7 @@ const AppNavigation = () => {
           </>
         ) : (
           <>
+            <Stack.Screen name="Server" component={ConnectScreen} />
             <Stack.Screen name="Login">
               {props => <LoginScreen handleLogin={handleLogin} {...props} />}
             </Stack.Screen>
