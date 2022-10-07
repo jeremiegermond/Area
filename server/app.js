@@ -27,7 +27,7 @@ app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 app.use(logger('dev'))
-app.use(express.json())
+app.use(express.json()) 
 
 app.use(cors({
   credentials: true,
@@ -47,4 +47,4 @@ app.use(function(err, req, res, next) {
 app.listen(port);
 
 //https.createServer(app).listen(port);
-//console.log(`https istening on port ${port}`)
+console.log(`http istening on port ${port}`)
