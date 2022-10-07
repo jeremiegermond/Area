@@ -6,13 +6,13 @@ const mongodb = require('./db/mongo')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
-const https = require('https');
-const fs = require('fs');
+//const https = require('https');
+//const fs = require('fs');
 
-const options = {
+/* const options = {
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem')
-};
+}; */
 
 require('./auth/auth');
 

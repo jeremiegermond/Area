@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const OAuth = require('oauth')
+/* const OAuth = require('oauth')
 
 const consumer = new OAuth.OAuth(
   'https://api.twitter.com/oauth/request_token',
@@ -9,7 +9,7 @@ const consumer = new OAuth.OAuth(
   "oCVtXQ2eAB2zQxFYYhtkQ1O1QZGj68g4A0rG5NK7LUIMfLley2",
   '1.0A', "http://localhost:8080/callback", 'HMAC-SHA1'
 )
-
+*/
 router.get(
   '/profile',
   (req, res, next) => {
@@ -21,7 +21,7 @@ router.get(
   }
 );
 
-router.get(
+/* router.get(
 '/callback', function(req, res) {
   try {
 console.log("oauthRequestToken "+req.query.oauth_token);
@@ -51,6 +51,6 @@ router.get(
       res.status(200).redirect("https://twitter.com/oauth/authorize?oauth_token="+oauthRequestToken+"&oauth_token_secret="+oauthRequestTokenSecret)
     }
   }); 
-});
+}); */
 
 module.exports = router;
