@@ -6,8 +6,6 @@ const Services = require('../../models/v1/services.js');
 const Action = require('../../models/v1/action.js')
 const Reaction = require('../../models/v1/reaction.js')
 
-mongodb.initDbConnection()
-
 /* const OAuth = require('oauth')
 
 const consumer = new OAuth.OAuth(
