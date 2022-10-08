@@ -20,7 +20,7 @@ const ProfileScreen = ({handleLogin}) => {
         <Text style={{color: 'black', fontSize: 16, fontWeight: 'bold'}}>
           By doing this, you consent the usage of your data
         </Text>
-        <DefaultBox style={{padding: 0, backgroundColor: 'lightgreen'}}>
+        <DefaultBox padding={0} style={{backgroundColor: 'lightgreen'}}>
           <PressableIcon
             icon={faTwitter}
             size={80}
@@ -28,23 +28,23 @@ const ProfileScreen = ({handleLogin}) => {
             onPress={() => console.log('Twitter api')}
           />
         </DefaultBox>
-        <DefaultBox style={{padding: 0}}>
+        <DefaultBox padding={0}>
           <PressableIcon
             icon={faGoogle}
             size={80}
             style={{width: '100%', height: '100%', borderRadius: 40}}
-            onPress={() => console.log('Twitter api')}
+            onPress={() => console.log('Google api')}
           />
         </DefaultBox>
-        <DefaultBox style={{padding: 0}}>
+        <DefaultBox padding={0}>
           <PressableIcon
             icon={faFacebook}
             size={80}
             style={{width: '100%', height: '100%', borderRadius: 40}}
-            onPress={() => console.log('Twitter api')}
+            onPress={() => console.log('Facebook api')}
           />
         </DefaultBox>
-        <DefaultBox style={{padding: 0}}>
+        <DefaultBox padding={0}>
           <PressableIcon
             icon={faRightFromBracket}
             size={80}

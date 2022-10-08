@@ -9,6 +9,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCirclePlus, faHome, faUser} from '@fortawesome/free-solid-svg-icons';
 import ProfileScreen from '../screens/profile';
+import AddScreen from '../screens/add';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -29,6 +30,7 @@ const AppNavigation = () => {
             options={{
               headerRight: () => <Button title="Update count" />,
             }}>
+            {/*tabPress={() => console.log('tab')}>*/}
             <Tab.Screen
               name="Home"
               options={{
@@ -50,9 +52,9 @@ const AppNavigation = () => {
                     color={focused ? 'blue' : 'black'}
                   />
                 ),
-              }}>
-              {props => <HomeScreen {...props} />}
-            </Tab.Screen>
+              }}
+              component={AddScreen}
+            />
             <Tab.Screen
               name="Profile"
               options={{

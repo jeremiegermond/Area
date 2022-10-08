@@ -78,11 +78,9 @@ const LoginScreen = ({handleLogin}) => {
           </View>
           <Gradient style={styles.loginBtn}>
             <DefaultPressable
-              style={{
-                height: '100%',
-                width: '100%',
-                borderRadius: 50,
-              }}
+              width={'100%'}
+              height={'100%'}
+              radius={50}
               onPress={() => {
                 console.log('Login pressed');
                 handleLogin();

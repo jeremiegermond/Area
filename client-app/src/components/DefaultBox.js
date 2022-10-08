@@ -1,8 +1,17 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 
-function DefaultBox(props) {
-  return <View style={[styles.defaultBox, props.style]}>{props.children}</View>;
+interface DefaultBoxProps {
+  padding?: number;
+}
+
+function DefaultBox(props: React.HTMLProps<DefaultBoxProps>) {
+  const {padding} = props;
+  return (
+    <View style={[styles.defaultBox, {padding: padding ?? 20}, props.style]}>
+      {props.children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -11,7 +20,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 40,
     margin: 10,
-    padding: 20,
     width: '100%',
     height: 170,
     flexGrow: 1,
