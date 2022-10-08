@@ -8,6 +8,7 @@ const mongodb = require('../../db/mongo');
 const { db } = require('../../models/v1/action.js');
 const { mongo } = require('mongoose');
 const User = require('../../models/v1/user')
+const OAuth = require('oauth')
 
 mongodb.initDbConnection()
 const router = express.Router();
@@ -172,5 +173,45 @@ router.get(
 
 router.post('/addReaction')
 
+const consumer = new OAuth.OAuth(
+  'https://api.twitter.com/oauth/request_token',
+  'https://api.twitter.com/oauth/access_token',
+  "YXBMV1ocZP8RVrjZako3BlhhI",
+  "oCVtXQ2eAB2zQxFYYhtkQ1O1QZGj68g4A0rG5NK7LUIMfLley2",
+  '1.0A', "http://localhost:8081/connect-api/twitter", 'HMAC-SHA1'
+)
+
+router.post(
+  '/twitter/callback', function(req, res) {
+    try {
+      console.log("oauthRequestToken "+req.body['oauth_token']);
+      console.log("oauth_verifier "+req.body['oauth_verifier']);
+      consumer.getOAuthAccessToken(req.body['oauth_token'], null ,req.body['oauth_verifier'], function(error, oauthAccessToken, oauthAccessTokenSecret, results) {
+    if (error) {
+      console.log(error);
+      res.status(500).send(error + " " + results);
+    } else {
+      console.log(oauthAccessToken + " " + oauthAccessTokenSecret)
+      // TODO : Lier les calls a un user (pas possible atm vu qu'on a pas d'auth sur le front) + stocker les 2 clés dans la db link a l'user
+      res.status(200)
+    }
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+)
+
+  router.get(
+  '/twitter/addAccount', function(req, res){
+    consumer.getOAuthRequestToken(function(error, oauthRequestToken, oauthRequestTokenSecret, results){
+      if (error) {
+        console.log(error)
+        res.status(500).send({error:"Error getting OAuth request token : " + error});
+      } else {  
+        res.status(200).send({"path" : "https://twitter.com/oauth/authenticate?oauth_token="+oauthRequestToken+"&oauth_token_secret="+oauthRequestTokenSecret})
+      }
+    }); 
+  });
 
 module.exports = router;

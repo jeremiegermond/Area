@@ -5,6 +5,7 @@ import Register from './Register/Register'
 import Login from './Login/Login'
 import ConnectAPI from './Connect-API/Connect';
 import Home from './Home/Home'
+import Twitter from './Connect-API/Twitter/Twitter'
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Route exact path="/register" element={<Register/>}/>
         <Route exact path="/login" element={<Login/>}/>
         <Route exact path="/connect-api" element={<ConnectAPI/>}/>
+        <Route exact path="/connect-api/twitter" element={<Twitter/>}/>
         <Route exact path="/home" element={<Home/>}/>
       </Routes>
     </Router>
