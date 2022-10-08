@@ -1,7 +1,6 @@
 import './Connect.css';
 import React from 'react';
 import axios from 'axios';
-import queryString from 'query-string';
 
 export default class Connect extends React.Component {
 
