@@ -1,13 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Pressable,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import IconButton from '../../components/IconButton';
+import {StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
+import PressableIcon from '../../components/PressableIcon';
 import {
   faFacebook,
   faGoogle,
@@ -15,7 +8,8 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import axios from 'axios';
 import Gradient from '../../components/Gradient';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DefaultPressable from '../../components/DefaultPressable';
 
 const LoginScreen = ({handleLogin}) => {
   const [login, setLogin] = useState(false);
@@ -62,23 +56,20 @@ const LoginScreen = ({handleLogin}) => {
               <View style={styles.loginSeparatorLine} />
             </View>
             <View style={styles.loginBoxIcons}>
-              <IconButton
+              <PressableIcon
                 icon={faTwitter}
-                scale={2}
                 onPress={() => {
                   console.log('twitter pressed');
                 }}
               />
-              <IconButton
+              <PressableIcon
                 icon={faGoogle}
-                scale={2}
                 onPress={() => {
                   console.log('google pressed');
                 }}
               />
-              <IconButton
+              <PressableIcon
                 icon={faFacebook}
-                scale={2}
                 onPress={() => {
                   console.log('facebook pressed');
                 }}
@@ -86,20 +77,12 @@ const LoginScreen = ({handleLogin}) => {
             </View>
           </View>
           <Gradient style={styles.loginBtn}>
-            <Pressable
-              style={({pressed}) => [
-                {
-                  backgroundColor: pressed
-                    ? 'rgba(210, 230, 255, 0.5)'
-                    : 'transparent',
-                  height: '100%',
-                  width: '100%',
-                  borderRadius: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                },
-              ]}
+            <DefaultPressable
+              style={{
+                height: '100%',
+                width: '100%',
+                borderRadius: 50,
+              }}
               onPress={() => {
                 console.log('Login pressed');
                 handleLogin();
@@ -107,7 +90,7 @@ const LoginScreen = ({handleLogin}) => {
               <Text style={styles.loginBtnText}>
                 {login ? 'Login' : 'Register'}
               </Text>
-            </Pressable>
+            </DefaultPressable>
           </Gradient>
         </View>
       </Gradient>

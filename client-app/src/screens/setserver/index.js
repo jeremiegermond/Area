@@ -4,15 +4,19 @@ import Gradient from '../../components/Gradient';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ConnectScreen = ({navigation}) => {
+const SetServerScreen = ({navigation}) => {
   const [server, setServer] = React.useState('');
   useEffect(() => {
     const ip = async () => await AsyncStorage.getItem('@ip');
-    ip().then(r => setServer(r));
-    axios
-      .get(`http://${server}:8080/ping2`, {timeout: 400})
-      .then(navigation.navigate('Login'))
-      .catch(e => console.log(e));
+    ip().then(r => {
+      setServer(r);
+      setTimeout(() => {
+        axios
+          .get(`http://${r}:8080/ping2`, {timeout: 400})
+          .then(navigation.navigate('Login'))
+          .catch(e => console.log(e));
+      }, 200);
+    });
   }, []);
   const checkServer = () => {
     axios
@@ -52,4 +56,4 @@ const ConnectScreen = ({navigation}) => {
   );
 };
 
-export default ConnectScreen;
+export default SetServerScreen;

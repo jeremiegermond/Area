@@ -1,0 +1,28 @@
+import React from 'react';
+import {Pressable} from 'react-native';
+
+interface DefaultPressableProps {
+  onPress?: null;
+}
+
+function DefaultPressable(props: React.HTMLProps<DefaultPressableProps>) {
+  const {onPress} = props;
+  return (
+    <Pressable
+      style={({pressed}) => [
+        {
+          backgroundColor: pressed ? 'rgba(0, 0, 0, 0.4)' : 'transparent',
+          borderRadius: 5,
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          flexDirection: 'row',
+          padding: 5,
+        },
+        props.style,
+      ]}
+      onPress={onPress}>
+      {props.children}
+    </Pressable>
+  );
+}
+export default DefaultPressable;
