@@ -4,4 +4,5 @@ FROM node
 EXPOSE 8081
 ENV NODE_ENV=development
 WORKDIR /app
+CMD ["npm", "i"]
 CMD ["npm", "start"]

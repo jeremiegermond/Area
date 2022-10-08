@@ -5,4 +5,5 @@ ENV NODE_ENV=development
 ENV PORT=8080
 EXPOSE $PORT
 WORKDIR /app
+CMD ["npm", "i"]
 CMD ["npm", "run", "dev"]
