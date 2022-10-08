@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Pressable,
   StatusBar,
@@ -15,11 +15,16 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import axios from 'axios';
 import Gradient from '../../components/Gradient';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({handleLogin}) => {
-  function isUserExist(user = 'user') {}
   const [login, setLogin] = useState(false);
   const [username, onChangeText] = React.useState('');
+  const [server, setServer] = React.useState('');
+  useEffect(() => {
+    const ip = async () => await AsyncStorage.getItem('@ip');
+    ip().then(r => setServer(r));
+  }, []);
   return (
     <>
       <StatusBar hidden={true} translucent={true} />
@@ -35,16 +40,13 @@ const LoginScreen = ({handleLogin}) => {
               onChangeText={onChangeText}
               value={username}
               onKeyPress={() => {
-                isUserExist();
+                if (username.length === 0) {
+                  return;
+                }
                 axios
-                  .post('http://localhost:8080/exist/' + username)
-                  .then(res => {
-                    console.log(res.data);
-                    setLogin(!login);
-                  })
-                  .catch(e => {
-                    console.log(e);
-                  });
+                  .get(`http://${server}:8080/exist/${username}`)
+                  .then(res => setLogin(res.data))
+                  .catch(e => console.log(e));
               }}
             />
             <TextInput
@@ -83,8 +85,7 @@ const LoginScreen = ({handleLogin}) => {
               />
             </View>
           </View>
-          <Gradient
-            style={styles.loginBtn}>
+          <Gradient style={styles.loginBtn}>
             <Pressable
               style={({pressed}) => [
                 {
