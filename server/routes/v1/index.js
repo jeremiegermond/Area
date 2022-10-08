@@ -10,7 +10,6 @@ const { mongo } = require('mongoose');
 const User = require('../../models/v1/user')
 const OAuth = require('oauth')
 
-mongodb.initDbConnection()
 const router = express.Router();
 
 router.post( '/signup',
