@@ -1,5 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const mongodb = require('../../db/mongo');
+const User = require('../../models/v1/user.js');
+const Services = require('../../models/v1/services.js');
+const Action = require('../../models/v1/action.js')
+const Reaction = require('../../models/v1/reaction.js')
+
+mongodb.initDbConnection()
+
 /* const OAuth = require('oauth')
 
 const consumer = new OAuth.OAuth(
@@ -20,6 +28,30 @@ router.get(
     })
   }
 );
+
+router.post('/addActionReaction', async (req, res, next)  => {
+    try {
+      const { service, action_id, reaction_id } = req.body
+      let act = await Action.findById(action_id)
+      let react = await Reaction.findById(reaction_id)
+      let usr = await User.findOne({name: req.user.name})
+      console.log(usr)
+      usr.actionReaction.push({
+        action: act._id,
+        reaction: react._id
+      })
+      usr.save().then(() => {
+        res.status(201).json({
+          message: `action ${act.name} and reaction ${react.name} successfully added to user ${req.user.name}`
+        })
+      })
+    } catch (error) {
+      console.log(error)
+      res.status(400).json({
+        error: error
+      })
+    }
+})
 
 /* router.get(
 '/callback', function(req, res) {

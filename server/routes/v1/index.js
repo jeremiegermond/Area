@@ -133,8 +133,9 @@ router.post('/addReaction', async (req, res, next)  => {
 router.get('/ping', async (req, res, next) => {
     try {
         let result = await db.collection("services").findOne(
-            {name: "test"},
+            {name: "test"}
         );
+        console.log(result)
         let ping = await db.collection("actions").findOne({_id: result.actions[0]})
         console.log(ping)
         res.status(201).json({
