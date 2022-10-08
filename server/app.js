@@ -6,6 +6,8 @@ const mongodb = require('./db/mongo')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
+const Users = require('./models/v1/user')
+const Reaction = require('./models/v1/reaction')
 //const https = require('https');
 //const fs = require('fs');
 
@@ -45,4 +47,28 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(port);
-console.log(`Server listening on port ${port}`)
+
+//https.createServer(app).listen(port);
+console.log(`http listening on port ${port}`)
+/*
+async function loop() {
+  while(true) {
+    Users.find({} , (err, users) => {
+      if(err)
+        console.log(err)
+      users.map(user => {
+        try {
+          console.log(user.username)
+            user.actionReaction.map(ar => {
+              console.log(ar)
+              ar.check()
+            })
+        } catch(error) {
+        console.log(error)
+        }
+      })
+    })
+    await new Promise(r => setTimeout(r, 2000));
+  }
+}
+loop()*/

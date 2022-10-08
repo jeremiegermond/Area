@@ -5,6 +5,7 @@ const User = require('../../models/v1/user.js');
 const Services = require('../../models/v1/services.js');
 const Action = require('../../models/v1/action.js')
 const Reaction = require('../../models/v1/reaction.js')
+const UserKeys = require('../../models/v1/userkeys.js')
 const OAuth = require('oauth')
 
 router.get(
@@ -51,30 +52,31 @@ const consumer = new OAuth.OAuth(
 )
 
 router.post(
-  '/twitter/callback', async(req, res) => {
+  '/twitter/callback', function(req, res) {
     try {
       console.log("oauthRequestToken "+req.body['oauth_token']);
       console.log("oauth_verifier "+req.body['oauth_verifier']);
-      consumer.getOAuthAccessToken(req.body['oauth_token'], null ,req.body['oauth_verifier'], async(error, oauthAccessToken, oauthAccessTokenSecret, results) => {
-    if (error) {
-      console.log(error);
-      res.status(500).send(error + " " + results);
-    } else {
-      console.log(oauthAccessToken + " " + oauthAccessTokenSecret)
-      let usr = await User.findOne({name: req.user.name})
-      usr.keys.push({
-        service: "twitter",
-        public_key: oauthAccessToken,
-        private_key: oauthAccessTokenSecret
-      })
-      usr.save().then(() => {
-        res.status(201).json({
-          message: `response`
-        })
-      })
-      
-      res.status(200)
-    }
+      consumer.getOAuthAccessToken(req.body['oauth_token'], null ,req.body['oauth_verifier'], async (error, oauthAccessToken, oauthAccessTokenSecret, results) => {
+        if (error) {
+          console.log(error);
+          res.status(500).send(error + " " + results);
+        } else {
+          let usr = await User.findOne({name: req.user.name})
+          console.log(usr.keys)
+          console.log(oauthAccessToken + " " + oauthAccessTokenSecret)
+          const newUserKeys = new UserKeys({
+            service: "twitter",
+            public_key: oauthAccessToken.toString(),
+            private_key: oauthAccessTokenSecret.toString()
+          }).save().then((data) => {
+            usr.keys.push(data)
+            usr.save().then(() => {
+              res.status(201).json({
+                message: `response`
+              })
+            })
+          })
+        }
       });
     } catch (error) {
       console.log(error)
@@ -89,7 +91,7 @@ router.post(
         console.log(error)
         res.status(500).send({error:"Error getting OAuth request token : " + error});
       } else {  
-        res.status(200).send({"path" : "https://twitter.com/oauth/authenticate?oauth_token="+oauthRequestToken+"&oauth_token_secret="+oauthRequestTokenSecret})
+        res.status(200).send({"path" : "https://twitter.com/oauth/authorize?oauth_token="+oauthRequestToken+"&oauth_token_secret="+oauthRequestTokenSecret})
       }
     }); 
   });
