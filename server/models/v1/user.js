@@ -1,21 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
-
-const UserKeys = new Schema({
-    service: {
-        type: String,
-        required: [true, 'Service name is required'],
-    },
-    public_key: {
-        type: String,
-        required: [true, 'Public key is required'],
-    },
-    private_key: {
-        type: String,
-        required: [true, 'Private key is required'],
-    }
-})
+const UserKeys = require('./userkeys.js')
 
 const User = new Schema({
     username: {

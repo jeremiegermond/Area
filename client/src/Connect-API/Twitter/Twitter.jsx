@@ -5,23 +5,35 @@ import queryString from 'query-string';
 export default class Twitter extends React.Component {
 
     componentDidMount() {
-        const {oauth_token, oauth_verifier} = queryString.parse(window.location.search);  
+        const {oauth_token, oauth_verifier} = queryString.parse(window.location.search);
         if (oauth_token && oauth_verifier) {
           try {
-             axios({
-               url: `http://localhost:8080/twitter/callback`,  
-               method: 'POST',
-               data: {oauth_token, oauth_verifier}
-             })
-             window.location.href = "http://localhost:8081/connect-api/"
+            axios({
+              method: 'post',
+              url: 'http://localhost:8080/user/twitter/callback',
+              headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDE5NTM1ZmRhZTRiOTE4OWJlNGJjZiIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1MjQyNDI2fQ.s0b0aMjQvXeVPTXFX5LvtY1Ox-ZA1E4zXlZJLrG1CDE`}, 
+              data: {
+                oauth_token, oauth_verifier
+              }
+            }).then(() => {console.log('stl');window.location.href = "http://localhost:8081/connect-api/"})
           } catch (error) {
            console.error(error); 
-          } 
+          }
         } else {
-            window.location.href = "http://localhost:8081/connect-api/"
+            //window.location.href = "http://localhost:8081/connect-api/"
         }
       }
       render() {
         return null
       }
 }
+
+/*
+axios({
+              method: 'post',
+              url: 'http://localhost:8080/user/twitter/callback',
+              headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDBjMDQyYzg4ZTQxOTgwNDRmNjU3NyIsInVzZXJuYW1lIjoiZ2FyZW5sb2wifSwiaWF0IjoxNjY1MjM2Nzg2fQ.hcoxOiuo6o1x3CVcoxFxaZWXUvt_9BAYrOQXXQznD_Q`}, 
+              data: {
+                oauth_token, oauth_verifier
+              }
+            }); */

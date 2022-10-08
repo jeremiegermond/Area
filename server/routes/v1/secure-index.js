@@ -5,17 +5,9 @@ const User = require('../../models/v1/user.js');
 const Services = require('../../models/v1/services.js');
 const Action = require('../../models/v1/action.js')
 const Reaction = require('../../models/v1/reaction.js')
+const UserKeys = require('../../models/v1/userkeys.js')
+const OAuth = require('oauth')
 
-/* const OAuth = require('oauth')
-
-const consumer = new OAuth.OAuth(
-  'https://api.twitter.com/oauth/request_token',
-  'https://api.twitter.com/oauth/access_token',
-  "YXBMV1ocZP8RVrjZako3BlhhI",
-  "oCVtXQ2eAB2zQxFYYhtkQ1O1QZGj68g4A0rG5NK7LUIMfLley2",
-  '1.0A', "http://localhost:8080/callback", 'HMAC-SHA1'
-)
-*/
 router.get(
   '/profile',
   (req, res, next) => {
@@ -51,36 +43,57 @@ router.post('/addActionReaction', async (req, res, next)  => {
     }
 })
 
-/* router.get(
-'/callback', function(req, res) {
-  try {
-console.log("oauthRequestToken "+req.query.oauth_token);
-console.log("oauth_verifier "+req.query.oauth_verifier);
-consumer.getOAuthAccessToken(req.query.oauth_token, null ,req.query.oauth_verifier, function(error, oauthAccessToken, oauthAccessTokenSecret, results) {
-  if (error) {
-    console.log(error);
-    res.status(500).send(error + " " + results);
-  } else {      
-      res.status(200).send({oauthAccessToken: oauthAccessToken, oauthAccessTokenSecret: oauthAccessTokenSecret})
-        }
-    });
-  } catch (error) {
-    console.log(error)
-  }
-}
+const consumer = new OAuth.OAuth(
+  'https://api.twitter.com/oauth/request_token',
+  'https://api.twitter.com/oauth/access_token',
+  "YXBMV1ocZP8RVrjZako3BlhhI",
+  "oCVtXQ2eAB2zQxFYYhtkQ1O1QZGj68g4A0rG5NK7LUIMfLley2",
+  '1.0A', "http://localhost:8081/connect-api/twitter", 'HMAC-SHA1'
 )
-router.get(
-'/addTwitter', function(req, res){
-  consumer.getOAuthRequestToken(function(error, oauthRequestToken, oauthRequestTokenSecret, results){
-    if (error) {
+
+router.post(
+  '/twitter/callback', function(req, res) {
+    try {
+      console.log("oauthRequestToken "+req.body['oauth_token']);
+      console.log("oauth_verifier "+req.body['oauth_verifier']);
+      consumer.getOAuthAccessToken(req.body['oauth_token'], null ,req.body['oauth_verifier'], async (error, oauthAccessToken, oauthAccessTokenSecret, results) => {
+        if (error) {
+          console.log(error);
+          res.status(500).send(error + " " + results);
+        } else {
+          let usr = await User.findOne({name: req.user.name})
+          console.log(usr.keys)
+          console.log(oauthAccessToken + " " + oauthAccessTokenSecret)
+          const newUserKeys = new UserKeys({
+            service: "twitter",
+            public_key: oauthAccessToken.toString(),
+            private_key: oauthAccessTokenSecret.toString()
+          }).save().then((data) => {
+            usr.keys.push(data)
+            usr.save().then(() => {
+              res.status(201).json({
+                message: `response`
+              })
+            })
+          })
+        }
+      });
+    } catch (error) {
       console.log(error)
-      res.status(500).send({error:"Error getting OAuth request token : " + error});
-    } else {  
-      console.log("oauthRequestToken "+oauthRequestToken);
-      console.log("oauthRequestTokenSecret "+oauthRequestTokenSecret);
-      res.status(200).redirect("https://twitter.com/oauth/authorize?oauth_token="+oauthRequestToken+"&oauth_token_secret="+oauthRequestTokenSecret)
     }
-  }); 
-}); */
+  }
+)
+
+  router.get(
+  '/twitter/addAccount', function(req, res){
+    consumer.getOAuthRequestToken(function(error, oauthRequestToken, oauthRequestTokenSecret, results){
+      if (error) {
+        console.log(error)
+        res.status(500).send({error:"Error getting OAuth request token : " + error});
+      } else {  
+        res.status(200).send({"path" : "https://twitter.com/oauth/authorize?oauth_token="+oauthRequestToken+"&oauth_token_secret="+oauthRequestTokenSecret})
+      }
+    }); 
+  });
 
 module.exports = router;
