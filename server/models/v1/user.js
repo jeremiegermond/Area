@@ -32,6 +32,16 @@ const User = new Schema({
     keys: [{
         type: Schema.ObjectId, ref: 'UserKeys'
     }],
+    actionReaction: [{
+        action: {
+            type: Schema.ObjectId, ref: "Action",
+            required: [true, 'Action is required']
+        },
+        reaction: {
+            type: Schema.ObjectId, ref: "Reaction",
+            required: [true, 'Reaction is required']
+        }
+    }]
 }, {
     timestamps: true
 })
