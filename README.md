@@ -112,6 +112,21 @@ erDiagram
     REACTION ||..|| EXT_API : run
 ```
 
+## Technologies Used
+
+To ensure we are the most efficient equally on the client-side and server-side we splitted the project between two main framework assisted by multiples librairies and a no-sql database
+
+### ExpressJS
+Used for the back-end of the project ExpressJS is a framework based on nodeJS, it's a web application framework that provides broad features for building web and mobile applications we use it's simple routing for requests made by clients and middleware that is responsible for making decisions to give the correct responses for the requests made by the client
+
+### ReactJS
+
+For the front-end and client side we use React a Javascript framework, we choose React for it's component system ,easy syntax, maintainability and because react is well documented and used by a majority of front-end developpers, it also work very well with the technox used for the server-side (NodeJs/ExpressJs)
+
+### MongoDB
+MongoDB is an open source NoSQL database used to store our Actions-Reactions data and our users.
+we use to store structured or unstructured data. It uses a JSON-like format to store documents in object which makes it really fast and easy to use by deleting the "normalization of the data" process which can take a lot of time in large-scale applications
+
 <!-- Links -->
 [1]:https://docs.docker.com/get-docker/
 [2]:https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry
