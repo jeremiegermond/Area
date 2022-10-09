@@ -58,12 +58,18 @@ function checkActions() {
         // console.log("Got user");
         // console.log(user.username);
         try {
-          user.actionReaction.forEach((ar) => {
-            console.log(ar);
-          });
-        } catch (e) {
-          console.log("catch error ar");
-          console.log(e);
+          console.log(user.username)
+          user.populate("actionReaction.action").then(() => {
+            user.actionReaction.map(ar => {
+              console.log(ar.action)
+              if (ar.action.check())
+                  user.populate("actionReaction.reaction").then(() => { 
+                    //ar.reaction.exec()
+                  })
+            })
+          })
+        } catch(error) {
+        console.log(error)
         }
       });
     });

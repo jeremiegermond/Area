@@ -11,7 +11,7 @@ export default class Twitter extends React.Component {
             axios({
               method: 'post',
               url: 'http://localhost:8080/user/twitter/callback',
-              headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDIxZmZmNThmM2YyM2QyMWE2ZWNjZiIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1Mjc3OTU1fQ.dcj7k56yHI1pNImLSGwgcGORmNuKV4DHfOngvZ84fO0`}, 
+              headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDJkMDg3ZTAwMWVmMGY5YjU2ZGMxYSIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1MzIzMTQ2fQ.wRsf6y_D679Iu3JOVgMkypexUSBIRgufchF_3mS22A4`}, 
               data: {
                 oauth_token, oauth_verifier
               }

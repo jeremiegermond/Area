@@ -1,5 +1,6 @@
 
 const mongoose = require('mongoose')
+const axios =  require('axios')
 const Schema = mongoose.Schema
 
 const Reaction = new Schema({
@@ -15,12 +16,15 @@ const Reaction = new Schema({
     endpointUrl: {
         type: String,
     },
+    header: {
+        type: String
+    },
     service: {
         type: Schema.ObjectId, ref: 'Services'
     }
 })
 
-Reaction.method.exec = async function(args) {
+Reaction.methods.exec = async function(args) {
     axios.post(this.endpointUrl, args)
     .then(res => {
         console.log(res);
