@@ -1,12 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import {getItem, setItem} from '../data';
+import {Linking} from 'react-native';
 
-export async function getServer(
-  endpoint: string,
-  token: string = '',
-  timeout = 400,
-) {
+export async function getServer(endpoint: string, timeout = 400) {
+  const token: string = await getItem('@token');
   return await axios.get(`http://${await getItem('@ip')}:8080/${endpoint}`, {
     timeout: timeout,
     headers: {
@@ -14,12 +12,8 @@ export async function getServer(
     },
   });
 }
-export async function postServer(
-  endpoint: string,
-  data: any,
-  token: string = '',
-  timeout = 400,
-) {
+export async function postServer(endpoint: string, data: any, timeout = 400) {
+  const token: string = await getItem('@token');
   return await axios.post(
     `http://${await getItem('@ip')}:8080/${endpoint}`,
     data,
@@ -32,9 +26,19 @@ export async function postServer(
   );
 }
 
+export async function deleteServer(endpoint: string, timeout = 400) {
+  const token: string = await getItem('@token');
+  return await axios.delete(`http://${await getItem('@ip')}:8080/${endpoint}`, {
+    timeout: timeout,
+    headers: {
+      Authorization: 'Bearer ' + token,
+    },
+  });
+}
+
 export async function pingServer(ip: string = '') {
   ip = ip.length ? ip : await getItem('@ip');
-  return await axios.get(`http://${ip}:8080/ping2`, {
+  await axios.get(`http://${ip}:8080/ping2`, {
     timeout: 400,
   });
 }
@@ -66,8 +70,8 @@ export async function userLogin(username: string, password: string) {
 export async function checkToken() {
   const token: string = await getItem('@token');
   if (token && token.length > 1) {
-    return getServer('user/profile', token)
-      .then(() => {
+    return getServer('user/profile')
+      .then(r => {
         console.log('Token ok');
         return true;
       })
@@ -77,4 +81,29 @@ export async function checkToken() {
       });
   }
   return false;
+}
+
+export async function connectApi(api: string) {
+  await getServer(`user/${api}/addAccount`).then(res => {
+    console.log(res.data);
+    Linking.openURL(res.data.path);
+  });
+}
+
+export async function hasApi(api: string) {
+  return await getServer(`user/hasApi/${api}`)
+    .then(res => res.data)
+    .catch(() => {
+      console.log("Couldn't get API status");
+      return false;
+    });
+}
+
+export async function deleteApi(api: string) {
+  return await deleteServer(`user/deleteApi/${api}`)
+    .then(res => res.data)
+    .catch(() => {
+      console.log("Couldn't get delete API");
+      return false;
+    });
 }

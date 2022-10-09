@@ -12,8 +12,8 @@ const SetServerScreen = ({navigation}) => {
       setServer(r || '');
       setTimeout(() => {
         pingServer()
-          .then(navigation.navigate('Login'))
-          .catch(e => console.log(e));
+          .then(() => navigation.navigate('Login'))
+          .catch(() => console.log('Server not found'));
       }, 200);
     });
   }, []);
@@ -22,8 +22,8 @@ const SetServerScreen = ({navigation}) => {
       return;
     }
     pingServer(server)
-      .then(() => {
-        setItem('@ip', server).then();
+      .then(async () => {
+        await setItem('@ip', server);
         navigation.navigate('Login');
       })
       .catch(e => Toast(e.message));

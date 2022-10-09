@@ -10,7 +10,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCirclePlus, faHome, faUser} from '@fortawesome/free-solid-svg-icons';
 import ProfileScreen from '../screens/profile';
 import AddScreen from '../screens/add';
-import {checkToken} from '../api';
+import {checkToken, pingServer} from '../api';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,9 +18,22 @@ const Tab = createBottomTabNavigator();
 const AppNavigation = () => {
   const [connected, setConnected] = useState(false);
   const handleLogin = async () => {
-    setConnected(await checkToken());
+    await pingServer()
+      .then(async () => {
+        setConnected(await checkToken());
+      })
+      .catch(() => console.log('No server connected'));
   };
+
   useEffect(() => {
+    // const ping = () => {
+    //   if (connected) {
+    //     return pingServer()
+    //       .then()
+    //       .catch(() => setConnected(false));
+    //   }
+    // };
+    // setInterval(ping, 1 * 1000);
     setTimeout(() => {
       handleLogin().then();
     }, 200);
@@ -36,7 +49,6 @@ const AppNavigation = () => {
             options={{
               headerRight: () => <Button title="Update count" />,
             }}>
-            {/*tabPress={() => console.log('tab')}>*/}
             <Tab.Screen
               name="Home"
               options={{
