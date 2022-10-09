@@ -41,7 +41,7 @@ export async function pingServer(ip: string = '') {
 
 export async function userExist(user: string = '') {
   if (user.length < 1) {
-    return false;
+    return {data: false};
   }
   return await getServer(`exist/${user}`);
 }
@@ -51,25 +51,24 @@ export async function userLogin(username: string, password: string) {
     username: username,
     password: password,
   };
-  await postServer('login', user).then(r => {
-    console.log(r.data.token);
+  const exist = await userExist(username)
+    .then(e => e.data)
+    .catch(e => console.log(e));
+  await postServer(exist ? 'login' : 'signup', user).then(async r => {
     if (r.data.token.length > 1) {
-      setItem('@token', r.data.token).then();
-      console.log('returning true');
-      return true;
+      await setItem('@token', r.data.token);
+    } else {
+      throw 'Wrong token';
     }
-    throw 'Wrong token';
   });
 }
 
 export async function checkToken() {
   const token: string = await getItem('@token');
   if (token && token.length > 1) {
-    console.log(typeof token);
-    console.log(token);
-    getServer('user/profile', token)
-      .then(r => {
-        console.log(r.data);
+    return getServer('user/profile', token)
+      .then(() => {
+        console.log('Token ok');
         return true;
       })
       .catch(e => {

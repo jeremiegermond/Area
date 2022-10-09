@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SetServerScreen from '../screens/setserver';
 import LoginScreen from '../screens/login';
@@ -20,6 +20,12 @@ const AppNavigation = () => {
   const handleLogin = async () => {
     setConnected(await checkToken());
   };
+  useEffect(() => {
+    setTimeout(() => {
+      handleLogin().then();
+    }, 200);
+  }, []);
+
   return (
     <NavigationContainer>
       {connected ? (

@@ -77,19 +77,13 @@ const LoginScreen = ({handleLogin}) => {
               height={'100%'}
               radius={50}
               disabled={username.length < 1 || password.length < 1}
-              onPress={() => {
-                if (login) {
-                  userLogin(username, password)
-                    .then(r => {
-                      handleLogin();
-                    })
-                    .catch(e => {
-                      console.log(e.message);
-                      Toast('Wrong password');
-                    });
-                }
-                console.log('Login pressed');
-                // handleLogin();
+              onPress={async () => {
+                await userLogin(username, password)
+                  .then(() => handleLogin())
+                  .catch(e => {
+                    console.log(e.message);
+                    Toast(`Error: Couldn't ${login ? 'login' : 'register'}`);
+                  });
               }}>
               <Text style={styles.loginBtnText}>
                 {login ? 'Login' : 'Register'}
