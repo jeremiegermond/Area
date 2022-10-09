@@ -24,6 +24,7 @@ router.post(
       message: "Signup successful",
       token: token,
     });
+})
 
 router.post( '/login',
     async (req, res, next) => {
