@@ -6,7 +6,8 @@ export default class Connect extends React.Component {
 
   handleSubmitTwitter = async event => {
     event.preventDefault();
-    await axios.get('http://localhost:8080/user/twitter/addAccount', { headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDJkMDg3ZTAwMWVmMGY5YjU2ZGMxYSIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1MzIzMTQ2fQ.wRsf6y_D679Iu3JOVgMkypexUSBIRgufchF_3mS22A4`} })
+    await axios.get('http://localhost:8080/user/twitter/addAccount', 
+    { headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDJkMDg3ZTAwMWVmMGY5YjU2ZGMxYSIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1MzIzMTQ2fQ.wRsf6y_D679Iu3JOVgMkypexUSBIRgufchF_3mS22A4`} })
     .then(res => {
         console.log(res.status);
         console.log(res.data);
@@ -14,6 +15,16 @@ export default class Connect extends React.Component {
       })
   }
   
+  handleSubmitReddit = async event => {
+    event.preventDefault();
+    await axios.get('http://localhost:8080/user/reddit/create',
+    { headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzM2YwYzJhMmY4NDZhNjE1MzdkNmRhOSIsInVzZXJuYW1lIjoiY3VydGlzc3MifSwiaWF0IjoxNjY1MzU4MjY5fQ.sULwrnpXSvAePsCiaiPNbzpiq5x8DqaNH4U5BWsMYXo`} })
+    .then(res => {
+        console.log(res.status);
+        console.log(res.data);
+        window.location.href = res.data['path']
+      })
+  }
 
   render() {
     return (
@@ -22,7 +33,7 @@ export default class Connect extends React.Component {
         <h3>By doing this, you consent the usage of your data</h3>
         <div className='api-buttons'>
             <input type="submit" value='Google' className='api-btn' />
-            <input type="submit" value='Facebook' className='api-btn' />
+            <input type="submit" value='Reddit' className='api-btn' onClick={this.handleSubmitReddit}/>
             <input type="submit" value='Twitter' className='api-btn' onClick={this.handleSubmitTwitter}/>
         </div>
       </section>

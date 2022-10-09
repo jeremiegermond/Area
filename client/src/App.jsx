@@ -6,6 +6,7 @@ import Login from './Login/Login'
 import ConnectAPI from './Connect-API/Connect';
 import Home from './Home/Home'
 import Twitter from './Connect-API/Twitter/Twitter'
+import Reddit from './Connect-API/Reddit/Reddit'
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route exact path="/login" element={<Login/>}/>
         <Route exact path="/connect-api" element={<ConnectAPI/>}/>
         <Route exact path="/connect-api/twitter" element={<Twitter/>}/>
+        <Route exact path="/connect-api/reddit" element={<Reddit/>}/>
         <Route exact path="/home" element={<Home/>}/>
       </Routes>
     </Router>

@@ -7,6 +7,8 @@ const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
 const UserKeys = require("../../models/v1/userkeys.js");
 const OAuth = require("oauth");
+const crypto = require("crypto")
+const axios = require("axios")
 
 router.get("/profile", (req, res, next) => {
   res.json({
@@ -62,8 +64,8 @@ router.post("/addActionReaction", async (req, res, next) => {
 const consumer = new OAuth.OAuth(
   "https://api.twitter.com/oauth/request_token",
   "https://api.twitter.com/oauth/access_token",
-  "YXBMV1ocZP8RVrjZako3BlhhI",
-  "oCVtXQ2eAB2zQxFYYhtkQ1O1QZGj68g4A0rG5NK7LUIMfLley2",
+  "8uDiSmBXliIrxodHw6mwuaJyh",
+  "NOtO3KLwKFeXm6YuH4wiM5qtzUAi87sUiYD6piZc5jjOP4Ip4k",
   "1.0A",
   "http://localhost:8081/connect-api/twitter",
   "HMAC-SHA1"
@@ -71,8 +73,6 @@ const consumer = new OAuth.OAuth(
 
 router.post("/twitter/callback", function (req, res) {
   try {
-    console.log("oauthRequestToken " + req.body["oauth_token"]);
-    console.log("oauth_verifier " + req.body["oauth_verifier"]);
     consumer.getOAuthAccessToken(
       req.body["oauth_token"],
       null,
@@ -130,5 +130,49 @@ router.get("/twitter/addAccount", function (req, res) {
     }
   });
 });
+
+router.post("/reddit/callback", async(req, res) => {
+  const CLIENT_ID = "isUVYO3_2jTORpYN_SVSZA"
+  const CLIENT_SECRET = "3X7O0lsVJ5HjWE3YC2QB7OBKZxOXtQ"
+  console.log(req.body["code"])
+  const data = await axios(
+    {
+      method: 'post',
+      url : "https://www.reddit.com/api/v1/access_token",
+      headers : {
+        Authorization: `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64")}`,
+        "content-type": "application/x-www-form-urlencoded"},
+      data : {
+        "grant_type" : "authorization_code",
+        "code" : req.body["code"],
+        "redirect_uri" : "http://localhost:8081/connect-api/reddit"
+      }
+    });
+  let usr = await User.findOne({ name: req.user.name });
+  new UserKeys({
+    service: "reddit",
+    public_key: data.data['access_token'].toString(),
+    private_key: data.data['refresh_token'].toString(),
+  })
+    .save()
+    .then((data) => {
+      usr.keys.push(data);
+      usr.save().then(() => {
+        res.status(201).json({
+          message: `response`,
+        });
+      });
+    });
+  console.log(data.data)
+})
+
+router.get("/reddit/create", async (req, res) => {
+  let random_string = crypto.randomBytes(5).toString('hex');
+  let url = `https://www.reddit.com/api/v1/authorize?client_id=isUVYO3_2jTORpYN_SVSZA&response_type=code&state=${random_string}&redirect_uri=http://localhost:8081/connect-api/reddit&duration=permanent&scope=read,submit,account`
+  res.status(200).json(
+    {"path": url}
+  )
+});
+
 
 module.exports = router;

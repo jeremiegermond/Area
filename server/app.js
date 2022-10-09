@@ -58,7 +58,7 @@ function checkActions() {
         // console.log("Got user");
         // console.log(user.username);
         try {
-          console.log(user.username)
+          //console.log(user.username)
           user.populate("actionReaction.action").then(() => {
             user.actionReaction.map(ar => {
               console.log(ar.action)
