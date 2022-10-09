@@ -6,7 +6,7 @@ export default class Connect extends React.Component {
 
   handleSubmitTwitter = async event => {
     event.preventDefault();
-    await axios.get('http://localhost:8080/user/twitter/addAccount', { headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDE5NTM1ZmRhZTRiOTE4OWJlNGJjZiIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1MjQyNDI2fQ.s0b0aMjQvXeVPTXFX5LvtY1Ox-ZA1E4zXlZJLrG1CDE`} })
+    await axios.get('http://localhost:8080/user/twitter/addAccount', { headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDIxZmZmNThmM2YyM2QyMWE2ZWNjZiIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1Mjc3OTU1fQ.dcj7k56yHI1pNImLSGwgcGORmNuKV4DHfOngvZ84fO0`} })
     .then(res => {
         console.log(res.status);
         console.log(res.data);

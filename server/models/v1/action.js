@@ -1,5 +1,6 @@
 
 const mongoose = require('mongoose')
+const axios =  require('axios')
 const Schema = mongoose.Schema
 
 const Action = new Schema({
@@ -7,6 +8,9 @@ const Action = new Schema({
         type: String,
     },
     description: {
+        type: String,
+    },
+    method: {
         type: String,
     },
     endpointUrl: {
@@ -20,12 +24,19 @@ const Action = new Schema({
     }
 })
 
-Action.method.check = async function(args) {
-    axios.post(this.endpointUrl, args)
-    .then(res => {
-        console.log(res);
-        console.log(res.data);
-    })
+Action.methods.check = async function(args) {
+    try {
+        axios.get(this.endpointUrl, args)
+        .then(res => {
+            console.log(`response: ${res.status} expected: ${this.expectedResponse}`);
+            if (res.status == this.expectedResponse)
+                console.log("reaction")
+            else
+                console.log(`${res.status} isn't the expected response to trigger reaction`)
+        })
+    } catch(e)  {
+        console.log(e)
+    }
 }
 
 module.exports = mongoose.model('Action', Action)

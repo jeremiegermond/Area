@@ -73,8 +73,8 @@ router.post('/addService', (req, res, next) => {
 
 router.post('/addAction', async (req, res, next)  => {
     try {
-        const { service, name, desc, endpointUrl, expectedResponse } = req.body
-        const newAction =  new Action({name: name, description: desc, endpointUrl: endpointUrl, expectedResponse: expectedResponse})
+        const { service, name, desc, method, endpointUrl, expectedResponse } = req.body
+        const newAction =  new Action({name: name, description: desc, method: method, endpointUrl: endpointUrl, expectedResponse: expectedResponse})
         let result = await db.collection("services").findOneAndUpdate(
             {name: service},
             {$push: {actions: newAction._id}},
@@ -102,8 +102,8 @@ router.post('/addAction', async (req, res, next)  => {
 
 router.post('/addReaction', async (req, res, next)  => {
     try {
-        const { service, name, desc, endpointUrl } = req.body
-        const newReaction =  new Reaction({name: name, description: desc, endpointUrl: endpointUrl})
+        const { service, name, method, desc, endpointUrl } = req.body
+        const newReaction =  new Reaction({name: name, description: desc, method: method, endpointUrl: endpointUrl})
         let result = await db.collection("services").findOneAndUpdate(
             {name: service},
             {$push: {reactions: newReaction._id}},

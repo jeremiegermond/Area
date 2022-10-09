@@ -9,6 +9,9 @@ const Reaction = new Schema({
     description: {
         type: String,
     },
+    method: {
+        type: String,
+    },
     endpointUrl: {
         type: String,
     },

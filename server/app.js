@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
 const Users = require('./models/v1/user')
+const Action = require('./models/v1/action')
 const Reaction = require('./models/v1/reaction')
 //const https = require('https');
 //const fs = require('fs');
@@ -50,7 +51,7 @@ app.listen(port);
 
 //https.createServer(app).listen(port);
 console.log(`http listening on port ${port}`)
-/*
+
 async function loop() {
   while(true) {
     Users.find({} , (err, users) => {
@@ -59,16 +60,21 @@ async function loop() {
       users.map(user => {
         try {
           console.log(user.username)
+          user.populate("actionReaction.action").then(() => {
             user.actionReaction.map(ar => {
-              console.log(ar)
-              ar.check()
+              console.log(ar.action)
+              //ar.action.check({
+              //  headers: {
+              //    authorization: `Bearer AAAAAAAAAAAAAAAAAAAAACZZhwEAAAAAjmB7uIqIMiuPd%2FqsJbgdLBIgfUw%3DcqQUx6IYf5oGhYndh4KO9ePZtZgUtRsqRjaUdw5HDL1ECkRF1p`
+              //  }})
             })
+          })
         } catch(error) {
         console.log(error)
         }
       })
     })
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 5000));
   }
 }
-loop()*/
+loop()
