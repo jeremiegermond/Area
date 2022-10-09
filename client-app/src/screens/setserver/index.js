@@ -1,37 +1,32 @@
 import React, {useEffect} from 'react';
-import {Button, TextInput, ToastAndroid} from 'react-native';
+import {Button, TextInput} from 'react-native';
 import Gradient from '../../components/Gradient';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getItem, setItem} from '../../data';
+import {pingServer} from '../../api';
+import {Toast} from '../../components/Toast';
 
 const SetServerScreen = ({navigation}) => {
   const [server, setServer] = React.useState('');
   useEffect(() => {
-    const ip = async () => await AsyncStorage.getItem('@ip');
-    ip().then(r => {
-      setServer(r);
+    getItem('@ip').then(r => {
+      setServer(r || '');
       setTimeout(() => {
-        axios
-          .get(`http://${r}:8080/ping2`, {timeout: 400})
+        pingServer()
           .then(navigation.navigate('Login'))
           .catch(e => console.log(e));
       }, 200);
     });
   }, []);
   const checkServer = () => {
-    axios
-      .get(`http://${server}:8080/ping2`, {timeout: 400})
+    if (server.length < 7) {
+      return;
+    }
+    pingServer(server)
       .then(() => {
-        AsyncStorage.setItem('@ip', server).then();
+        setItem('@ip', server).then();
         navigation.navigate('Login');
       })
-      .catch(e =>
-        ToastAndroid.showWithGravity(
-          e.message,
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER,
-        ),
-      );
+      .catch(e => Toast(e.message));
   };
   return (
     <>

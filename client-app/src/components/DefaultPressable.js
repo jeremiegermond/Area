@@ -14,7 +14,8 @@ function DefaultPressable(props: React.HTMLProps<DefaultPressableProps>) {
     <Pressable
       style={({pressed}) => [
         {
-          backgroundColor: pressed ? 'rgba(0, 0, 0, 0.4)' : 'transparent',
+          backgroundColor:
+            props.disabled || pressed ? 'rgba(0, 0, 0, 0.4)' : 'transparent',
           borderRadius: radius || 5,
           justifyContent: 'space-evenly',
           alignItems: 'center',
@@ -25,7 +26,8 @@ function DefaultPressable(props: React.HTMLProps<DefaultPressableProps>) {
         },
         props.style,
       ]}
-      onPress={onPress}>
+      onPress={onPress}
+      disabled={props.disabled}>
       {props.children}
     </Pressable>
   );

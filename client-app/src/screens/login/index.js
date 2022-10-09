@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
 import PressableIcon from '../../components/PressableIcon';
 import {
@@ -6,19 +6,16 @@ import {
   faGoogle,
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
-import axios from 'axios';
 import Gradient from '../../components/Gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import DefaultPressable from '../../components/DefaultPressable';
+import {userExist, userLogin} from '../../api';
+import {Toast} from '../../components/Toast';
 
 const LoginScreen = ({handleLogin}) => {
   const [login, setLogin] = useState(false);
-  const [username, onChangeText] = React.useState('');
-  const [server, setServer] = React.useState('');
-  useEffect(() => {
-    const ip = async () => await AsyncStorage.getItem('@ip');
-    ip().then(r => setServer(r));
-  }, []);
+  const [username, onChangeUser] = React.useState('');
+  const [password, onChangePassword] = React.useState('');
+
   return (
     <>
       <StatusBar hidden={true} translucent={true} />
@@ -31,14 +28,10 @@ const LoginScreen = ({handleLogin}) => {
               placeholder="Username"
               style={styles.loginInput}
               autoComplete="email"
-              onChangeText={onChangeText}
+              onChangeText={onChangeUser}
               value={username}
               onKeyPress={() => {
-                if (username.length === 0) {
-                  return;
-                }
-                axios
-                  .get(`http://${server}:8080/exist/${username}`)
+                userExist(username)
                   .then(res => setLogin(res.data))
                   .catch(e => console.log(e));
               }}
@@ -49,6 +42,8 @@ const LoginScreen = ({handleLogin}) => {
               style={styles.loginInput}
               autoComplete="password"
               secureTextEntry={true}
+              value={password}
+              onChangeText={onChangePassword}
             />
             <View style={styles.loginSeparator}>
               <View style={styles.loginSeparatorLine} />
@@ -81,9 +76,20 @@ const LoginScreen = ({handleLogin}) => {
               width={'100%'}
               height={'100%'}
               radius={50}
+              disabled={username.length < 1 || password.length < 1}
               onPress={() => {
+                if (login) {
+                  userLogin(username, password)
+                    .then(r => {
+                      handleLogin();
+                    })
+                    .catch(e => {
+                      console.log(e.message);
+                      Toast('Wrong password');
+                    });
+                }
                 console.log('Login pressed');
-                handleLogin();
+                // handleLogin();
               }}>
               <Text style={styles.loginBtnText}>
                 {login ? 'Login' : 'Register'}

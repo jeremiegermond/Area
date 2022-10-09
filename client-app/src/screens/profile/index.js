@@ -9,6 +9,7 @@ import {
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
 import {Text} from 'react-native';
+import {removeItem} from '../../data';
 
 const ProfileScreen = ({handleLogin}) => {
   return (
@@ -49,7 +50,10 @@ const ProfileScreen = ({handleLogin}) => {
             icon={faRightFromBracket}
             size={80}
             style={{width: '100%', height: '100%', borderRadius: 40}}
-            onPress={handleLogin}
+            onPress={() => {
+              removeItem('@token').then();
+              handleLogin();
+            }}
           />
         </DefaultBox>
       </DefaultView>
