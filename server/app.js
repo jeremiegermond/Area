@@ -47,6 +47,7 @@ app.listen(port);
 
 console.log(`Server listening on port ${port}`);
 
+
 function checkActions() {
   try {
     Users.find({}, (err, users) => {
@@ -60,12 +61,16 @@ function checkActions() {
         try {
           //console.log(user.username)
           user.populate("actionReaction.action").then(() => {
-            user.actionReaction.map(ar => {
+            user.actionReaction.map(async (ar) => {
               console.log(ar.action)
-              if (ar.action.check())
-                  user.populate("actionReaction.reaction").then(() => { 
-                    //ar.reaction.exec()
-                  })
+              let test = await ar.action.check()
+              console.log(">>>"+test)
+              if (test == true)
+                console.log("\n\nTony le SANG\n\n")
+                  //user.populate("actionReaction.reaction").then(() => { 
+                  //  console.log("\n\nTony le SANG\n\n")
+                  //  //ar.reaction.exec()
+                  //})
             })
           })
         } catch(error) {
