@@ -66,11 +66,9 @@ function checkActions() {
               let test = await ar.action.check()
               console.log(">>>"+test)
               if (test == true)
-                console.log("\n\nTony le SANG\n\n")
-                  //user.populate("actionReaction.reaction").then(() => { 
-                  //  console.log("\n\nTony le SANG\n\n")
-                  //  //ar.reaction.exec()
-                  //})
+                user.populate("actionReaction.reaction").then(() => { 
+                  ar.reaction.exec()
+                })
             })
           })
         } catch(error) {

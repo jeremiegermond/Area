@@ -19,13 +19,29 @@ const Reaction = new Schema({
     header: {
         type: String
     },
+    body: {
+        type: String
+    },
     service: {
         type: Schema.ObjectId, ref: 'Services'
     }
 })
 
 Reaction.methods.exec = async function(args) {
-    axios.post(this.endpointUrl, args)
+    /*axios.post("https://oauth.reddit.com/api/submit?sr=test&text=this is a text&title=le titre&kind=self", {
+        headers: {
+          'Authorization': 'Bearer 1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA'
+        }})*/
+    axios({
+        method: 'post',
+        url: 'https://oauth.reddit.com/api/submit?sr=test&text=A tweet was posted&title=le titre&kind=self',
+        headers: {"Authorization" : 'Bearer 1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA'},
+        data: {
+            "resubmit" : "true",
+            "send_replies" : "true",
+            "api_type" : "json"
+        }
+    })
     .then(res => {
         console.log(res);
         console.log(res.data);

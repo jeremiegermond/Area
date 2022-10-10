@@ -106,8 +106,8 @@ router.post('/addAction', async (req, res, next)  => {
 
 router.post('/addReaction', async (req, res, next)  => {
     try {
-        const { service, name, method, desc, header, endpointUrl } = req.body
-        const newReaction =  new Reaction({name: name, description: desc, method: method, endpointUrl: endpointUrl, header: header})
+        const { service, name, method, desc, header, body, endpointUrl } = req.body
+        const newReaction =  new Reaction({name: name, description: desc, method: method, endpointUrl: endpointUrl, header: header, body: body})
         let result = await db.collection("services").findOneAndUpdate(
             {name: service},
             {$push: {reactions: newReaction._id}},
