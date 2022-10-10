@@ -1,6 +1,8 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const UserModel = require('../models/v1/user');
+const JWTstrategy = require('passport-jwt').Strategy;
+const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 passport.use( 'signup',
     new localStrategy( {
@@ -38,9 +40,6 @@ passport.use( 'login',
         }
     )
 );
-
-const JWTstrategy = require('passport-jwt').Strategy;
-const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 passport.use(
   new JWTstrategy(
