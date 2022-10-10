@@ -27,14 +27,24 @@ router.get("/hasApi/:api", async (req, res) => {
 });
 
 router.delete("/deleteApi/:api", async (req, res) => {
-  const { api } = req.params;
-  await User.findOne({ username: req.user.username }).then((user) => {
-    user.populate("keys").then(() => {
-      user.keys
-        .filter(({ service }) => service === api)
-        .forEach(async (key) => await UserKeys.deleteOne({ _id: key.id }));
+  try {
+    const { api } = req.params;
+    await User.findOne({ username: req.user.username })
+      .populate("keys")
+      .then(async (user) => {
+        console.log(user.keys.filter(({ service }) => service !== api));
+        user.keys
+          .filter(({ service }) => service === api)
+          .forEach((key) => UserKeys.deleteOne({ _id: key.id }).then());
+        user.keys = user.keys.filter(({ service }) => service !== api);
+        await user.save().then(() => res.status(200).send("Api deleted"));
+      });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      error: e,
     });
-  });
+  }
 });
 
 router.post("/addActionReaction", async (req, res, next) => {
@@ -140,7 +150,7 @@ router.post("/reddit/callback", async(req, res) => {
       method: 'post',
       url : "https://www.reddit.com/api/v1/access_token",
       headers : {
-        Authorization: `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64")}`,
+        "Authorization": `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64")}`,
         "content-type": "application/x-www-form-urlencoded"},
       data : {
         "grant_type" : "authorization_code",
