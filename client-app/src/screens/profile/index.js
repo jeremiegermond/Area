@@ -12,14 +12,18 @@ import {Text} from 'react-native';
 import {removeItem} from '../../data';
 import {connectApi, deleteApi, hasApi} from '../../api';
 
-const ProfileScreen = ({handleLogin}) => {
+const ProfileScreen = ({handleLogin, navigation}) => {
   const [twitter, setTwitter] = useState(false);
   const updateApi = (api: string, setter) => {
     hasApi(api).then(r => setter(r));
   };
   useEffect(() => {
     updateApi('twitter', setTwitter);
-  }, []);
+    const unsubscribe = navigation.addListener('state', s => {
+      setTimeout(() => updateApi('twitter', setTwitter), 1000);
+    });
+    return unsubscribe;
+  }, [navigation]);
   return (
     <>
       <DefaultView>
@@ -38,11 +42,12 @@ const ProfileScreen = ({handleLogin}) => {
             style={{width: '100%', height: '100%', borderRadius: 40}}
             onPress={() => {
               if (twitter) {
-                deleteApi('twitter').then();
+                deleteApi('twitter').then(() =>
+                  updateApi('twitter', setTwitter),
+                );
               } else {
-                connectApi('twitter').then();
+                connectApi('twitter', navigation).then();
               }
-              updateApi('twitter', setTwitter);
             }}
           />
         </DefaultBox>

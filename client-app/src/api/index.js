@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import {getItem, setItem} from '../data';
-import {Linking} from 'react-native';
 
 export async function getServer(endpoint: string, timeout = 400) {
   const token: string = await getItem('@token');
@@ -83,10 +82,12 @@ export async function checkToken() {
   return false;
 }
 
-export async function connectApi(api: string) {
+export async function connectApi(api: string, navigation) {
   await getServer(`user/${api}/addAccount`).then(res => {
     console.log(res.data);
-    Linking.openURL(res.data.path);
+    navigation.navigate('browser', {
+      url: res.data.path,
+    });
   });
 }
 
@@ -106,4 +107,10 @@ export async function deleteApi(api: string) {
       console.log("Couldn't get delete API");
       return false;
     });
+}
+
+export async function postApi(api: string, params) {
+  const {oauth_token, oauth_verifier} = params;
+  console.log(params);
+  await postServer(`user/${api}/callback`, {oauth_token, oauth_verifier});
 }

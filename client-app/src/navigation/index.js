@@ -4,13 +4,13 @@ import SetServerScreen from '../screens/setserver';
 import LoginScreen from '../screens/login';
 import HomeScreen from '../screens/home';
 import {NavigationContainer} from '@react-navigation/native';
-import {Button} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCirclePlus, faHome, faUser} from '@fortawesome/free-solid-svg-icons';
 import ProfileScreen from '../screens/profile';
 import AddScreen from '../screens/add';
 import {checkToken, pingServer} from '../api';
+import BrowserScreen from '../screens/browser';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,18 +22,26 @@ const AppNavigation = () => {
       .then(async () => {
         setConnected(await checkToken());
       })
-      .catch(() => console.log('No server connected'));
+      .catch(() => {
+        console.log('No server connected');
+        setConnected(false);
+      });
   };
-
+  function Profile() {
+    return (
+      <Stack.Navigator
+        initialRouteName="base"
+        screenOptions={{headerShown: false}}>
+        <Stack.Screen name="base">
+          {props => <ProfileScreen handleLogin={handleLogin} {...props} />}
+        </Stack.Screen>
+        <Stack.Screen name="browser">
+          {props => <BrowserScreen {...props} />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    );
+  }
   useEffect(() => {
-    // const ping = () => {
-    //   if (connected) {
-    //     return pingServer()
-    //       .then()
-    //       .catch(() => setConnected(false));
-    //   }
-    // };
-    // setInterval(ping, 1 * 1000);
     setTimeout(() => {
       handleLogin().then();
     }, 200);
@@ -45,10 +53,7 @@ const AppNavigation = () => {
         <>
           <Tab.Navigator
             initialRouteName="Server"
-            screenOptions={{headerShown: false}}
-            options={{
-              headerRight: () => <Button title="Update count" />,
-            }}>
+            screenOptions={{headerShown: false}}>
             <Tab.Screen
               name="Home"
               options={{
@@ -83,7 +88,7 @@ const AppNavigation = () => {
                   />
                 ),
               }}>
-              {props => <ProfileScreen handleLogin={handleLogin} {...props} />}
+              {props => <Profile handleLogin={handleLogin} {...props} />}
             </Tab.Screen>
           </Tab.Navigator>
         </>
