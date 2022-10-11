@@ -15,7 +15,8 @@ export default class Twitter extends React.Component {
               data: {
                 oauth_token, oauth_verifier
               }
-            }).then(() => {console.log('stl');window.location.href = "http://localhost:8081/connect-api/"})
+            }).then(() => {console.log('stl');
+            window.location.href = "http://localhost:8081/connect-api/"})
           } catch (error) {
            console.error(error); 
           }
