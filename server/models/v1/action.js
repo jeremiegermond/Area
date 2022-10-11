@@ -44,7 +44,7 @@ async function check_response(action, res) {
     //console.log(action.memory[0])
     let ret = false
     console.log("data="+data)
-    if (typeof data === 'undefined')
+    if (typeof data === 'undefined' || action.memory[0] === "unset")
         return false
     if (action.trigger[0] == "dataChanged")
         if (data != action.memory)
