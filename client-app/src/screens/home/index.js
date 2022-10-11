@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import PressableIcon from '../../components/PressableIcon';
 import {
@@ -8,8 +8,25 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import DefaultBox from '../../components/DefaultBox';
 import DefaultView from '../../components/DefaultView';
+import {getServer} from '../../api';
 
 const HomeScreen = ({navigation}) => {
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    getServer('user/getActions')
+      .then(r => {
+        console.log(r.data);
+        setList(r.data);
+      })
+      .catch(e => console.log(e));
+  }, []);
+
+  function deleteId(id: string) {
+    console.log(id);
+    setList(list.filter(item => item.id !== id));
+  }
+
   return (
     <>
       <DefaultView>
@@ -35,6 +52,30 @@ const HomeScreen = ({navigation}) => {
               />
             </View>
           </DefaultBox>
+          {list.map(item => {
+            return (
+              <DefaultBox key={item.id}>
+                <View style={styles.boxTextView}>
+                  <Text style={styles.boxBoldText}>Do </Text>
+                  <Text style={styles.boxText} numberOfLines={1}>
+                    {item.do}
+                  </Text>
+                  <Text style={styles.boxBoldText}>When </Text>
+                  <Text style={styles.boxText} numberOfLines={1}>
+                    {item.when}
+                  </Text>
+                </View>
+                <View style={styles.boxIconView}>
+                  <PressableIcon icon={faPencil} size={30} />
+                  <PressableIcon
+                    icon={faTrash}
+                    size={30}
+                    onPress={() => deleteId(item.id)}
+                  />
+                </View>
+              </DefaultBox>
+            );
+          })}
           <DefaultBox>
             <View style={styles.boxTextView}>
               <Text style={styles.boxBoldText}>Do </Text>
