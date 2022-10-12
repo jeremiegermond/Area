@@ -26,6 +26,18 @@ router.get("/hasApi/:api", async (req, res) => {
   });
 });
 
+router.get("/getActions", async (req, res) => {
+  await User.findOne({ username: req.user.username })
+    .populate("actionReaction")
+    .then((user) => {
+      // res.status(200).json(user.actionReaction);
+      res.status(200).json([
+        { do: "action 1", when: "reaction 1", id: "123" },
+        { do: "action 2", when: "reaction 2", id: "456" },
+      ]);
+    });
+});
+
 router.delete("/deleteApi/:api", async (req, res) => {
   try {
     const { api } = req.params;
@@ -52,7 +64,7 @@ router.post("/addActionReaction", async (req, res, next) => {
     const { service, action_id, reaction_id } = req.body;
     let act = await Action.findById(action_id);
     let react = await Reaction.findById(reaction_id);
-    let usr = await User.findOne({ name: req.user.name });
+    let usr = await User.findOne({ name: req.user.username });
     console.log(usr);
     usr.actionReaction.push({
       action: act._id,
@@ -60,7 +72,7 @@ router.post("/addActionReaction", async (req, res, next) => {
     });
     usr.save().then(() => {
       res.status(201).json({
-        message: `action ${act.name} and reaction ${react.name} successfully added to user ${req.user.name}`,
+        message: `action ${act.name} and reaction ${react.name} successfully added to user ${req.user.username}`,
       });
     });
   } catch (error) {
