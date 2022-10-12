@@ -23,9 +23,6 @@ const Action = new Schema({
     body: {
         type: String
     },
-    expectedResponse: { //suppr
-        type: String
-    },
     service: {
         type: Schema.ObjectId, ref: 'Services'
     },
@@ -41,9 +38,7 @@ async function check_response(action, res) {
     const path = action.trigger[1].split('.')
     let data = res.data
     path.forEach((elem) => {data = data[elem]})
-    //console.log(action.memory[0])
     let ret = false
-    console.log("data="+data)
     if (typeof data === 'undefined' || action.memory[0] === "unset")
         return false
     if (action.trigger[0] == "dataChanged")
@@ -51,49 +46,29 @@ async function check_response(action, res) {
             ret = true
     action.memory = data
     action.save()
-    console.log("return")
     return ret
 }
 
-async function post(action, args) {
-    let ret
-    await axios.post(action.endpointUrl, args)
-    .then(async (res) => {
-        //console.log(`response: ${res.status} expected: ${action.expectedResponse}`);
-        ret = await check_response(action, res)
+async function get_headers(action) {
+    const header = {}
+    await action.populate("service")
+    action.header.split(',').forEach(element => {
+        let data = action.service.appKeys.get(element)
+        header[element] = typeof data === 'undefined' ? element : data
     })
-    return (ret)
-}
-
-async function get(action, args) {
-    let ret
-    await axios.get(action.endpointUrl, args)
-    .then(async (res) => {
-        //console.log(`response: ${res.status} expected: ${action.expectedResponse}`);
-        ret = await check_response(action, res)
-    })
-    return(ret)
+    return header
 }
 
 Action.methods.check = async function(args) {
     try {
-        const header = {headers: {}, body: this.body}
-        await this.populate("service")
-        let ret = false
-        this.header.split(',').forEach(element => {
-            header.headers[element] = this.service.appKeys.get(element)
-        });
-        //console.log(header)
-        if (this.method == "post")
-            ret = await post(this, header)
-        else if (this.method == "get")
-            ret = await get(this, header)
-        else
-            console.log(`Unknown method ${this.method}`)
-        //console.log(ret)
-        return ret
+        return await check_response(this, await axios({
+            method: this.method,
+            url: this.endpointUrl,
+            headers: await get_headers(this),
+            data: this.body
+        }))
     } catch(e)  {
-        //console.log(e)
+        console.log(e)
     }
 }
 

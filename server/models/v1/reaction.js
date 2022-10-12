@@ -28,10 +28,6 @@ const Reaction = new Schema({
 })
 
 Reaction.methods.exec = async function(args) {
-    /*axios.post("https://oauth.reddit.com/api/submit?sr=test&text=this is a text&title=le titre&kind=self", {
-        headers: {
-          'Authorization': 'Bearer 1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA'
-        }})*/
     axios({
         method: 'post',
         url: 'https://oauth.reddit.com/api/submit?sr=test&text=A tweet was posted&title=le titre&kind=self',
