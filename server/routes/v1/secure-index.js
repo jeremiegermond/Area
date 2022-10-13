@@ -176,7 +176,7 @@ router.post("/twitter/callback", function (req, res) {
             .then((data) => {
               usr.keys.push(data);
               usr.save().then(() => {
-                console.log(`Twitter key added to ${user.username}`);
+                console.log(`Twitter key added to ${usr.username}`);
                 res.status(201).json({
                   message: `response`,
                 });
