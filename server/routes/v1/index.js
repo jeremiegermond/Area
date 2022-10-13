@@ -76,9 +76,9 @@ router.post('/addService', (req, res, next) => {
 router.post('/addAction', async (req, res, next)  => {
     try {
         const { service, name, desc, method, endpointUrl,
-        header, body, expectedResponse, trigger } = req.body
+        header, body, trigger } = req.body
         const newAction =  new Action({name: name, description: desc, method: method, endpointUrl: endpointUrl, header: header,
-        body: body, expectedResponse: expectedResponse, trigger: trigger.split(','), memory: ["unset"]})
+        body: body, trigger: trigger.split(','), memory: ["unset"]})
         let result = await db.collection("services").findOneAndUpdate(
             {name: service},
             {$push: {actions: newAction._id}},
