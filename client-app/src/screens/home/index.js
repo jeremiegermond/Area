@@ -57,7 +57,10 @@ const HomeScreen = ({navigation}) => {
                   <PressableIcon
                     icon={faPencil}
                     size={30}
-                    onClick={() => console.log(item._id)}
+                    onPress={() => {
+                      deleteId(item._id);
+                      navigation.navigate('Add');
+                    }}
                   />
                   <PressableIcon
                     icon={faTrash}
