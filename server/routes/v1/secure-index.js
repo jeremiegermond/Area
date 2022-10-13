@@ -27,15 +27,70 @@ router.get("/hasApi/:api", async (req, res) => {
 });
 
 router.get("/getActions", async (req, res) => {
+  let data = [];
+  const actions = await Action.find({});
+
   await User.findOne({ username: req.user.username })
-    .populate("actionReaction")
+    .populate("keys")
     .then((user) => {
-      // res.status(200).json(user.actionReaction);
-      res.status(200).json([
-        { do: "action 1", when: "reaction 1", id: "123" },
-        { do: "action 2", when: "reaction 2", id: "456" },
-      ]);
+      user.keys.forEach((key) => {
+        data.push(actions.filter(({ name }) => name === key.service));
+        console.log(data);
+      });
+      res.status(200).json(data.flat());
     });
+});
+
+router.get("/getReactions", async (req, res) => {
+  let data = [];
+  const reactions = await Reaction.find({});
+  await User.findOne({ username: req.user.username })
+    .populate("keys")
+    .then((user) => {
+      user.keys.forEach((key) => {
+        data.push(reactions.filter(({ name }) => name !== key.service));
+        console.log(data);
+      });
+      res.status(200).json(data.flat());
+    });
+});
+
+router.get("/getActionReaction", async (req, res) => {
+  try {
+    await User.findOne({ username: req.user.username })
+      .populate({
+        path: "actionReaction",
+        populate: [
+          { path: "action", select: "name" },
+          { path: "reaction", select: "name" },
+        ],
+      })
+      .then((user) => {
+        res.status(200).json(user.actionReaction);
+      });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Error getting ar");
+  }
+});
+
+router.delete("/deleteActionReaction/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await User.findOne({ username: req.user.username })
+      // .populate("actionReaction")
+      .then(async (user) => {
+        user.actionReaction = user.actionReaction.filter(
+          ({ _id }) => !_id.equals(id)
+        );
+        console.log(user.actionReaction);
+        console.log(id);
+        await user.save().then(() => res.status(200).send("ar deleted"));
+      });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
+  }
 });
 
 router.delete("/deleteApi/:api", async (req, res) => {
@@ -61,7 +116,7 @@ router.delete("/deleteApi/:api", async (req, res) => {
 
 router.post("/addActionReaction", async (req, res, next) => {
   try {
-    const { service, action_id, reaction_id } = req.body;
+    const { action_id, reaction_id } = req.body;
     let act = await Action.findById(action_id);
     let react = await Reaction.findById(reaction_id);
     let usr = await User.findOne({ name: req.user.username });
@@ -157,37 +212,52 @@ router.post("/reddit/callback", async (req, res) => {
   const CLIENT_ID = "isUVYO3_2jTORpYN_SVSZA";
   const CLIENT_SECRET = "3X7O0lsVJ5HjWE3YC2QB7OBKZxOXtQ";
   console.log(req.body["code"]);
-  const data = await axios({
-    method: "post",
-    url: "https://www.reddit.com/api/v1/access_token",
-    headers: {
-      Authorization: `Basic ${Buffer.from(
-        `${CLIENT_ID}:${CLIENT_SECRET}`
-      ).toString("base64")}`,
-      "content-type": "application/x-www-form-urlencoded",
-    },
-    data: {
-      grant_type: "authorization_code",
-      code: req.body["code"],
-      redirect_uri: "http://localhost:8081/connect-api/reddit",
-    },
-  });
-  let usr = await User.findOne({ username: req.user.username });
-  new UserKeys({
-    service: "reddit",
-    public_key: data.data["access_token"].toString(),
-    private_key: data.data["refresh_token"].toString(),
-  })
-    .save()
-    .then((data) => {
-      usr.keys.push(data);
-      usr.save().then(() => {
-        res.status(201).json({
-          message: `response`,
+  try {
+    const data = await axios({
+      method: "post",
+      url: "https://www.reddit.com/api/v1/access_token",
+      headers: {
+        Authorization: `Basic ${Buffer.from(
+          `${CLIENT_ID}:${CLIENT_SECRET}`
+        ).toString("base64")}`,
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      data: {
+        grant_type: "authorization_code",
+        code: req.body["code"],
+        redirect_uri: "http://localhost:8081/connect-api/reddit",
+      },
+    }).then((d) => {
+      console.log(d.data);
+      return d;
+    });
+    // .catch((e) => {
+    //   console.log(e.message);
+    //   res.status(500).json(e);
+    // });
+    let usr = await User.findOne({ username: req.user.username });
+    console.log(data);
+    new UserKeys({
+      service: "reddit",
+      public_key: data.data["access_token"].toString(),
+      private_key: data.data["refresh_token"].toString(),
+    })
+      .save()
+      .then((data) => {
+        usr.keys.push(data);
+        usr.save().then(() => {
+          res.status(201).json({
+            message: `response`,
+          });
         });
       });
-    });
-  console.log(data.data);
+    //
+
+    console.log(data.data);
+  } catch (e) {
+    console.log(e.keys);
+    res.status(500).json(e.status);
+  }
 });
 
 router.get("/reddit/create", async (req, res) => {
