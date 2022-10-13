@@ -13,12 +13,12 @@ class BrowserScreen extends React.Component {
       <WebView
         ref={ref => (this.webview = ref)}
         source={{uri: route.params.url}}
-        onError={e => this.handleError(e, navigation)}
+        onError={e => this.handleError(e, navigation, route)}
       />
     );
   }
 
-  handleError = (error: WebViewErrorEvent, navigation) => {
+  handleError = (error: WebViewErrorEvent, navigation, route) => {
     const {url} = error.nativeEvent;
     if (url.startsWith('http://localhost:8081/connect-api/')) {
       const regex = /[?&]([^=#]+)=([^&#]*)/g;
@@ -27,7 +27,7 @@ class BrowserScreen extends React.Component {
       while ((match = regex.exec(url))) {
         params[match[1]] = match[2];
       }
-      postApi('twitter', params)
+      postApi(route.params.api, params)
         .then()
         .catch(() => Toast('Error connecting to API'));
       navigation.goBack();

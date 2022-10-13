@@ -14,13 +14,16 @@ const HomeScreen = ({navigation}) => {
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    getServer('user/getActionReaction')
-      .then(r => {
-        console.log(r.data);
-        setList(r.data);
-      })
-      .catch(e => console.log(e));
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getServer('user/getActionReaction')
+        .then(r => {
+          console.log(r.data);
+          setList(r.data);
+        })
+        .catch(e => console.log(e));
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   function deleteId(id: string) {
     console.log(id);

@@ -3,24 +3,25 @@ import DefaultBox from '../../components/DefaultBox';
 import DefaultView from '../../components/DefaultView';
 import PressableIcon from '../../components/PressableIcon';
 import {faRightFromBracket} from '@fortawesome/free-solid-svg-icons/faRightFromBracket';
-import {
-  faFacebook,
-  faGoogle,
-  faTwitter,
-} from '@fortawesome/free-brands-svg-icons';
+import {faReddit, faTwitter} from '@fortawesome/free-brands-svg-icons';
 import {Text} from 'react-native';
 import {removeItem} from '../../data';
 import {connectApi, deleteApi, hasApi} from '../../api';
 
 const ProfileScreen = ({handleLogin, navigation}) => {
   const [twitter, setTwitter] = useState(false);
+  const [reddit, setReddit] = useState(false);
   const updateApi = (api: string, setter) => {
     hasApi(api).then(r => setter(r));
   };
   useEffect(() => {
     updateApi('twitter', setTwitter);
+    updateApi('reddit', setReddit);
     const unsubscribe = navigation.addListener('state', s => {
-      setTimeout(() => updateApi('twitter', setTwitter), 1000);
+      setTimeout(() => {
+        updateApi('twitter', setTwitter);
+        updateApi('reddit', setReddit);
+      }, 1000);
     });
     return unsubscribe;
   }, [navigation]);
@@ -51,20 +52,20 @@ const ProfileScreen = ({handleLogin, navigation}) => {
             }}
           />
         </DefaultBox>
-        <DefaultBox padding={0}>
+        <DefaultBox
+          padding={0}
+          style={{backgroundColor: reddit ? 'lightgreen' : 'lightgray'}}>
           <PressableIcon
-            icon={faGoogle}
+            icon={faReddit}
             size={80}
             style={{width: '100%', height: '100%', borderRadius: 40}}
-            onPress={() => console.log('Google api')}
-          />
-        </DefaultBox>
-        <DefaultBox padding={0}>
-          <PressableIcon
-            icon={faFacebook}
-            size={80}
-            style={{width: '100%', height: '100%', borderRadius: 40}}
-            onPress={() => console.log('Facebook api')}
+            onPress={() => {
+              if (reddit) {
+                deleteApi('reddit').then(() => updateApi('reddit', setReddit));
+              } else {
+                connectApi('reddit', navigation).then();
+              }
+            }}
           />
         </DefaultBox>
         <DefaultBox padding={0}>

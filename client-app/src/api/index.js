@@ -87,6 +87,7 @@ export async function connectApi(api: string, navigation) {
     console.log(res.data);
     navigation.navigate('browser', {
       url: res.data.path,
+      api: api,
     });
   });
 }
@@ -110,7 +111,5 @@ export async function deleteApi(api: string) {
 }
 
 export async function postApi(api: string, params) {
-  const {oauth_token, oauth_verifier} = params;
-  console.log(params);
-  await postServer(`user/${api}/callback`, {oauth_token, oauth_verifier});
+  await postServer(`user/${api}/callback`, params);
 }
