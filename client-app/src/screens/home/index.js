@@ -8,13 +8,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import DefaultBox from '../../components/DefaultBox';
 import DefaultView from '../../components/DefaultView';
-import {getServer} from '../../api';
+import {deleteServer, getServer} from '../../api';
 
 const HomeScreen = ({navigation}) => {
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    getServer('user/getActions')
+    getServer('user/getActionReaction')
       .then(r => {
         console.log(r.data);
         setList(r.data);
@@ -24,7 +24,12 @@ const HomeScreen = ({navigation}) => {
 
   function deleteId(id: string) {
     console.log(id);
-    setList(list.filter(item => item.id !== id));
+    deleteServer(`user/deleteActionReaction/${id}`)
+      .then(r => {
+        console.log(r.data);
+      })
+      .catch(e => console.log(e));
+    setList(list.filter(({_id}) => _id !== id));
   }
 
   return (
@@ -32,70 +37,34 @@ const HomeScreen = ({navigation}) => {
       <DefaultView>
         <Text style={styles.mainText}>Select or edit your action</Text>
         <View style={styles.boxesView}>
-          <DefaultBox>
-            <View style={styles.boxTextView}>
-              <Text style={styles.boxBoldText}>Do </Text>
-              <Text style={styles.boxText} numberOfLines={1}>
-                Spotify Play Music
-              </Text>
-              <Text style={styles.boxBoldText}>When </Text>
-              <Text style={styles.boxText} numberOfLines={1}>
-                New Email
-              </Text>
-            </View>
-            <View style={styles.boxIconView}>
-              <PressableIcon icon={faPencil} size={30} />
-              <PressableIcon
-                icon={faTrash}
-                size={30}
-                onPress={() => console.log('Pen pressed')}
-              />
-            </View>
-          </DefaultBox>
           {list.map(item => {
             return (
-              <DefaultBox key={item.id}>
+              <DefaultBox key={item._id}>
                 <View style={styles.boxTextView}>
                   <Text style={styles.boxBoldText}>Do </Text>
                   <Text style={styles.boxText} numberOfLines={1}>
-                    {item.do}
+                    {item.reaction.name}
                   </Text>
                   <Text style={styles.boxBoldText}>When </Text>
                   <Text style={styles.boxText} numberOfLines={1}>
-                    {item.when}
+                    {item.action.name}
                   </Text>
                 </View>
                 <View style={styles.boxIconView}>
-                  <PressableIcon icon={faPencil} size={30} />
+                  <PressableIcon
+                    icon={faPencil}
+                    size={30}
+                    onClick={() => console.log(item._id)}
+                  />
                   <PressableIcon
                     icon={faTrash}
                     size={30}
-                    onPress={() => deleteId(item.id)}
+                    onPress={() => deleteId(item._id)}
                   />
                 </View>
               </DefaultBox>
             );
           })}
-          <DefaultBox>
-            <View style={styles.boxTextView}>
-              <Text style={styles.boxBoldText}>Do </Text>
-              <Text style={styles.boxText} numberOfLines={1}>
-                Tweet `Hello world!`
-              </Text>
-              <Text style={styles.boxBoldText}>When </Text>
-              <Text style={styles.boxText} numberOfLines={1}>
-                New commit from Curtis
-              </Text>
-            </View>
-            <View style={styles.boxIconView}>
-              <PressableIcon icon={faPencil} size={30} />
-              <PressableIcon
-                icon={faTrash}
-                size={30}
-                onPress={() => console.log('Pen pressed')}
-              />
-            </View>
-          </DefaultBox>
           <DefaultBox padding={0} style={{backgroundColor: 'lightgreen'}}>
             <PressableIcon
               icon={faCirclePlus}
