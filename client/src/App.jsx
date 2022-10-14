@@ -8,6 +8,8 @@ import Home from './Home/Home'
 import Twitter from './Connect-API/Twitter/Twitter'
 import Reddit from './Connect-API/Reddit/Reddit'
 import ProtectedRoutes from './Component/ProtectedRoutes'
+import Action from './Action/Action'
+import Reaction from './Reaction/Reaction'
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
         <Route exact path="/connect-api" element={<ConnectAPI/>}/>
         <Route exact path="/connect-api/twitter" element={<Twitter/>}/>
         <Route exact path="/connect-api/reddit" element={<Reddit/>}/>
+        <Route exact path="/action" element={<Action />} />
+        <Route exact path="/reaction" element={<Reaction />} />
         <Route exact path="/home" element={<ProtectedRoutes/>}>
           <Route exact path="/home" element={<Home />} />
         </Route>
