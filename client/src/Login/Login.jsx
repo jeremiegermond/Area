@@ -1,56 +1,74 @@
 import './Login.css';
 import { FaTwitter, FaGoogle, FaFacebook } from 'react-icons/fa';
-import React from 'react';
+import React, { useState } from 'react';
+import { Form, Button } from "react-bootstrap";
 import axios from 'axios';
+import Cookies from "universal-cookie";
 
-export default class Login extends React.Component {
-  state = {
-    username: '',
-    password: ''
+const cookies = new Cookies();
+
+export default function Register() {
+  const [username, setUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [login, setLogin] = useState(false);
+  const client = {
+    username,
+    password
   }
 
-  handleChange = event => {
-    const {name , value} = event.target;
-    this.setState({ [name] : value });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(client);
+    axios.post('http://localhost:8080/login', client)
+    .then((res) => {
+      setLogin(true);
+      console.log(res);
+      console.log(res.data);
+      cookies.set("TOKEN", res.data.token, {
+        path: "/",
+      });
+      window.location.href = "../home";
+    })
+    .catch((error) => {
+      error = new Error();
+    });
   }
 
-  handleSubmit = event => {
-    event.preventDefault();
-    const user = {
-      username: this.state.username,
-      password: this.state.password
-    };
-    console.log(user)
-    axios.post('http://localhost:8080/login', user)
-    .then(res => {
-        console.log(res);
-        console.log(res.data);
-      })
-  }
-  render() {
-    return (
+  return (
+    <>
       <div className="home">
         <div className='login-box'>
           <h1 className='title'>Login</h1>
-          <form className='login-box-btns'>
-            <label htmlFor='username'></label>
-            <input type='text' name='username' placeholder='Username' className='btn' onChange={this.handleChange} required/>
-            <label htmlFor='password'></label>
-            <input type='password' name='password' placeholder='Password' className='btn' onChange={this.handleChange} required/>
-            <div className='separator'>
-              <div className='line'></div> 
-              <p> or </p> 
-              <div className='line'></div> 
+          <Form onSubmit={(e)=>handleSubmit(e)}>
+            <div className='login-box-btns'>
+              <Form.Group controlId="formUsername">
+                <label htmlFor='username'></label>
+                <input value={username} type='text' name='username' placeholder='Username' className='btn' onChange={(e) => setUser(e.target.value)} required/>
+              </Form.Group>
+              <Form.Group controlId="formPassword">
+                <label htmlFor='password'></label>
+                <input value={password} type='password' name='password' placeholder='Password' className='btn' onChange={(e) => setPassword(e.target.value)} required/>
+              </Form.Group>
+              <div className='separator'>
+                <div className='line'></div> 
+                <p> or </p> 
+                <div className='line'></div> 
+              </div>
+              <div className='login-box-icons'>
+                <FaTwitter className='icon' />
+                <FaGoogle className='icon' />
+                <FaFacebook className='icon' />
+              </div>
             </div>
-            <div className='login-box-icons'>
-              <FaTwitter className='icon' />
-              <FaGoogle className='icon' />
-              <FaFacebook className='icon' />
-            </div>
-          </form>
-          <input type="submit" value='Login' className='login-btn' onClick={this.handleSubmit}/>
+            <Button variant="primary" type="submit" className='login-btn' onClick={(e) => handleSubmit(e)}>Login</Button>
+            {login ? (
+              <p className="text-success">You are logged in</p>
+            ) : (
+              <p className="text-danger">You are not logged in</p>
+            )}
+          </Form>
         </div>
       </div>
-    );
-  }
+    </>
+  );
 }
