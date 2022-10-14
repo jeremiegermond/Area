@@ -36,7 +36,7 @@ router.get("/getActions", async (req, res) => {
     .populate("keys")
     .then((user) => {
       user.keys.forEach((key) => {
-        data.push(actions.filter(({ name }) => name === key.service));
+        data.push(actions.filter(({ service }) => service.name === key.service));
         console.log(data);
       });
       res.status(200).json(data.flat());
