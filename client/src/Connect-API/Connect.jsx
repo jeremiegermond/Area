@@ -1,24 +1,28 @@
 import './Connect.css';
 import React from 'react';
 import axios from 'axios';
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+const auth = cookies.get("TOKEN")
 
 export default class Connect extends React.Component {
 
   handleSubmitTwitter = async event => {
     event.preventDefault();
     await axios.get('http://localhost:8080/user/twitter/addAccount', 
-    { headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDJkMDg3ZTAwMWVmMGY5YjU2ZGMxYSIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1MzIzMTQ2fQ.wRsf6y_D679Iu3JOVgMkypexUSBIRgufchF_3mS22A4`} })
+    { headers: {"Authorization" : `Bearer ${auth}`} })
     .then(res => {
         console.log(res.status);
         console.log(res.data);
         window.location.href = res.data['path']
       })
   }
-  
+
   handleSubmitReddit = async event => {
     event.preventDefault();
-    await axios.get('http://localhost:8080/user/reddit/create',
-    { headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzM2YwYzJhMmY4NDZhNjE1MzdkNmRhOSIsInVzZXJuYW1lIjoiY3VydGlzc3MifSwiaWF0IjoxNjY1MzU4MjY5fQ.sULwrnpXSvAePsCiaiPNbzpiq5x8DqaNH4U5BWsMYXo`} })
+    await axios.get('http://localhost:8080/user/reddit/addAccount',
+    { headers: {"Authorization" : `Bearer ${auth}`} })
     .then(res => {
         console.log(res.status);
         console.log(res.data);

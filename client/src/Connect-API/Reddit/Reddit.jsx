@@ -1,6 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import queryString from 'query-string';
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+const auth = cookies.get("TOKEN")
 
 export default class Reddit extends React.Component {
 
@@ -11,7 +15,7 @@ export default class Reddit extends React.Component {
             axios({
               method: 'post',
               url: 'http://localhost:8080/user/reddit/callback',
-              headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzM2YwYzJhMmY4NDZhNjE1MzdkNmRhOSIsInVzZXJuYW1lIjoiY3VydGlzc3MifSwiaWF0IjoxNjY1MzU4MjY5fQ.sULwrnpXSvAePsCiaiPNbzpiq5x8DqaNH4U5BWsMYXo`},
+              headers: {"Authorization" : `Bearer ${auth}`},
               data: {
                 code
               }
