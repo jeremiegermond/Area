@@ -28,7 +28,8 @@ const Reaction = new Schema({
 })
 
 Reaction.methods.exec = async function(args) {
-    axios({
+    console.log("\n\nreaction\n\n")
+    /*axios({
         method: 'post',
         url: 'https://oauth.reddit.com/api/submit?sr=test&text=A tweet was posted&title=le titre&kind=self',
         headers: {"Authorization" : 'Bearer 1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA'},
@@ -41,7 +42,7 @@ Reaction.methods.exec = async function(args) {
     .then(res => {
         console.log(res);
         console.log(res.data);
-    })
+    })*/
 }
 
 module.exports = mongoose.model('Reaction', Reaction)

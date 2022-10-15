@@ -56,19 +56,16 @@ function checkActions() {
         console.log(err);
       }
       users.forEach((user) => {
-        // console.log("Got user");
-        // console.log(user.username);
         try {
-          //console.log(user.username)
+          console.log(user.username)
           user.populate("actionReaction.action").then(() => {
             user.actionReaction.map(async (ar) => {
               console.log(ar.action)
-              let test = await ar.action.check()
-              console.log(">>>"+test)
-              if (test == true)
-                user.populate("actionReaction.reaction").then(() => { 
-                  ar.reaction.exec()
-                })
+              if (await ar.action.check() == true)
+                console.log(">>> reaction")
+                //user.populate("actionReaction.reaction").then(() => { 
+                //  ar.reaction.exec()
+                //})
             })
           })
         } catch(error) {

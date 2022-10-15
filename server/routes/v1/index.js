@@ -73,66 +73,64 @@ router.post('/addService', (req, res, next) => {
     );
 });
 
-router.post('/addAction', async (req, res, next)  => {
-    try {
-        const { service, name, desc, method, endpointUrl,
-        header, body, trigger } = req.body
-        const newAction =  new Action({name: name, description: desc, method: method, endpointUrl: endpointUrl, header: header,
-        body: body, trigger: trigger.split(','), memory: ["unset"]})
-        let result = await db.collection("services").findOneAndUpdate(
-            {name: service},
-            {$push: {actions: newAction._id}},
-            {new: true}
-        ).then((data) => {
-            newAction.service = data.value._id
-        })
-        newAction.save().then(
-            () => {
-                res.status(201).json({
-                    message: `Action added successfully to service ${service}!`
-                });
-            }
-        ).catch(
-          (error) => {
-            console.log(error)
-            res.status(400).json({error: error});
-          }
-        );
-    } catch (error) {
+router.post('/addAction', async (req, res, next) => {
+  try {
+    const { service, name, desc, method, endpointUrl,
+    header, body, trigger } = req.body
+    const newAction =  new Action({name: name, description: desc, method: method, endpointUrl: endpointUrl, header: header,
+    body: body, trigger: trigger.split(','), memory: ["unset"]})
+    await db.collection("services").findOneAndUpdate(
+      {name: service},
+      {$push: {actions: newAction._id}},
+      {new: true}
+    ).then((data) => {
+      newAction.service = data.value._id
+    })
+    newAction.save().then(() => {
+      res.status(201).json({
+        message: `Action added successfully to service ${service}!`
+      });
+    }).catch(
+      (error) => {
         console.log(error)
         res.status(400).json({error: error});
-    }
+      }
+    );
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({error: error});
+  }
 })
 
 router.post('/addReaction', async (req, res, next)  => {
-    try {
-        const { service, name, method, desc, header, body, endpointUrl } = req.body
-        const newReaction =  new Reaction({name: name, description: desc, method: method, endpointUrl: endpointUrl, header: header, body: body})
-        let result = await db.collection("services").findOneAndUpdate(
-            {name: service},
-            {$push: {reactions: newReaction._id}},
-            {new: true}
-        ).then((data) => { 
-            newReaction.service = data.value._id
-        })
-        newReaction.save().then(
-            () => {
-                res.status(201).json({
-                    message: `Reaction added successfully to service ${service}!`
-                });
-            }
-        ).catch(
-          (error) => {
-            console.log(error)
-            res.status(400).json({error: error});
-          }
-        );
-    } catch (error) {
+  try {
+    const { service, name, method, desc, header, body, endpointUrl } = req.body
+    const newReaction =  new Reaction({name: name, description: desc, method: method, endpointUrl: endpointUrl, header: header, body: body})
+    let result = await db.collection("services").findOneAndUpdate(
+      {name: service},
+      {$push: {reactions: newReaction._id}},
+      {new: true}
+    ).then((data) => { 
+      newReaction.service = data.value._id
+    })
+    newReaction.save().then(
+      () => {
+        res.status(201).json({
+          message: `Reaction added successfully to service ${service}!`
+        });
+      }
+    ).catch(
+      (error) => {
         console.log(error)
-        res.status(400).json({
-          error: error
-        })
-    }
+        res.status(400).json({error: error});
+      }
+    );
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
+      error: error
+    })
+  }
 })
 
 router.get("/ping", async (req, res, next) => {

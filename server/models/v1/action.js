@@ -34,16 +34,47 @@ const Action = new Schema({
     }
 })
 
-async function check_response(action, res) {
-    const path = action.trigger[1].split('.')
-    let data = res.data
-    path.forEach((elem) => {data = data[elem]})
-    let ret = false
-    if (typeof data === 'undefined' || action.memory[0] === "unset")
+async function check_trigger(action, res, data) {
+    if (typeof data === 'undefined')
         return false
-    if (action.trigger[0] == "dataChanged")
-        if (data != action.memory)
-            ret = true
+    switch (action.trigger[0]) {
+        case "dataChanged":
+            if (data != action.memory && action.memory[0] !== "unset")
+                return true
+            break
+        case "dataIs":
+            if (data === action.trigger[2])
+                return true
+            break
+        case "dataHas":
+            if (~data.indexOf(action.trigger[2]))
+                return true
+            break
+        case "codeChanged":
+            if (String(res.status) != action.memory && action.memory[0] !== "unset")
+                return true
+            break
+        case "codeIs":
+            if (String(res.status) === action.trigger[1])
+                return true
+            break
+        case "codeHas":
+            if (~String(res.status).indexOf(action.trigger[1]))
+                return true
+            break
+        default:
+            return false
+    }
+    return false
+}
+
+async function check_response(action, res) {
+    let data = res.data
+    if (~action.trigger[0].indexOf("data"))
+        action.trigger[1].split('.').forEach((elem) => {data = data[elem]})
+    else 
+        data = res.status
+    let ret = await check_trigger(action, res, data)
     action.memory = data
     action.save()
     return ret
@@ -54,7 +85,7 @@ async function get_headers(action) {
     await action.populate("service")
     action.header.split(',').forEach(element => {
         let data = action.service.appKeys.get(element)
-        header[element] = typeof data === 'undefined' ? element : data
+        header[element] = typeof data === 'undefined' ? element: data
     })
     return header
 }
