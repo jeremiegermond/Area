@@ -235,7 +235,6 @@ router.post("/reddit/callback", async (req, res) => {
           redirect_uri: "http://localhost:8081/connect-api/reddit",
         },
       }).then((r) => {
-        console.log(r.data["access_token"].toString())
         new UserKeys({
           service: "reddit",
           public_key: r.data["access_token"].toString(),
@@ -263,47 +262,6 @@ router.get("/reddit/addAccount", async (req, res) => {
   let random_string = crypto.randomBytes(5).toString("hex");
   let url = `https://www.reddit.com/api/v1/authorize?client_id=isUVYO3_2jTORpYN_SVSZA&response_type=code&state=${random_string}&redirect_uri=http://localhost:8081/connect-api/reddit&duration=permanent&scope=read,submit,account`;
   res.status(200).json({ path: url });
-});
-
-router.post("/twitch/callback", async (req, res) => {
-  const CLIENT_ID = "vi9za74j91x41dxvhmdsyjzau002xe";
-  const CLIENT_SECRET = "5f9xt5qhr8ly2n84q4qwxb7ocac38z"
-  const { code } = req.body;
-  let url = `https://id.twitch.tv/oauth2/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=http://localhost:8081/connect-api/twitch`
-  try {
-    await User.findOne({ username: req.user.username }).then(async (user) => {
-      await axios({
-        method: "post",
-        url: url
-      }).then((r) => {
-        console.log(r.data["access_token"].toString())
-        new UserKeys({
-          service: "twitch",
-          public_key: r.data["access_token"].toString(),
-          private_key: r.data["refresh_token"].toString(),
-        })
-          .save()
-          .then((key) => {
-            user.keys.push(key);
-            user.save().then(() => {
-              console.log(`Twitch key added to ${user.username}`);
-              res.status(201).json({
-                message: `response`,
-              });
-            });
-          });
-      });
-    });
-  } catch (e) {
-    console.log(e);
-    res.status(500).send(e);
-  }
-});
-
-router.get("/twitch/addAccount", async (req, res) => {
-  let client_id = "vi9za74j91x41dxvhmdsyjzau002xe"
-  url = `https://id.twitch.tv/oauth2/authorize?redirect_uri=http://localhost:8081/connect-api/twitch&client_id=${client_id}&response_type=code`
-  res.status(200).json({ "path": url })
 });
 
 module.exports = router;

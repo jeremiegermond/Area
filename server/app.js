@@ -57,7 +57,7 @@ function checkActions() {
       }
       users.forEach((user) => {
         try {
-          //console.log(user.username)
+          console.log(user.username)
           user.populate("actionReaction.action").then(() => {
             user.actionReaction.map(async (ar) => {
               console.log(ar.action)
