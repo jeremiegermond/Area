@@ -2,6 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import queryString from 'query-string';
 
+const cookies = new Cookies();
+const auth = cookies.get("TOKEN")
+
 export default class Twitter extends React.Component {
 
     componentDidMount() {
@@ -11,17 +14,15 @@ export default class Twitter extends React.Component {
             axios({
               method: 'post',
               url: 'http://localhost:8080/user/twitter/callback',
-              headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYzNDJkMDg3ZTAwMWVmMGY5YjU2ZGMxYSIsInVzZXJuYW1lIjoiZ2FyZW4ifSwiaWF0IjoxNjY1MzIzMTQ2fQ.wRsf6y_D679Iu3JOVgMkypexUSBIRgufchF_3mS22A4`}, 
+              headers: {"Authorization" : `Bearer ${auth}`},
               data: {
                 oauth_token, oauth_verifier
               }
-            }).then(() => {console.log('stl');
-            window.location.href = "http://localhost:8081/connect-api/"})
+            })
           } catch (error) {
            console.error(error); 
           }
-        } else {
-            window.location.href = "http://localhost:8081/connect-api/"
+        window.location.href = "http://localhost:8081/connect-api/"
         }
       }
       render() {
