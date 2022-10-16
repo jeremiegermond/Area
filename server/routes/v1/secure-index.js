@@ -302,7 +302,7 @@ router.post("/twitch/callback", async (req, res) => {
 
 router.get("/twitch/addAccount", async (req, res) => {
   let client_id = "vi9za74j91x41dxvhmdsyjzau002xe"
-  url = `https://id.twitch.tv/oauth2/authorize?redirect_uri=http://localhost:8081/connect-api/twitch&client_id=${client_id}&response_type=code&scope=user%3Aedit+user%3Aread%3Afollows`
+  url = `https://id.twitch.tv/oauth2/authorize?redirect_uri=http://localhost:8081/connect-api/twitch&client_id=${client_id}&response_type=code&scope=user%3Aedit+user%3Aread%3Afollows+channel%3Amanage%3Abroadcast`
   res.status(200).json({ "path": url })
 });
 
