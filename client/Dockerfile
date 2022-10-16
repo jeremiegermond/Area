@@ -5,6 +5,6 @@ EXPOSE 8081
 ENV NODE_ENV=development
 WORKDIR /app
 COPY ["package.json", "package-lock.json*", "./"]
-RUN npm install --development
+RUN npm install
 COPY . .
 CMD ["npm", "start"]
