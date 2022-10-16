@@ -19,9 +19,11 @@ services:
       - PORT=8080
 
   mongo:
-    image: mongo
+    image: mongo:4.4.6
     restart: always
     container_name: mongo-prod
+    logging:
+      driver: none
     volumes:
       - "./mongo/data:/data/db"
     environment:

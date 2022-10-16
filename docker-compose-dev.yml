@@ -27,7 +27,7 @@ services:
 
   mongo:
     container_name: mongo-dev
-    image: mongo
+    image: mongo:4.4.6
     restart: always
     logging:
       driver: none
