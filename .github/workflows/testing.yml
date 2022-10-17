@@ -22,6 +22,6 @@ jobs:
       - name: docker-compose status
         run: docker-compose ps
       - name: Test client
-        run: curl localhost:8081
+        run: curl 172.17.0.1:8081
       - name: Test server
-        run: curl localhost:8080/ping2
+        run: curl 172.17.0.1:8080
