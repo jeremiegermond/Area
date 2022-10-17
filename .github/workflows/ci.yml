@@ -80,3 +80,16 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-server.outputs.tags }}
           labels: ${{ steps.meta-server.outputs.labels }}
+  update-vm:
+    runs-on: self-hosted
+    steps:
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: brumai.re
+          key_path: ./id_area
+          script: |
+            cd B-DEV-500-LIL-5-1-area-romain.leemans
+            docker-compose stop
+            git pull
+            docker-compose up -d
