@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    image: docker/compose
     steps:
       - uses: actions/checkout@v3
       - name: Build docker-compose
