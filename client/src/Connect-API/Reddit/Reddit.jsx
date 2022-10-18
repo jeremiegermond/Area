@@ -19,11 +19,10 @@ export default class Reddit extends React.Component {
               data: {
                 code
               }
-            })
+            }).then(() => {window.location.href = "http://localhost:8081/connect-api/"})
           } catch (error) {
            console.error(error); 
           }
-          window.location.href = "http://localhost:8081/connect-api/"
       }
     }
       render() {

@@ -21,11 +21,10 @@ export default class Twitter extends React.Component {
             oauth_token,
             oauth_verifier,
           },
-        });
+        }).then(() => {window.location.href = "http://localhost:8081/connect-api/"});
       } catch (error) {
         console.error(error);
       }
-      window.location.href = "http://localhost:8081/connect-api/";
     }
   }
   render() {
