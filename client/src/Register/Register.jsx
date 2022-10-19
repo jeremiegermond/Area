@@ -3,6 +3,9 @@ import { FaFacebook, FaGoogle, FaTwitter } from "react-icons/fa";
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default function Register() {
   const [username, setUser] = useState("");
@@ -17,12 +20,16 @@ export default function Register() {
     e.preventDefault();
     console.log(client);
     axios
-      .post("http://localhost:8080/signup", client)
+      .post(`${process.env.REACT_APP_API_URL}/signup`, client)
       .then((res) => {
         setRegister(true);
         // savetolocalstorage @auth
         console.log(res);
         console.log(res.data);
+        cookies.set("TOKEN", res.data.token, {
+          path: "/",
+        });
+        window.location.href = "../home";
       })
       .catch((error) => {
         error = new Error();

@@ -11,6 +11,14 @@ services:
       - ./client/:/app
     depends_on:
       - server
+    environment:
+      - NODE_ENV=development
+      - PORT=8081
+      - REACT_APP_API_URL=${API_URL:-http://localhost:8080}
+      - REACT_APP_CALLBACK_URL=${CALLBACK_URL:-http://localhost:8081}
+      - HTTPS=${HTTPS:-false}
+      - SSL_CRT_FILE=${SSL_CRT_FILE}
+      - SSL_KEY_FILE=${SSL_KEY_FILE}
   server:
     build:
       context: ./server
@@ -23,7 +31,12 @@ services:
     links:
       - mongo
     environment:
+      - NODE_ENV=development
+      - PORT=8080
       - URL_MONGO=mongodb://user_area:pass_area@mongo
+      - HTTPS=${HTTPS:-false}
+      - SSL_CRT_FILE=${SSL_CRT_FILE}
+      - SSL_KEY_FILE=${SSL_KEY_FILE}
 
   mongo:
     container_name: mongo-dev

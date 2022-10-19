@@ -7,17 +7,6 @@ Developed in React, Express and MongoDB.
 
 It is assumed that the user already has a working [Docker installation][1] on their machine.
 
-## Packages
-
-Connect to [Docker Hub][2] and run the latest version of the package:
-
-```shell
-docker container run -d --rm -p 8080:8080 --name area-server ghcr.io/epitechpromo2025/area-server
-docker container run -d --rm -p 8081:8081 --name area-client ghcr.io/epitechpromo2025/area-client
-```
-
-To stop the containers run: `docker stop area-server area-client`
-
 ## Building from source
 
 ```shell
@@ -32,8 +21,8 @@ Compilation only: `docker-compose build`
 
 ## Open the application
 
-- Open your browser and go to [http://localhost:8081][3]
-- Download amd install the [mobile application][4]
+- Open your browser and go to [http://localhost:8081][2]
+- Download amd install the [mobile application][3]
 
 # About the project
 
@@ -129,6 +118,5 @@ we use to store structured or unstructured data. It uses a JSON-like format to s
 
 <!-- Links -->
 [1]:https://docs.docker.com/get-docker/
-[2]:https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry
-[3]:http://localhost:8081
-[4]:https://localhost:8081/client.apk
+[2]:http://localhost:8081
+[3]:http://localhost:8081/client.apk

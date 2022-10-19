@@ -1,8 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM node
-EXPOSE 8081
-ENV NODE_ENV=development
+EXPOSE $PORT
 WORKDIR /app
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm install
