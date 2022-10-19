@@ -167,10 +167,12 @@ router.post("/twitter/callback", function (req, res) {
           let usr = await User.findOne({ username: req.user.username });
           console.log(usr.keys);
           console.log(oauthAccessToken + " " + oauthAccessTokenSecret);
+          const map = new Map()
+          .set("public", oauthAccessToken.toString())
+          .set("secret", oauthAccessTokenSecret.toString())
           const newUserKeys = new UserKeys({
             service: "twitter",
-            public_key: oauthAccessToken.toString(),
-            private_key: oauthAccessTokenSecret.toString(),
+            keys: map
           })
             .save()
             .then((data) => {
@@ -234,15 +236,18 @@ router.post("/reddit/callback", async (req, res) => {
           code: code,
           redirect_uri: "http://localhost:8081/connect-api/reddit",
         },
-      }).then((r) => {
-        console.log(r.data["access_token"].toString())
+      })
+        .then((r) => {
+        const map = new Map()
+        .set("access_token", r.data["access_token"].toString())
+        .set("refresh_token", r.data["refresh_token"].toString())
         new UserKeys({
           service: "reddit",
-          public_key: r.data["access_token"].toString(),
-          private_key: r.data["refresh_token"].toString(),
+          keys: map
         })
           .save()
           .then((key) => {
+            console.log(user)
             user.keys.push(key);
             user.save().then(() => {
               console.log(`Reddit key added to ${user.username}`);
@@ -273,14 +278,17 @@ router.post("/twitch/callback", async (req, res) => {
   let url = `https://id.twitch.tv/oauth2/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=http://localhost:8081/connect-api/twitch`
   try {
     await User.findOne({ username: req.user.username }).then(async (user) => {
+      console.log(user)
       await axios({
         method: "post",
         url: url
       }).then((r) => {
+        const map = new Map()
+        .set("access_token", r.data["access_token"].toString())
+        .set("refresh_token", r.data["refresh_token"].toString())
         new UserKeys({
           service: "twitch",
-          public_key: r.data["access_token"].toString(),
-          private_key: r.data["refresh_token"].toString(),
+          keys: map
         })
           .save()
           .then((key) => {

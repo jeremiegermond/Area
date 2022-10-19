@@ -6,14 +6,9 @@ const UserKeys = new Schema({
         type: String,
         required: [true, 'Service name is required'],
     },
-    public_key: {
-        type: String,
-        required: [true, 'Public key is required'],
+    keys: {
+        type : Map
     },
-    private_key: {
-        type: String,
-        required: [true, 'Private key is required'],
-    }
 })
 
 module.exports = mongoose.model('UserKeys', UserKeys)

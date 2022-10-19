@@ -1,5 +1,5 @@
 
-const axios =  require('axios')
+const axios = require('axios')
 const Service = require('./services')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
@@ -80,22 +80,28 @@ async function check_response(action, res) {
     return ret
 }
 
-async function get_headers(action) {
+async function get_headers(reaction, user) {
     const header = {}
-    await action.populate("service")
-    action.header.split(',').forEach(element => {
-        let data = action.service.appKeys.get(element)
-        header[element] = typeof data === 'undefined' ? element: data
+    await reaction.populate("service")
+    await user.populate("keys")
+    let keys = await user.keys.find(e => e.service === reaction.service.name)
+    reaction.header.split(',').forEach(element => {
+        let type = element.split(':')
+        let data = keys.keys.get(type[type.length - 1])
+        if (typeof data === 'undefined')
+            data = reaction.service.appKeys.get(type[type.length - 1])
+        header["Authorization"] = typeof data === 'undefined' ? element : type[0] + " " + data
     })
+    console.log(header)
     return header
 }
 
-Action.methods.check = async function(args) {
+Action.methods.check = async function(user) {
     try {
         return await check_response(this, await axios({
             method: this.method,
             url: this.endpointUrl,
-            headers: await get_headers(this),
+            headers: await get_headers(this, user),
             data: this.body
         }))
     } catch(e)  {

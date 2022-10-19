@@ -57,15 +57,12 @@ function checkActions() {
       }
       users.forEach((user) => {
         try {
-          //console.log(user.username)
-          user.populate("actionReaction.action").then(() => {
-            user.actionReaction.map(async (ar) => {
-              console.log(ar.action)
-              if (await ar.action.check() == true)
-                console.log(">>> reaction")
-                //user.populate("actionReaction.reaction").then(() => { 
-                //  ar.reaction.exec()
-                //})
+          user.populate("actionReaction.action").then((u) => {
+            u.actionReaction.map(async (ar) => {
+              if (await ar.action.check(u) == true)
+                user.populate("actionReaction.reaction").then(async () => {
+                  await ar.reaction.exec(u)
+               })
             })
           })
         } catch(error) {
