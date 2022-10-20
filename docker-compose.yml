@@ -30,6 +30,7 @@ services:
       - HTTPS=${HTTPS:-false}
       - SSL_CRT_FILE=${SSL_CRT_FILE}
       - SSL_KEY_FILE=${SSL_KEY_FILE}
+      - BASE_URL=${BASE_URL:-http://localhost}
 
   mongo:
     container_name: mongo-prod

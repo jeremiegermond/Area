@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mongodb = require("../../db/mongo");
 const User = require("../../models/v1/user.js");
-const Services = require("../../models/v1/services.js");
 const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
 const UserKeys = require("../../models/v1/userkeys.js");
@@ -10,7 +8,7 @@ const OAuth = require("oauth");
 const crypto = require("crypto");
 const axios = require("axios");
 
-router.get("/profile", (req, res, next) => {
+router.get("/profile", (req, res) => {
   res.json({
     message: "You made it to the secure route",
     user: req.user,
@@ -19,11 +17,11 @@ router.get("/profile", (req, res, next) => {
 
 router.get("/hasApi/:api", async (req, res) => {
   const { api } = req.params;
-  await User.findOne({ username: req.user.username }).then((user) => {
-    user.populate("keys").then(() => {
+  await User.findOne({ username: req.user.username })
+    .populate("keys")
+    .then((user) => {
       res.status(200).json(!!user.keys.find(({ service }) => service === api));
     });
-  });
 });
 
 router.get("/getActions", async (req, res) => {
@@ -36,7 +34,9 @@ router.get("/getActions", async (req, res) => {
     .populate("keys")
     .then((user) => {
       user.keys.forEach((key) => {
-        data.push(actions.filter(({ service }) => service.name === key.service));
+        data.push(
+          actions.filter(({ service }) => service.name === key.service)
+        );
         console.log(data);
       });
       res.status(200).json(data.flat());
@@ -119,7 +119,7 @@ router.delete("/deleteApi/:api", async (req, res) => {
   }
 });
 
-router.post("/addActionReaction", async (req, res, next) => {
+router.post("/addActionReaction", async (req, res) => {
   try {
     const { action_id, reaction_id } = req.body;
     let act = await Action.findById(action_id);
@@ -149,7 +149,7 @@ const consumer = new OAuth.OAuth(
   "8uDiSmBXliIrxodHw6mwuaJyh",
   "NOtO3KLwKFeXm6YuH4wiM5qtzUAi87sUiYD6piZc5jjOP4Ip4k",
   "1.0A",
-  "http://localhost:8081/connect-api/twitter",
+  `${process.env.BASE_URL}:8081/connect-api/twitter`,
   "HMAC-SHA1"
 );
 
@@ -168,11 +168,11 @@ router.post("/twitter/callback", function (req, res) {
           console.log(usr.keys);
           console.log(oauthAccessToken + " " + oauthAccessTokenSecret);
           const map = new Map()
-          .set("public", oauthAccessToken.toString())
-          .set("secret", oauthAccessTokenSecret.toString())
-          const newUserKeys = new UserKeys({
+            .set("public", oauthAccessToken.toString())
+            .set("secret", oauthAccessTokenSecret.toString());
+          new UserKeys({
             service: "twitter",
-            keys: map
+            keys: map,
           })
             .save()
             .then((data) => {
@@ -196,8 +196,7 @@ router.get("/twitter/addAccount", function (req, res) {
   consumer.getOAuthRequestToken(function (
     error,
     oauthRequestToken,
-    oauthRequestTokenSecret,
-    results
+    oauthRequestTokenSecret
   ) {
     if (error) {
       console.log(error);
@@ -234,20 +233,19 @@ router.post("/reddit/callback", async (req, res) => {
         data: {
           grant_type: "authorization_code",
           code: code,
-          redirect_uri: "http://localhost:8081/connect-api/reddit",
+          redirect_uri: `${process.env.BASE_URL}:8081/connect-api/reddit`,
         },
-      })
-        .then((r) => {
+      }).then((r) => {
         const map = new Map()
-        .set("access_token", r.data["access_token"].toString())
-        .set("refresh_token", r.data["refresh_token"].toString())
+          .set("access_token", r.data["access_token"].toString())
+          .set("refresh_token", r.data["refresh_token"].toString());
         new UserKeys({
           service: "reddit",
-          keys: map
+          keys: map,
         })
           .save()
           .then((key) => {
-            console.log(user)
+            console.log(user);
             user.keys.push(key);
             user.save().then(() => {
               console.log(`Reddit key added to ${user.username}`);
@@ -266,29 +264,28 @@ router.post("/reddit/callback", async (req, res) => {
 
 router.get("/reddit/addAccount", async (req, res) => {
   let random_string = crypto.randomBytes(5).toString("hex");
-  let url = `https://www.reddit.com/api/v1/authorize?client_id=isUVYO3_2jTORpYN_SVSZA&response_type=code&state=${random_string}&redirect_uri=http://localhost:8081/connect-api/reddit&duration=permanent&scope=read,submit,account`;
+  let url = `https://www.reddit.com/api/v1/authorize?client_id=isUVYO3_2jTORpYN_SVSZA&response_type=code&state=${random_string}&redirect_uri=${process.env.BASE_URL}:8081/connect-api/reddit&duration=permanent&scope=read,submit,account`;
   res.status(200).json({ path: url });
 });
 
-
 router.post("/twitch/callback", async (req, res) => {
   const CLIENT_ID = "vi9za74j91x41dxvhmdsyjzau002xe";
-  const CLIENT_SECRET = "5f9xt5qhr8ly2n84q4qwxb7ocac38z"
+  const CLIENT_SECRET = "5f9xt5qhr8ly2n84q4qwxb7ocac38z";
   const { code } = req.body;
-  let url = `https://id.twitch.tv/oauth2/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=http://localhost:8081/connect-api/twitch`
+  let url = `https://id.twitch.tv/oauth2/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch`;
   try {
     await User.findOne({ username: req.user.username }).then(async (user) => {
-      console.log(user)
+      console.log(user);
       await axios({
         method: "post",
-        url: url
+        url: url,
       }).then((r) => {
         const map = new Map()
-        .set("access_token", r.data["access_token"].toString())
-        .set("refresh_token", r.data["refresh_token"].toString())
+          .set("access_token", r.data["access_token"].toString())
+          .set("refresh_token", r.data["refresh_token"].toString());
         new UserKeys({
           service: "twitch",
-          keys: map
+          keys: map,
         })
           .save()
           .then((key) => {
@@ -309,10 +306,9 @@ router.post("/twitch/callback", async (req, res) => {
 });
 
 router.get("/twitch/addAccount", async (req, res) => {
-  let client_id = "vi9za74j91x41dxvhmdsyjzau002xe"
-  url = `https://id.twitch.tv/oauth2/authorize?redirect_uri=http://localhost:8081/connect-api/twitch&client_id=${client_id}&response_type=code&scope=user%3Aedit+user%3Aread%3Afollows+channel%3Amanage%3Abroadcast`
-  res.status(200).json({ "path": url })
+  let client_id = "vi9za74j91x41dxvhmdsyjzau002xe";
+  url = `https://id.twitch.tv/oauth2/authorize?redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch&client_id=${client_id}&response_type=code&scope=user%3Aedit+user%3Aread%3Afollows+channel%3Amanage%3Abroadcast`;
+  res.status(200).json({ path: url });
 });
-
 
 module.exports = router;
