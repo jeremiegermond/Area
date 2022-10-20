@@ -146,8 +146,8 @@ router.post("/addActionReaction", async (req, res) => {
 const consumer = new OAuth.OAuth(
   "https://api.twitter.com/oauth/request_token",
   "https://api.twitter.com/oauth/access_token",
-  "8uDiSmBXliIrxodHw6mwuaJyh",
-  "NOtO3KLwKFeXm6YuH4wiM5qtzUAi87sUiYD6piZc5jjOP4Ip4k",
+  process.env.TWITTER_APP_ID,
+  process.env.TWITTER_APP_SECRET,
   "1.0A",
   `${process.env.BASE_URL}:8081/connect-api/twitter`,
   "HMAC-SHA1"
@@ -216,8 +216,6 @@ router.get("/twitter/addAccount", function (req, res) {
 });
 
 router.post("/reddit/callback", async (req, res) => {
-  const CLIENT_ID = "isUVYO3_2jTORpYN_SVSZA";
-  const CLIENT_SECRET = "3X7O0lsVJ5HjWE3YC2QB7OBKZxOXtQ";
   const { code } = req.body;
   try {
     await User.findOne({ username: req.user.username }).then(async (user) => {
@@ -226,7 +224,7 @@ router.post("/reddit/callback", async (req, res) => {
         url: "https://www.reddit.com/api/v1/access_token",
         headers: {
           Authorization: `Basic ${Buffer.from(
-            `${CLIENT_ID}:${CLIENT_SECRET}`
+            `${process.env.REDDIT_APP_ID}:${process.env.REDDIT_APP_SECRET}`
           ).toString("base64")}`,
           "content-type": "application/x-www-form-urlencoded",
         },
@@ -269,10 +267,8 @@ router.get("/reddit/addAccount", async (req, res) => {
 });
 
 router.post("/twitch/callback", async (req, res) => {
-  const CLIENT_ID = "vi9za74j91x41dxvhmdsyjzau002xe";
-  const CLIENT_SECRET = "5f9xt5qhr8ly2n84q4qwxb7ocac38z";
   const { code } = req.body;
-  let url = `https://id.twitch.tv/oauth2/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch`;
+  let url = `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch`;
   try {
     await User.findOne({ username: req.user.username }).then(async (user) => {
       console.log(user);
