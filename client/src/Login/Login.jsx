@@ -92,6 +92,9 @@ export default function Register() {
               <p className="text-danger">You are not logged in</p>
             )}
           </Form>
+          <p>
+            You don't have an account ? Back to <a href="../register">register</a>
+          </p>
         </div>
       </div>
     </>

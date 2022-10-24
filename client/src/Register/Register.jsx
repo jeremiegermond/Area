@@ -93,7 +93,7 @@ export default function Register() {
             )}
           </Form>
           <p>
-            You already have an account ? Go to <a href="../Login">login</a>
+            You already have an account ? Go to <a href="../login">login</a>
           </p>
         </div>
       </div>
