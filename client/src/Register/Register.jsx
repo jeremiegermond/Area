@@ -69,7 +69,7 @@ export default function Register() {
               </Form.Group>
               <div className="separator">
                 <div className="line"></div>
-                <p> or </p>
+                <h6>or</h6>
                 <div className="line"></div>
               </div>
               <div className="register-box-icons">
