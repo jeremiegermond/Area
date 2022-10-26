@@ -19,6 +19,7 @@ jobs:
       - name: Executing remote ssh commands
         uses: appleboy/ssh-action@master
         with:
+          username: thibb1
           host: brumai.re
           key_path: ./id_area
           debug: true
