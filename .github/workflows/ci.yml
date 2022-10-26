@@ -1,7 +1,7 @@
 name: Build AREA client and server
 on:
   push:
-    branches: [ "test_ci" ]
+    branches: [ "docker" ]
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "docker" ]
