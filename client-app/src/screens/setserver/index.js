@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {Button, TextInput} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Button, Switch, Text, TextInput, View} from 'react-native';
 import Gradient from '../../components/Gradient';
 import {getItem, setItem} from '../../data';
 import {pingServer} from '../../api';
@@ -7,23 +7,33 @@ import {Toast} from '../../components/Toast';
 
 const SetServerScreen = ({navigation}) => {
   const [server, setServer] = React.useState('');
+  const [https, setHttps] = useState(false);
   useEffect(() => {
+    getItem('@https').then(r => setHttps(r ?? false));
+    getItem('@server').then(r => setServer(r ?? ''));
     getItem('@ip').then(r => {
-      setServer(r || '');
       setTimeout(() => {
-        pingServer()
+        pingServer(r)
           .then(() => navigation.navigate('Login'))
-          .catch(() => console.log('Server not found'));
+          .catch(() => {
+            console.log(`Server ${r} not found`);
+          });
       }, 200);
     });
   }, []);
+
   const checkServer = () => {
     if (server.length < 7) {
       return;
     }
-    pingServer(server)
+    const uri = (https ? 'https://' : 'http://') + server;
+    pingServer(uri)
       .then(async () => {
-        await setItem('@ip', server);
+        await Promise.all([
+          setItem('@server', server),
+          setItem('@ip', uri),
+          setItem('@https', https),
+        ]);
         navigation.navigate('Login');
       })
       .catch(e => Toast(e.message));
@@ -31,6 +41,15 @@ const SetServerScreen = ({navigation}) => {
   return (
     <>
       <Gradient>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text>HTTPS</Text>
+          <Switch
+            value={https}
+            onChange={() => {
+              setHttps(!https);
+            }}
+          />
+        </View>
         <TextInput
           value={server}
           placeholderTextColor="white"
@@ -38,7 +57,6 @@ const SetServerScreen = ({navigation}) => {
           onChangeText={setServer}
           autoComplete="off"
           autoFocus={true}
-          keyboardType="number-pad"
           onSubmitEditing={checkServer}
         />
         <Button
