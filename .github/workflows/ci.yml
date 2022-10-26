@@ -15,11 +15,12 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
+      - run: ls
       - name: Executing remote ssh commands
         uses: appleboy/ssh-action@master
         with:
           host: brumai.re
-          key_path: /id_area
+          key_path: ./id_area
           script: |
             cd B-DEV-500-LIL-5-1-area-romain.leemans
             git pull
