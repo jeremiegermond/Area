@@ -52,16 +52,22 @@ const SetServerScreen = ({navigation}) => {
         </View>
         <TextInput
           value={server}
-          placeholderTextColor="white"
-          placeholder="Server ip"
+          placeholderTextColor="lightgray"
+          multiline={server.length < 1}
+          numberOfLines={1}
+          placeholder="Server ip / domain"
           onChangeText={setServer}
           autoComplete="off"
           autoFocus={true}
+          autoCapitalize="none"
+          blurOnSubmit={false}
           onSubmitEditing={checkServer}
+          maxLength={20}
+          style={{textAlign: 'center'}}
         />
         <Button
           title="Connect server"
-          disabled={server.length < 7}
+          disabled={server.length < 7 && !server.match(/.+\..{2,}/)}
           onPress={checkServer}
         />
       </Gradient>

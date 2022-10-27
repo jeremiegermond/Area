@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import PressableIcon from '../../components/PressableIcon';
 import {
   faFacebook,
@@ -13,86 +13,101 @@ import {Toast} from '../../components/Toast';
 
 const LoginScreen = ({handleLogin}) => {
   const [login, setLogin] = useState(false);
-  const [username, onChangeUser] = React.useState('');
-  const [password, onChangePassword] = React.useState('');
-
+  const [username, onChangeUser] = useState('');
+  const [password, onChangePassword] = useState('');
+  const ref_password = useRef();
   return (
-    <>
-      <StatusBar hidden={true} translucent={true} />
-      <Gradient>
-        <View style={styles.loginBox}>
-          <Text style={styles.loginText}>{login ? 'Login' : 'Register'}</Text>
-          <View style={styles.loginBoxBtn}>
-            <TextInput
-              placeholderTextColor="gray"
-              placeholder="Username"
-              style={styles.loginInput}
-              autoComplete="email"
-              onChangeText={onChangeUser}
-              value={username}
-              onKeyPress={() => {
-                userExist(username)
-                  .then(res => setLogin(res.data))
-                  .catch(e => console.log(e));
-              }}
-            />
-            <TextInput
-              placeholderTextColor="gray"
-              placeholder="Password"
-              style={styles.loginInput}
-              autoComplete="password"
-              secureTextEntry={true}
-              value={password}
-              onChangeText={onChangePassword}
-            />
-            <View style={styles.loginSeparator}>
-              <View style={styles.loginSeparatorLine} />
-              <Text style={styles.loginSeparatorText}>or</Text>
-              <View style={styles.loginSeparatorLine} />
-            </View>
-            <View style={styles.loginBoxIcons}>
-              <PressableIcon
-                icon={faTwitter}
-                onPress={() => {
-                  console.log('twitter pressed');
-                }}
-              />
-              <PressableIcon
-                icon={faGoogle}
-                onPress={() => {
-                  console.log('google pressed');
-                }}
-              />
-              <PressableIcon
-                icon={faFacebook}
-                onPress={() => {
-                  console.log('facebook pressed');
-                }}
-              />
-            </View>
-          </View>
-          <Gradient style={styles.loginBtn}>
-            <DefaultPressable
-              width={'100%'}
-              height={'100%'}
-              radius={50}
-              disabled={username.length < 1 || password.length < 1}
-              onPress={async () => {
+    <Gradient>
+      <View style={styles.loginBox}>
+        <Text style={styles.loginText}>{login ? 'Login' : 'Register'}</Text>
+        <View style={styles.loginBoxBtn}>
+          <TextInput
+            placeholderTextColor="gray"
+            placeholder="Username"
+            style={styles.loginInput}
+            autoComplete="username"
+            autoCorrect={false}
+            onChangeText={onChangeUser}
+            value={username}
+            autoFocus={true}
+            onKeyPress={() => {
+              userExist(username)
+                .then(res => setLogin(res.data))
+                .catch(e => console.log(e));
+            }}
+            blurOnSubmit={false}
+            onSubmitEditing={() => ref_password.current.focus()}
+            maxLength={20}
+            returnKeyType="go"
+          />
+          <TextInput
+            ref={ref_password}
+            placeholderTextColor="gray"
+            placeholder="Password"
+            style={styles.loginInput}
+            autoComplete="password"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={onChangePassword}
+            onSubmitEditing={async () => {
+              if (username.length > 0 && password.length > 0) {
                 await userLogin(username, password)
                   .then(() => handleLogin())
                   .catch(e => {
                     console.log(e.message);
                     Toast(`Error: Couldn't ${login ? 'login' : 'register'}`);
                   });
-              }}>
-              <Text style={styles.loginBtnText}>
-                {login ? 'Login' : 'Register'}
-              </Text>
-            </DefaultPressable>
-          </Gradient>
+              }
+            }}
+            maxLength={20}
+          />
+          <View style={styles.loginSeparator}>
+            <View style={styles.loginSeparatorLine} />
+            <Text style={styles.loginSeparatorText}>or</Text>
+            <View style={styles.loginSeparatorLine} />
+          </View>
+          <View style={styles.loginBoxIcons}>
+            <PressableIcon
+              icon={faTwitter}
+              onPress={() => {
+                console.log('twitter pressed');
+              }}
+            />
+            <PressableIcon
+              icon={faGoogle}
+              onPress={() => {
+                console.log('google pressed');
+              }}
+            />
+            <PressableIcon
+              icon={faFacebook}
+              onPress={() => {
+                console.log('facebook pressed');
+              }}
+            />
+          </View>
         </View>
-      </Gradient>
-    </>
+        <Gradient style={styles.loginBtn}>
+          <DefaultPressable
+            width={'100%'}
+            height={'100%'}
+            radius={50}
+            disabled={username.length < 1 || password.length < 1}
+            onPress={async () => {
+              await userLogin(username, password)
+                .then(() => handleLogin())
+                .catch(e => {
+                  console.log(e.message);
+                  Toast(`Error: Couldn't ${login ? 'login' : 'register'}`);
+                });
+            }}>
+            <Text style={styles.loginBtnText}>
+              {login ? 'Login' : 'Register'}
+            </Text>
+          </DefaultPressable>
+        </Gradient>
+      </View>
+    </Gradient>
   );
 };
 

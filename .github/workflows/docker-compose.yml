@@ -4,9 +4,9 @@ on:
   push:
     branches: [ "docker" ]
     paths:
-      - client
-      - client-app
-      - server
+      - 'client/**'
+      - 'client-app/**'
+      - 'server/**'
 
   workflow_dispatch:
 
