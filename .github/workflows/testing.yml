@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build docker-compose
-        run: docker-compose up -d
+        run: docker-compose up --build -d
       - name: Sleep for 3 seconds
         run: sleep 3
         shell: bash
