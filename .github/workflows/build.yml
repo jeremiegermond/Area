@@ -3,6 +3,10 @@ on:
   push:
     branches: [ "docker" ]
     tags: [ 'v*.*.*' ]
+    paths:
+      - client
+      - client-app
+      - server
   pull_request:
     branches: [ "docker" ]
   workflow_dispatch:
@@ -24,4 +28,4 @@ jobs:
           script: |
             cd B-DEV-500-LIL-5-1-area-romain.leemans
             git pull
-            docker-compose up --build -d
+            docker-compose up --build -d &
