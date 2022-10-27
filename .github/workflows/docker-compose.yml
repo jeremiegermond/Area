@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build docker-compose
-        run: docker-compose up -d -f docker-compose-no-apk.yml
+        run: docker-compose -f docker-compose-no-apk.yml up -d
       - name: Sleep for 8 seconds
         run: sleep 8
         shell: bash
