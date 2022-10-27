@@ -4,9 +4,9 @@ on:
     branches: [ "docker" ]
     tags: [ 'v*.*.*' ]
     paths:
-      - client
-      - client-app
-      - server
+      - 'client/**'
+      - 'client-app/**'
+      - 'server/**'
   pull_request:
     branches: [ "docker" ]
   workflow_dispatch:

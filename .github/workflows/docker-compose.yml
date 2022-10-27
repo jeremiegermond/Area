@@ -1,4 +1,4 @@
-name: docker-compose up
+name: Run tests with docker-compose up
 
 on:
   push:
