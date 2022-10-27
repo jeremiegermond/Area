@@ -22,7 +22,7 @@ services:
       - SSL_CRT_FILE=${SSL_CRT_FILE}
       - SSL_KEY_FILE=${SSL_KEY_FILE}
     volumes:
-      - client-volume:/app/public/
+      - client-volume:/app/public/app
   server:
     build: ./server
     ports:

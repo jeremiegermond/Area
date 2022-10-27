@@ -16,6 +16,7 @@ import Twitch from "./Connect-API/Twitch/Twitch";
 import ProtectedRoutes from "./Component/ProtectedRoutes";
 import Action from "./Action/Action";
 import Reaction from "./Reaction/Reaction";
+import Download from "./Download/Download";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
             </ProtectedRoutes>
           }
         />
+        <Route exact path="/base.apk" element={<Download />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
