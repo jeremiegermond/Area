@@ -16,8 +16,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build docker-compose
         run: docker-compose up -d
-      - name: Sleep for 3 seconds
-        run: sleep 3
+      - name: Sleep for 8 seconds
+        run: sleep 8
         shell: bash
       - name: docker-compose status
         run: docker-compose ps
