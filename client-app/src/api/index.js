@@ -4,7 +4,7 @@ import {getItem, setItem} from '../data';
 
 export async function getServer(endpoint: string, timeout = 400) {
   const token: string = await getItem('@token');
-  return await axios.get(`http://${await getItem('@ip')}:8080/${endpoint}`, {
+  return await axios.get(`${await getItem('@ip')}:8080/${endpoint}`, {
     timeout: timeout,
     headers: {
       Authorization: 'Bearer ' + token,
@@ -13,21 +13,17 @@ export async function getServer(endpoint: string, timeout = 400) {
 }
 export async function postServer(endpoint: string, data: any, timeout = 400) {
   const token: string = await getItem('@token');
-  return await axios.post(
-    `http://${await getItem('@ip')}:8080/${endpoint}`,
-    data,
-    {
-      timeout: timeout,
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
+  return await axios.post(`${await getItem('@ip')}:8080/${endpoint}`, data, {
+    timeout: timeout,
+    headers: {
+      Authorization: 'Bearer ' + token,
     },
-  );
+  });
 }
 
 export async function deleteServer(endpoint: string, timeout = 400) {
   const token: string = await getItem('@token');
-  return await axios.delete(`http://${await getItem('@ip')}:8080/${endpoint}`, {
+  return await axios.delete(`${await getItem('@ip')}:8080/${endpoint}`, {
     timeout: timeout,
     headers: {
       Authorization: 'Bearer ' + token,
@@ -37,7 +33,7 @@ export async function deleteServer(endpoint: string, timeout = 400) {
 
 export async function pingServer(ip: string = '') {
   ip = ip.length ? ip : await getItem('@ip');
-  await axios.get(`http://${ip}:8080/ping2`, {
+  await axios.get(`${ip}:8080/ping2`, {
     timeout: 400,
   });
 }
