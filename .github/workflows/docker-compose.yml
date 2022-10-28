@@ -9,6 +9,9 @@ on:
       - 'server/**'
   pull_request:
     branches: [ "docker" ]
+    paths:
+      - 'client/**'
+      - 'server/**'
 
   workflow_dispatch:
 

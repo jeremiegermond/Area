@@ -7,6 +7,10 @@ on:
       - 'client/**'
       - 'client-app/**'
       - 'server/**'
+  pull_request:
+    branches: [ "docker" ]
+    paths:
+      - 'client-app/**'
   workflow_dispatch:
 
 env:
