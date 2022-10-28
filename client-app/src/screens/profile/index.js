@@ -83,7 +83,7 @@ const ProfileScreen = ({handleLogin, navigation}) => {
             size={80}
             style={{width: '100%', height: '100%', borderRadius: 40}}
             onPress={() => {
-              if (reddit) {
+              if (twitch) {
                 deleteApi('twitch').then(() => updateApi('twitch', setTwitch));
               } else {
                 connectApi('twitch', navigation).then();
