@@ -262,7 +262,7 @@ router.post("/reddit/callback", async (req, res) => {
 
 router.get("/reddit/addAccount", async (req, res) => {
   let random_string = crypto.randomBytes(5).toString("hex");
-  let url = `https://www.reddit.com/api/v1/authorize?client_id=isUVYO3_2jTORpYN_SVSZA&response_type=code&state=${random_string}&redirect_uri=${process.env.BASE_URL}:8081/connect-api/reddit&duration=permanent&scope=read,submit,account`;
+  let url = `https://www.reddit.com/api/v1/authorize?client_id=${process.env.REDDIT_APP_ID}&response_type=code&state=${random_string}&redirect_uri=${process.env.BASE_URL}:8081/connect-api/reddit&duration=permanent&scope=read,submit,account`;
   res.status(200).json({ path: url });
 });
 
@@ -302,9 +302,18 @@ router.post("/twitch/callback", async (req, res) => {
 });
 
 router.get("/twitch/addAccount", async (req, res) => {
-  let client_id = "vi9za74j91x41dxvhmdsyjzau002xe";
-  url = `https://id.twitch.tv/oauth2/authorize?redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch&client_id=${client_id}&response_type=code&scope=user%3Aedit+user%3Aread%3Afollows+channel%3Amanage%3Abroadcast`;
-  res.status(200).json({ path: url });
+  const uri = new URL("https://id.twitch.tv/oauth2/authorize");
+  uri.searchParams.append(
+    "redirect_uri",
+    process.env.BASE_URL + ":8081/connect-api/twitch"
+  );
+  uri.searchParams.append("client_id", process.env.TWITCH_APP_ID);
+  uri.searchParams.append("response_type", "code");
+  uri.searchParams.append(
+    "scope",
+    "user:edit user:read:follows channel:manage:broadcast"
+  );
+  res.status(200).json({ path: uri.href });
 });
 
 module.exports = router;
