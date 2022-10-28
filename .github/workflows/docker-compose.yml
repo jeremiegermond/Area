@@ -3,9 +3,12 @@ name: Run tests with docker-compose up
 on:
   push:
     branches: [ "docker" ]
+    tags: [ 'v*.*.*' ]
     paths:
       - 'client/**'
       - 'server/**'
+  pull_request:
+    branches: [ "docker" ]
 
   workflow_dispatch:
 
