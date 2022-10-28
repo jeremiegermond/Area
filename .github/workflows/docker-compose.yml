@@ -5,13 +5,12 @@ on:
     branches: [ "docker" ]
     paths:
       - 'client/**'
-      - 'client-app/**'
       - 'server/**'
 
   workflow_dispatch:
 
 jobs:
-  build:
+  docker-compose:
     runs-on: self-hosted
     container: linuxserver/docker-compose
     steps:
