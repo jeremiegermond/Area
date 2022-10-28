@@ -80,7 +80,10 @@ export async function checkToken() {
 
 export async function connectApi(api: string, navigation) {
   await getServer(`user/${api}/addAccount`).then(res => {
-    console.log(res.data);
+    console.log({
+      url: res.data.path,
+      api: api,
+    });
     navigation.navigate('browser', {
       url: res.data.path,
       api: api,

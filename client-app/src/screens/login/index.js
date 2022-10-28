@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {Keyboard, StyleSheet, Text, TextInput, View} from 'react-native';
 import PressableIcon from '../../components/PressableIcon';
 import {
   faFacebook,
@@ -10,6 +10,8 @@ import Gradient from '../../components/Gradient';
 import DefaultPressable from '../../components/DefaultPressable';
 import {userExist, userLogin} from '../../api';
 import {Toast} from '../../components/Toast';
+import Animated, {BounceIn, BounceOut} from 'react-native-reanimated';
+import {AnimatedGradient} from '../../utils/animated';
 
 const LoginScreen = ({handleLogin}) => {
   const [login, setLogin] = useState(false);
@@ -17,8 +19,11 @@ const LoginScreen = ({handleLogin}) => {
   const [password, onChangePassword] = useState('');
   const ref_password = useRef();
   return (
-    <Gradient>
-      <View style={styles.loginBox}>
+    <AnimatedGradient>
+      <Animated.View
+        style={styles.loginBox}
+        entering={BounceIn}
+        exiting={BounceOut}>
         <Text style={styles.loginText}>{login ? 'Login' : 'Register'}</Text>
         <View style={styles.loginBoxBtn}>
           <TextInput
@@ -94,6 +99,7 @@ const LoginScreen = ({handleLogin}) => {
             radius={50}
             disabled={username.length < 1 || password.length < 1}
             onPress={async () => {
+              Keyboard.dismiss();
               await userLogin(username, password)
                 .then(() => handleLogin())
                 .catch(e => {
@@ -106,8 +112,8 @@ const LoginScreen = ({handleLogin}) => {
             </Text>
           </DefaultPressable>
         </Gradient>
-      </View>
-    </Gradient>
+      </Animated.View>
+    </AnimatedGradient>
   );
 };
 

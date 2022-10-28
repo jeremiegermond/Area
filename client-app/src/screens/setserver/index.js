@@ -1,9 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Switch, Text, TextInput, View} from 'react-native';
-import Gradient from '../../components/Gradient';
+import {Button, Switch, Text, TextInput} from 'react-native';
 import {getItem, setItem} from '../../data';
 import {pingServer} from '../../api';
 import {Toast} from '../../components/Toast';
+import Animated, {
+  BounceIn,
+  BounceOut,
+  FadeOutLeft,
+} from 'react-native-reanimated';
+import Gradient from '../../components/Gradient';
 
 const SetServerScreen = ({navigation}) => {
   const [server, setServer] = React.useState('');
@@ -39,9 +44,14 @@ const SetServerScreen = ({navigation}) => {
       .catch(e => Toast(e.message));
   };
   return (
-    <>
-      <Gradient>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <Gradient>
+      <Animated.View
+        style={{alignItems: 'center'}}
+        entering={BounceIn}
+        exiting={BounceOut}>
+        <Animated.View
+          style={{flexDirection: 'row', alignItems: 'center'}}
+          exiting={FadeOutLeft}>
           <Text>HTTPS</Text>
           <Switch
             value={https}
@@ -49,7 +59,7 @@ const SetServerScreen = ({navigation}) => {
               setHttps(!https);
             }}
           />
-        </View>
+        </Animated.View>
         <TextInput
           value={server}
           placeholderTextColor="lightgray"
@@ -70,8 +80,8 @@ const SetServerScreen = ({navigation}) => {
           disabled={server.length < 7 && !server.match(/.+\..{2,}/)}
           onPress={checkServer}
         />
-      </Gradient>
-    </>
+      </Animated.View>
+    </Gradient>
   );
 };
 

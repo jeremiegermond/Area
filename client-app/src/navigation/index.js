@@ -11,6 +11,7 @@ import ProfileScreen from '../screens/profile';
 import AddScreen from '../screens/add';
 import {checkToken, pingServer} from '../api';
 import BrowserScreen from '../screens/browser';
+import {Keyboard} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -20,7 +21,14 @@ const AppNavigation = () => {
   const handleLogin = async () => {
     await pingServer()
       .then(async () => {
-        setConnected(await checkToken());
+        if ((await checkToken()) === true) {
+          Keyboard.dismiss();
+          setTimeout(() => {
+            setConnected(true);
+          }, 200);
+        } else {
+          setConnected(false);
+        }
       })
       .catch(() => {
         console.log('No server connected');
@@ -31,7 +39,7 @@ const AppNavigation = () => {
     return (
       <Stack.Navigator
         initialRouteName="base"
-        screenOptions={{headerShown: false}}>
+        screenOptions={{headerShown: false, unmountOnBlur: true}}>
         <Stack.Screen name="base">
           {props => <ProfileScreen handleLogin={handleLogin} {...props} />}
         </Stack.Screen>
@@ -53,7 +61,7 @@ const AppNavigation = () => {
         <>
           <Tab.Navigator
             initialRouteName="Server"
-            screenOptions={{headerShown: false}}>
+            screenOptions={{headerShown: false, unmountOnBlur: true}}>
             <Tab.Screen
               name="Home"
               options={{
@@ -94,7 +102,8 @@ const AppNavigation = () => {
         </>
       ) : (
         <>
-          <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Navigator
+            screenOptions={{headerShown: false, unmountOnBlur: true}}>
             <Stack.Screen name="Server" component={SetServerScreen} />
             <Stack.Screen name="Login">
               {props => <LoginScreen handleLogin={handleLogin} {...props} />}
