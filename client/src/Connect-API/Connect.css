@@ -22,6 +22,10 @@
     font-size: 32px;
 }
 
+.connect-page h6 {
+    text-align: center;
+}
+
 /* API buttons */
 
 .connect-page .api-buttons {

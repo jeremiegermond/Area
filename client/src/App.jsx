@@ -25,16 +25,43 @@ const App = () => {
         <Route exact path="/" element={<Register />} />
         <Route exact path="/register" element={<Register />} />
         <Route exact path="/login" element={<Login />} />
-        <Route exact path="/connect-api" element={<ConnectAPI />} />
-        <Route exact path="/connect-api/twitter" element={<Twitter />} />
-        <Route exact path="/connect-api/reddit" element={<Reddit />} />
-        <Route exact path="/connect-api/twitch" element={<Twitch />} />
-        <Route exact path="/action" element={<Action />} />
-        <Route exact path="/reaction" element={<Reaction />} />
-        <Route
-          exact
-          path="/home"
-          element={
+        <Route exact path="/connect-api" element={
+          <ProtectedRoutes>
+            <ConnectAPI />
+          </ProtectedRoutes>
+          } 
+        />
+        <Route exact path="/connect-api/twitter" element={
+          <ProtectedRoutes>
+            <Twitter />
+          </ProtectedRoutes>
+          }
+        />
+        <Route exact path="/connect-api/reddit" element={
+          <ProtectedRoutes>
+            <Reddit />
+          </ProtectedRoutes>
+          } 
+        />
+        <Route exact path="/connect-api/twitch" element={
+          <ProtectedRoutes>
+            <Twitch />         
+          </ProtectedRoutes>
+          }
+        />
+        <Route exact path="/action" element={
+          <ProtectedRoutes>
+            <Action />
+          </ProtectedRoutes>
+          } 
+        />
+        <Route exact path="/reaction" element={
+          <ProtectedRoutes>
+            <Reaction />
+          </ProtectedRoutes>
+          } 
+        />
+        <Route exact path="/home" element={
             <ProtectedRoutes>
               <Home />
             </ProtectedRoutes>

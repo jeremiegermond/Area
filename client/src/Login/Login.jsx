@@ -6,8 +6,14 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
+const auth = cookies.get("TOKEN");
 
-export default function Register() {
+export default function Login() {
+  useState(() => {
+    if (auth != null ) {
+      window.location.href="/home"
+    }
+  }, [])
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState(false);

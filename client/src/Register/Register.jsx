@@ -6,8 +6,14 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
+const auth = cookies.get("TOKEN");
 
 export default function Register() {
+  useState(() => {
+    if (auth != null ) {
+      window.location.href="/home"
+    }
+  }, [])
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [register, setRegister] = useState(false);
@@ -23,7 +29,6 @@ export default function Register() {
       .post(`${process.env.REACT_APP_API_URL}/signup`, client)
       .then((res) => {
         setRegister(true);
-        // savetolocalstorage @auth
         console.log(res);
         console.log(res.data);
         cookies.set("TOKEN", res.data.token, {
