@@ -31,6 +31,9 @@ const Action = new Schema({
     },
     memory: {
         type: Array
+    },
+    userKey: {
+        type: Boolean
     }
 })
 
@@ -69,7 +72,45 @@ async function check_trigger(action, res, data) {
 }
 
 async function check_response(action, res) {
+    let results = []
     let data = res.data
+    console.log(action.trigger)
+    await action.trigger.forEach(async (trig, i) => {
+        if (trig[0] == "&&" || trig[0] == "||") {
+            results[i] = trig[0]
+            return
+        }
+        if (~trig.indexOf("data"))
+        trig[1].split('.').forEach((elem) => {data = data[elem]})
+        else 
+            data = res.status
+        let ret = await check_trigger(action, res, data)
+        results[i] = ret
+    })
+    action.memory = data
+    action.save()
+    console.log(results)
+    for (let i = 0; typeof results[i + 2] !== 'undefined'; i += 2) {
+        console.log(results[i])
+        if (results[i + 1] == '&&') {
+            results[i+2] = results[i] && results[i + 2]
+            results[i] = ''
+            results[i+1] = ''
+        }
+    }
+    results = results.filter(val => typeof val !== 'string' || val != '')
+    for (let i = 0; typeof results[i + 2] !== 'undefined'; i += 2) {
+        console.log(results[i])
+        if (results[i + 1] == '||') {
+            results[i+2] = results[i] || results[i + 2]
+            results[i] = ''
+            results[i+1] = ''
+        }
+    }
+    results = results.filter(val => typeof val !== 'string' || val != '')
+    console.log(results)
+    return results[0]
+    /*let data = res.data
     if (~action.trigger[0].indexOf("data"))
         action.trigger[1].split('.').forEach((elem) => {data = data[elem]})
     else 
@@ -77,7 +118,7 @@ async function check_response(action, res) {
     let ret = await check_trigger(action, res, data)
     action.memory = data
     action.save()
-    return ret
+    return ret*/
 }
 
 async function get_headers(reaction, user) {

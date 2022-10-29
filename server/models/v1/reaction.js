@@ -24,6 +24,9 @@ const Reaction = new Schema({
     },
     service: {
         type: Schema.ObjectId, ref: 'Services'
+    },
+    userKey: {
+        type: Boolean
     }
 })
 

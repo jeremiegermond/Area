@@ -77,8 +77,16 @@ router.post("/addService", (req, res, next) => {
 
 router.post("/addAction", async (req, res, next) => {
   try {
-    const { service, name, desc, method, endpointUrl, header, body, trigger } =
+    const interleave = (arr, x) => arr.flatMap(e => [e, x]).slice(0, -1)
+    const { service, name, desc, method, endpointUrl, header, body, trigger, userKey } =
       req.body;
+    console.log(userKey)
+    let trigger_arr = trigger.split(/(&&|\|\|)/)
+    trigger_arr.forEach((elem, index) => {
+      if (elem != "&&" || elem != "||")
+        trigger_arr[index] = elem.split(',')
+    })
+    console.log(trigger_arr)
     const newAction = new Action({
       name: name,
       description: desc,
@@ -86,8 +94,9 @@ router.post("/addAction", async (req, res, next) => {
       endpointUrl: endpointUrl,
       header: header,
       body: body,
-      trigger: trigger.split(","),
+      trigger: trigger_arr,
       memory: ["unset"],
+      userKey: userKey === "true" ? true : false
     });
     await db
       .collection("services")
@@ -118,7 +127,7 @@ router.post("/addAction", async (req, res, next) => {
 
 router.post("/addReaction", async (req, res, next) => {
   try {
-    const { service, name, method, desc, header, body, endpointUrl } = req.body;
+    const { service, name, method, desc, header, body, endpointUrl, userKey } = req.body;
     const newReaction = new Reaction({
       name: name,
       description: desc,
@@ -126,6 +135,7 @@ router.post("/addReaction", async (req, res, next) => {
       endpointUrl: endpointUrl,
       header: header,
       body: body,
+      userKey: userKey === "true" ? true : false
     });
     let result = await db
       .collection("services")
