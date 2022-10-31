@@ -4,9 +4,9 @@
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    width: 16%;
+    width: 25%;
     height: 10vh;
-    margin-left: 80%;
+    margin-left: 75%;
     margin-top: 20px;
 }
 
@@ -14,6 +14,7 @@
     display: flex;
     justify-content: right;
     flex-direction: row;
+    align-items: center;
     color: black;
     text-decoration: none;
     font-size: 18px;
@@ -23,14 +24,27 @@
     display: flex;
     align-items: center;
     height: 5vh;
+    width: 100%;
 }
 
 .home-header .home-username {
     width: 36%;
     height: 5vh;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+}
+
+.home-header .home-username .icon {
+    margin-left: 15px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.home-header .logout {
+    border: 1px solid red;
+    width: 30%;
+    height: 5vh;
+    margin: 0 20px;
+    background: #b10003;
+    color: white;
 }
 
 .home-header .icon {
