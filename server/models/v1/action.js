@@ -137,11 +137,21 @@ async function get_headers(reaction, user) {
     return header
 }
 
-Action.methods.check = async function(user) {
+function complete_url(url, params) {
+    params.forEach((p) => {
+        url = url.replaceAll('{' + p.name + '}', p.value)
+    })
+    return url
+}
+
+Action.methods.check = async function(user, params) {
     try {
+        console.log("action")
+        console.log(params)
+        console.log(complete_url(this.endpointUrl, params))
         return await check_response(this, await axios({
             method: this.method,
-            url: this.endpointUrl,
+            url: complete_url(this.endpointUrl, params),
             headers: await get_headers(this, user),
             data: this.body
         }))

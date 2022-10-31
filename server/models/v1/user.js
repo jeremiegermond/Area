@@ -24,17 +24,9 @@ const User = new Schema(
     ],
     actionReaction: [
       {
-        action: {
           type: Schema.ObjectId,
-          ref: "Action",
-          required: [true, "Action is required"],
-        },
-        reaction: {
-          type: Schema.ObjectId,
-          ref: "Reaction",
-          required: [true, "Reaction is required"],
-        },
-      },
+          ref: "ActionReaction"
+      }
     ],
   },
   {

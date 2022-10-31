@@ -48,7 +48,7 @@ if (process.env.HTTPS === "true") {
 
 console.log(`Server listening on port ${port}`);
 
-function checkActions() {
+async function checkActions() {
   try {
     Users.find({}, (err, users) => {
       if (err) {
@@ -57,14 +57,15 @@ function checkActions() {
       }
       users.forEach((user) => {
         try {
-          user.populate("actionReaction.action").then((u) => {
-            u.actionReaction.map(async (ar) => {
-              if ((await ar.action.check(u)) === true)
-                user.populate("actionReaction.reaction").then(async () => {
-                  await ar.reaction.exec(u);
-                });
-            });
-          });
+          user.populate("actionReaction").then(() => {
+            user.actionReaction.forEach(async (ar) => {
+              await ar.populate("action")
+              if ((await ar.action.check(user, ar.action_params)) === true)
+              ar.populate("reaction").then(async () => {
+                await ar.reaction.exec(user, ar.reaction_params);
+              });
+            })
+          })
         } catch (error) {
           console.log(error);
         }

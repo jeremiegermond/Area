@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/v1/user.js");
+const ActionReaction = require("../../models/v1/actionreaction.js");
 const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
 const UserKeys = require("../../models/v1/userkeys.js");
@@ -60,7 +61,7 @@ router.get("/getReactions", async (req, res) => {
     });
 });
 
-router.get("/getActionReaction", async (req, res) => {
+router.get("/getActionReaction", async (req, res) => {  // needs to be updated with new table
   try {
     await User.findOne({ username: req.user.username })
       .populate({
@@ -79,7 +80,7 @@ router.get("/getActionReaction", async (req, res) => {
   }
 });
 
-router.delete("/deleteActionReaction/:id", async (req, res) => {
+router.delete("/deleteActionReaction/:id", async (req, res) => {  // needs to be updated with new table
   const { id } = req.params;
   try {
     await User.findOne({ username: req.user.username })
@@ -121,19 +122,34 @@ router.delete("/deleteApi/:api", async (req, res) => {
 
 router.post("/addActionReaction", async (req, res) => {
   try {
-    const { action_id, reaction_id } = req.body;
+    const split_params = (params, dest) => {
+      params.split(',').forEach((p) => { 
+        if (p === "")
+          return
+        p = p.split(':')
+        dest.push({name: p[0], value: p[1]})
+      })
+    }
+    const { action_id, reaction_id, action_params, reaction_params } = req.body;
+    let usr = await User.findOne({ name: req.user.username });
     let act = await Action.findById(action_id);
     let react = await Reaction.findById(reaction_id);
-    let usr = await User.findOne({ name: req.user.username });
-    console.log(usr);
-    usr.actionReaction.push({
+    console.log(act)
+    const ar = new ActionReaction({
       action: act._id,
       reaction: react._id,
-    });
-    usr.save().then(() => {
-      res.status(201).json({
-        message: `action ${act.name} and reaction ${react.name} successfully added to user ${req.user.username}`,
-      });
+    })
+    split_params(action_params, ar.action_params)
+    split_params(reaction_params, ar.reaction_params)
+    ar.save().then(() => {
+      console.log(ar);
+      usr.actionReaction.push(ar);
+      console.log(usr);
+      usr.save().then(() => {
+        res.status(201).json({
+          message: `action ${act.name} and reaction ${react.name} successfully added to user ${req.user.username}`,
+        });
+      })
     });
   } catch (error) {
     console.log(error);

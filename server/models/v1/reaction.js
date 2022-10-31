@@ -46,13 +46,20 @@ async function get_headers(reaction, user) {
     return header
 }
 
-Reaction.methods.exec = async function(user) {
+function complete_url(url, params) {
+    params.forEach((p) => {
+        url = url.replaceAll('{' + p.name + '}', p.value)
+    })
+    return url
+}
+
+Reaction.methods.exec = async function(user, params) {
     console.log("\n\nreaction\n\n")
     try {
         console.log(`${user.username} : Triggered reaction ${this.name}, ${this.description}`)
         await axios({
             method: this.method,
-            url: `${this.endpointUrl}`,
+            url: complete_url(this.endpointUrl, params),
             headers: await get_headers(this, user),
             data: this.body
         }).then(res => {
