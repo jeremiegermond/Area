@@ -8,8 +8,12 @@ const mongodb = require("../../db/mongo");
 const { db } = require("../../models/v1/action.js");
 const { mongo } = require("mongoose");
 const User = require("../../models/v1/user");
+const querystring = require('querystring');
+const crypto = require('crypto');
+const axios = require("axios");
 
 const router = express.Router();
+
 
 router.post(
   "/signup",
@@ -206,5 +210,86 @@ router.get("/exist/:name", async (req, res) => {
 router.get("/", (req, res) => {
   res.status(200).send("It works");
 });
+
+
+
+router.post("/webhooks/twitter", (req, res) => {
+  let crc_token = req.query.crc_token
+  crc_response = crypto.createHmac('sha256', process.env.TWITTER_APP_SECRET).update(crc_token).digest('base64')
+  res.status(200).json({"response_token": `sha256=${crc_response}`})
+})
+
+
+
+router.post("/webhooks/twitch", (req, res) => {
+
+  if (req.header("Twitch-Eventsub-Message-Type") === "webhook_callback_verification") {
+    console.log(req.body.challenge)
+    res.send(req.body.challenge)
+  } else if(req.header("Twitch-Eventsub-Message-Type") === "notification") {
+      console.log(req.body)
+      res.send("")
+}
+})
+
+async function get_twitch_bearer()
+{
+  await axios({
+    method: "post",
+    url: `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&grant_type=client_credentials`
+  }).then((r) => {
+    return r.data['access_token'] 
+  })
+}
+
+router.post("/webhooks/twitch/create-webhook", async (req, res) => {
+  const temp_bearer = get_twitch_bearer()
+  const target_type = req.body['target_type']
+  const body = {
+    "type": req.body['webhook_type'],
+    "version": "1",
+    "condition": {
+    },
+    "transport": {
+        "method": "webhook",
+        "callback": "",
+        "secret": crypto.randomBytes(10).toString('hex')
+    }
+  }
+  body['condition'][target_type] = req.body['condition_value']
+  await axios({
+    method: "post",
+    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+    headers: { 'Authorization': `Bearer ${temp_bearer}`,
+          "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe" },
+    data : body
+  }).then((r) => {
+      console.log(r.data)
+      res.status(200).send(r.data)
+  })
+
+})
+
+router.post("/webhooks/twitch/get-webhook", async (req, res) => {
+  const temp_bearer = await get_twitch_bearer()
+  console.log(temp_bearer)
+  res.send("")
+  /*
+  await axios({
+    method: "get",
+    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+    headers: { 'Authorization': `Bearer ${temp_bearer}`,
+          "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe" },
+  }).then((r) => {
+      console.log(r.data)
+      res.status(200).send(r.data)
+  })
+*/
+})
+
+router.post("/webhooks/twitter/create", (req, res) => {
+
+})
+
 
 module.exports = router;
