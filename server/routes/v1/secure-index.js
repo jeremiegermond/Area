@@ -4,30 +4,22 @@ const User = require("../../models/v1/user.js");
 const ActionReaction = require("../../models/v1/actionreaction.js");
 const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
-const UserKeys = require("../../models/v1/userkeys.js");
 
 const twitter = require("./twitter");
 const twitch = require("./twitch");
 const reddit = require("./reddit");
+const api = require("./api");
 
 router.use("/twitter", twitter);
 router.use("/twitch", twitch);
 router.use("/reddit", reddit);
+router.use("/", api);
 
 router.get("/profile", (req, res) => {
   res.json({
     message: "You made it to the secure route",
     user: req.user,
   });
-});
-
-router.get("/hasApi/:api", async (req, res) => {
-  const { api } = req.params;
-  await User.findOne({ username: req.user.username })
-    .populate("keys")
-    .then((user) => {
-      res.status(200).json(!!user.keys.find(({ service }) => service === api));
-    });
 });
 
 router.get("/getActions", async (req, res) => {
@@ -103,27 +95,6 @@ router.delete("/deleteActionReaction/:id", async (req, res) => {
   } catch (e) {
     console.log(e);
     res.status(500).json(e);
-  }
-});
-
-router.delete("/deleteApi/:api", async (req, res) => {
-  try {
-    const { api } = req.params;
-    await User.findOne({ username: req.user.username })
-      .populate("keys")
-      .then(async (user) => {
-        console.log(user.keys.filter(({ service }) => service !== api));
-        user.keys
-          .filter(({ service }) => service === api)
-          .forEach((key) => UserKeys.deleteOne({ _id: key.id }).then());
-        user.keys = user.keys.filter(({ service }) => service !== api);
-        await user.save().then(() => res.status(200).send("Api deleted"));
-      });
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({
-      error: e,
-    });
   }
 });
 

@@ -3,19 +3,21 @@ const router = express.Router();
 const OAuth = require("oauth");
 const User = require("../../../models/v1/user");
 const UserKeys = require("../../../models/v1/userkeys");
-const consumer = new OAuth.OAuth(
-  "https://api.twitter.com/oauth/request_token",
-  "https://api.twitter.com/oauth/access_token",
-  process.env.TWITTER_APP_ID,
-  process.env.TWITTER_APP_SECRET,
-  "1.0A",
-  `${process.env.BASE_URL}:8081/connect-api/twitter`,
-  "HMAC-SHA1"
-);
+function consumer() {
+  return new OAuth.OAuth(
+    "https://api.twitter.com/oauth/request_token",
+    "https://api.twitter.com/oauth/access_token",
+    process.env.TWITTER_APP_ID,
+    process.env.TWITTER_APP_SECRET,
+    "1.0A",
+    `${process.env.BASE_URL}:8081/connect-api/twitter`,
+    "HMAC-SHA1"
+  );
+}
 
 router.post("/callback", function (req, res) {
   try {
-    consumer.getOAuthAccessToken(
+    consumer().getOAuthAccessToken(
       req.body["oauth_token"],
       null,
       req.body["oauth_verifier"],
@@ -53,11 +55,14 @@ router.post("/callback", function (req, res) {
 });
 
 router.get("/addAccount", function (req, res) {
-  consumer.getOAuthRequestToken(function (
+  consumer().getOAuthRequestToken(function (
     error,
     oauthRequestToken,
     oauthRequestTokenSecret
   ) {
+    const uri = new URL("https://twitter.com/oauth/authorize");
+    uri.searchParams.append("oauth_token", oauthRequestToken);
+    uri.searchParams.append("oauth_token_secret", oauthRequestTokenSecret);
     if (error) {
       console.log(error);
       res
@@ -65,11 +70,7 @@ router.get("/addAccount", function (req, res) {
         .send({ error: "Error getting OAuth request token : " + error });
     } else {
       res.status(200).send({
-        path:
-          "https://twitter.com/oauth/authorize?oauth_token=" +
-          oauthRequestToken +
-          "&oauth_token_secret=" +
-          oauthRequestTokenSecret,
+        path: uri,
       });
     }
   });
