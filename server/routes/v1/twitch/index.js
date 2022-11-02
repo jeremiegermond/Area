@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/callback", async (req, res) => {
   const { code } = req.body;
-  let url = `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch`;
+  const url = `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch`;
   try {
     await User.findOne({ username: req.user.username }).then(async (user) => {
       console.log(user);
