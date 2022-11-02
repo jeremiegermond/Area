@@ -4,7 +4,7 @@ const axios = require("axios");
 const UserKeys = require("../../../models/v1/userkeys");
 const router = express.Router();
 
-router.post("/twitch/callback", async (req, res) => {
+router.post("/callback", async (req, res) => {
   const { code } = req.body;
   let url = `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&code=${code}&grant_type=authorization_code&redirect_uri=${process.env.BASE_URL}:8081/connect-api/twitch`;
   try {
@@ -39,7 +39,7 @@ router.post("/twitch/callback", async (req, res) => {
   }
 });
 
-router.get("/twitch/addAccount", async (req, res) => {
+router.get("/addAccount", async (req, res) => {
   const uri = new URL("https://id.twitch.tv/oauth2/authorize");
   uri.searchParams.append(
     "redirect_uri",
