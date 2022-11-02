@@ -118,15 +118,6 @@ async function check_response(action, res) {
     results = results.filter(val => typeof val !== 'string' || val != '')
     console.log(results)
     return results[0]
-    /*let data = res.data
-    if (~action.trigger[0].indexOf("data"))
-        action.trigger[1].split('.').forEach((elem) => {data = data[elem]})
-    else 
-        data = res.status
-    let ret = await check_trigger(action, res, data)
-    action.memory = data
-    action.save()
-    return ret*/
 }
 
 async function get_headers(reaction, user) {

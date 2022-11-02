@@ -207,6 +207,27 @@ router.get("/exist/:name", async (req, res) => {
   }
 });
 
+router.get('/about.json', async (req, res, next) => {
+  try {
+    const ip = req.ip.split(':')[3]
+    const services = await Services.find({}, {name:1, actions:1, reactions:1, _id:0})
+      .populate([{ path: "actions", select: "name description -_id" }, { path: "reactions", select: "name", select: "name description -_id" }])
+      .select(["name", "action", "reaction"]);
+    return res.status(200).json({
+      "client": {
+        "host": ip
+      },
+      "server": {
+        "current_time": Date.now(),
+        "services": services
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json(error);
+  }
+})
+
 router.get("/", (req, res) => {
   res.status(200).send("It works");
 });
