@@ -29,7 +29,7 @@ jobs:
           key_path: ./id_area
           script: |
             cd B-DEV-500-LIL-5-1-area-romain.leemans
-            git pull
-            git checkout ${{ github.ref }}
+            git pull origin docker
+            git checkout ${GITHUB_REF##*/}
             git pull
             nohup docker-compose up --build -d > nohup.out 2> nohup.err < /dev/null &
