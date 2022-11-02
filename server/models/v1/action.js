@@ -37,32 +37,32 @@ const Action = new Schema({
     }
 })
 
-async function check_trigger(action, res, data) {
+async function check_trigger(trig, memory, res, data) {
     if (typeof data === 'undefined')
         return false
-    switch (action.trigger[0]) {
+    switch (trig[0]) {
         case "dataChanged":
-            if (data != action.memory && action.memory[0] !== "unset")
+            if (data != memory && memory[0] !== "unset")
                 return true
             break
         case "dataIs":
-            if (data === action.trigger[2])
+            if (data === trig[2])
                 return true
             break
         case "dataHas":
-            if (~data.indexOf(action.trigger[2]))
+            if (~data.indexOf(trig[2]))
                 return true
             break
         case "codeChanged":
-            if (String(res.status) != action.memory && action.memory[0] !== "unset")
+            if (String(res.status) != memory && memory[0] !== "unset")
                 return true
             break
         case "codeIs":
-            if (String(res.status) === action.trigger[1])
+            if (String(res.status) === trig[1])
                 return true
             break
         case "codeHas":
-            if (~String(res.status).indexOf(action.trigger[1]))
+            if (~String(res.status).indexOf(trig[1]))
                 return true
             break
         default:
@@ -73,22 +73,30 @@ async function check_trigger(action, res, data) {
 
 async function check_response(action, res) {
     let results = []
+    let newmem = []
     let data = res.data
     console.log(action.trigger)
+    console.log(res.status)
+    let mem_index = 0
     await action.trigger.forEach(async (trig, i) => {
         if (trig[0] == "&&" || trig[0] == "||") {
             results[i] = trig[0]
             return
         }
-        if (~trig.indexOf("data"))
-        trig[1].split('.').forEach((elem) => {data = data[elem]})
+        if (~trig[0].indexOf("data"))
+            trig[1].split('.').forEach((elem) => {data = data[elem]})
         else 
             data = res.status
-        let ret = await check_trigger(action, res, data)
+        console.log(data)
+        newmem.push(data)
+        console.log(newmem)
+        let ret = await check_trigger(trig, action.memory[mem_index], res, data)
         results[i] = ret
+        mem_index++
     })
-    action.memory = data
-    action.save()
+    console.log(newmem)
+    action.memory = newmem
+    await action.save()
     console.log(results)
     for (let i = 0; typeof results[i + 2] !== 'undefined'; i += 2) {
         console.log(results[i])
