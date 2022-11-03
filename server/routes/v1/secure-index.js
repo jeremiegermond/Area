@@ -8,14 +8,21 @@ const Reaction = require("../../models/v1/reaction.js");
 const twitter = require("./twitter");
 const twitch = require("./twitch");
 const reddit = require("./reddit");
+const epitech = require("./epitech");
 const api = require("./api");
 
 router.use("/twitter", twitter);
 router.use("/twitch", twitch);
 router.use("/reddit", reddit);
+router.use("/epitech", epitech);
 router.use("/", api);
 
-router.get("/profile", (req, res) => {
+router.get("/profile", async (req, res) => {
+  const { keys } = await User.findOne({ username: req.user.username }).populate(
+    "keys"
+  );
+  // user.populate("keys");
+  console.log(keys);
   res.json({
     message: "You made it to the secure route",
     user: req.user,
@@ -24,43 +31,60 @@ router.get("/profile", (req, res) => {
 
 router.get("/getActions", async (req, res) => {
   let data = [];
-  const actions = await Action.find({})
-    .populate({ path: "service", select: "name" })
-    .select(["name", "description", "service"]);
-
-  await User.findOne({ username: req.user.username })
-    .populate("keys")
-    .then((user) => {
-      user.keys.forEach((key) => {
-        data.push(
-          actions.filter(({ service }) => service.name === key.service)
-        );
-        console.log(data);
-      });
-      res.status(200).json(data.flat());
+  try {
+    const actions = await Action.find({})
+      .populate({
+        path: "service",
+        select: "name",
+      })
+      .select("name description service options");
+    const { keys } = await User.findOne({
+      username: req.user.username,
+    }).populate("keys");
+    keys.forEach((key) => {
+      data.push(actions.filter(({ service }) => service.name === key.service));
     });
+    res.status(200).json(data.flat());
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Couldn't getActions");
+  }
 });
 
 router.get("/getReactions", async (req, res) => {
   let data = [];
-  const reactions = await Reaction.find({})
-    .populate({ path: "service", select: "name" })
-    .select(["name", "description", "service"]);
-  await User.findOne({ username: req.user.username })
-    .populate("keys")
-    .then((user) => {
-      user.keys.forEach((key) => {
-        data.push(
-          reactions.filter(({ service }) => service.name === key.service)
-        );
-      });
-      res.status(200).json(data.flat());
+  try {
+    const reactions = await Reaction.find({})
+      .populate({ path: "service", select: "name" })
+      .select("name description service options");
+    const { keys } = await User.findOne({
+      username: req.user.username,
+    }).populate("keys");
+    keys.forEach((key) => {
+      data.push(
+        reactions.filter(({ service }) => service.name === key.service)
+      );
     });
+    res.status(200).json(data.flat());
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Couldn't getReactions");
+  }
 });
 
 router.get("/getActionReaction", async (req, res) => {
   // needs to be updated with new table
   try {
+    const { actionReaction } = await User.findOne({
+      username: req.user.username,
+    }).populate({
+      path: "actionReaction",
+      populate: [
+        { path: "action", select: "name" },
+        { path: "reaction", select: "name" },
+      ],
+    });
+    console.log(actionReaction);
     await User.findOne({ username: req.user.username })
       .populate({
         path: "actionReaction",
@@ -108,23 +132,23 @@ router.post("/addActionReaction", async (req, res) => {
       });
     };
     const { action_id, reaction_id, action_params, reaction_params } = req.body;
-    let usr = await User.findOne({ name: req.user.username });
-    let act = await Action.findById(action_id);
-    let react = await Reaction.findById(reaction_id);
-    console.log(act);
-    const ar = new ActionReaction({
-      action: act._id,
-      reaction: react._id,
+    const user = await User.findOne({ name: req.user.username });
+    const action = await Action.findById(action_id);
+    const reaction = await Reaction.findById(reaction_id);
+    console.log(action);
+    const newActionReaction = await new ActionReaction({
+      action: action._id,
+      reaction: reaction._id,
     });
-    split_params(action_params, ar.action_params);
-    split_params(reaction_params, ar.reaction_params);
-    ar.save().then(() => {
-      console.log(ar);
-      usr.actionReaction.push(ar);
-      console.log(usr);
-      usr.save().then(() => {
+    split_params(action_params, newActionReaction.action_params);
+    split_params(reaction_params, newActionReaction.reaction_params);
+    newActionReaction.save().then(() => {
+      console.log(newActionReaction);
+      user.actionReaction.push(newActionReaction);
+      console.log(user);
+      user.save().then(() => {
         res.status(201).json({
-          message: `action ${act.name} and reaction ${react.name} successfully added to user ${req.user.username}`,
+          message: `action ${action.name} and reaction ${reaction.name} successfully added to user ${req.user.username}`,
         });
       });
     });

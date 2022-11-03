@@ -4,16 +4,12 @@ const jwt = require("jsonwebtoken");
 const Services = require("../../models/v1/services.js");
 const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
-const mongodb = require("../../db/mongo");
 const { db } = require("../../models/v1/action.js");
-const { mongo } = require("mongoose");
 const User = require("../../models/v1/user");
-const querystring = require('querystring');
-const crypto = require('crypto');
+const crypto = require("crypto");
 const axios = require("axios");
 
 const router = express.Router();
-
 
 router.post(
   "/signup",
@@ -55,8 +51,8 @@ router.post("/addService", (req, res, next) => {
   const map = new Map();
   appKeys.split(",").forEach((elem) => {
     map.set(
-      elem.substr(0, elem.indexOf(":")),
-      elem.substr(elem.indexOf(":") + 1)
+      elem.substring(0, elem.indexOf(":")),
+      elem.substring(elem.indexOf(":") + 1)
     );
   });
   const newService = new Services({
@@ -81,16 +77,25 @@ router.post("/addService", (req, res, next) => {
 
 router.post("/addAction", async (req, res, next) => {
   try {
-    const interleave = (arr, x) => arr.flatMap(e => [e, x]).slice(0, -1)
-    const { service, name, desc, method, endpointUrl, header, body, trigger, userKey } =
-      req.body;
-    console.log(userKey)
-    let trigger_arr = trigger.split(/(&&|\|\|)/)
+    const interleave = (arr, x) => arr.flatMap((e) => [e, x]).slice(0, -1);
+    const {
+      service,
+      name,
+      desc,
+      method,
+      endpointUrl,
+      header,
+      body,
+      trigger,
+      userKey,
+      options,
+    } = req.body;
+    console.log(userKey);
+    let trigger_arr = trigger.split(/(&&|\|\|)/);
     trigger_arr.forEach((elem, index) => {
-      if (elem != "&&" || elem != "||")
-        trigger_arr[index] = elem.split(',')
-    })
-    console.log(trigger_arr)
+      if (elem !== "&&" || elem !== "||") trigger_arr[index] = elem.split(",");
+    });
+    console.log(trigger_arr);
     const newAction = new Action({
       name: name,
       description: desc,
@@ -100,7 +105,8 @@ router.post("/addAction", async (req, res, next) => {
       body: body,
       trigger: trigger_arr,
       memory: ["unset"],
-      userKey: userKey === "true" ? true : false
+      userKey: userKey === "true",
+      options: JSON.parse(options),
     });
     await db
       .collection("services")
@@ -131,7 +137,17 @@ router.post("/addAction", async (req, res, next) => {
 
 router.post("/addReaction", async (req, res, next) => {
   try {
-    const { service, name, method, desc, header, body, endpointUrl, userKey } = req.body;
+    const {
+      service,
+      name,
+      method,
+      desc,
+      header,
+      body,
+      endpointUrl,
+      userKey,
+      options,
+    } = req.body;
     const newReaction = new Reaction({
       name: name,
       description: desc,
@@ -139,9 +155,10 @@ router.post("/addReaction", async (req, res, next) => {
       endpointUrl: endpointUrl,
       header: header,
       body: body,
-      userKey: userKey === "true" ? true : false
+      userKey: userKey === "true",
+      options: JSON.parse(options),
     });
-    let result = await db
+    await db
       .collection("services")
       .findOneAndUpdate(
         { name: service },
@@ -207,94 +224,97 @@ router.get("/exist/:name", async (req, res) => {
   }
 });
 
-router.get('/about.json', async (req, res, next) => {
+router.get("/about.json", async (req, res, next) => {
   try {
-    const ip = req.ip.split(':')[3]
-    const services = await Services.find({}, {name:1, actions:1, reactions:1, _id:0})
-      .populate([{ path: "actions", select: "name description -_id" }, { path: "reactions", select: "name", select: "name description -_id" }])
-      .select(["name", "action", "reaction"]);
+    const ip = req.ip.split(":")[3];
+    const services = await Services.find()
+      .populate([
+        { path: "actions", select: "name description -_id" },
+        { path: "reactions", select: "name description -_id" },
+      ])
+      .select("name action reaction -_id");
     return res.status(200).json({
-      "client": {
-        "host": ip
+      client: {
+        host: ip,
       },
-      "server": {
-        "current_time": Date.now(),
-        "services": services
-      }
+      server: {
+        current_time: Date.now(),
+        services: services,
+      },
     });
   } catch (error) {
     console.log(error);
     return res.status(200).json(error);
   }
-})
+});
 
 router.get("/", (req, res) => {
   res.status(200).send("It works");
 });
 
-
-
 router.post("/webhooks/twitter", (req, res) => {
-  let crc_token = req.query.crc_token
-  crc_response = crypto.createHmac('sha256', process.env.TWITTER_APP_SECRET).update(crc_token).digest('base64')
-  res.status(200).json({"response_token": `sha256=${crc_response}`})
-})
-
-
+  const { crc_token } = req.query;
+  const crc_response = crypto
+    .createHmac("sha256", process.env.TWITTER_APP_SECRET)
+    .update(crc_token)
+    .digest("base64");
+  res.status(200).json({ response_token: `sha256=${crc_response}` });
+});
 
 router.post("/webhooks/twitch", (req, res) => {
+  if (
+    req.header("Twitch-Eventsub-Message-Type") ===
+    "webhook_callback_verification"
+  ) {
+    console.log(req.body.challenge);
+    res.send(req.body.challenge);
+  } else if (req.header("Twitch-Eventsub-Message-Type") === "notification") {
+    console.log(req.body);
+    res.send("");
+  }
+});
 
-  if (req.header("Twitch-Eventsub-Message-Type") === "webhook_callback_verification") {
-    console.log(req.body.challenge)
-    res.send(req.body.challenge)
-  } else if(req.header("Twitch-Eventsub-Message-Type") === "notification") {
-      console.log(req.body)
-      res.send("")
-}
-})
-
-async function get_twitch_bearer()
-{
+async function get_twitch_bearer() {
   await axios({
     method: "post",
-    url: `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&grant_type=client_credentials`
+    url: `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&grant_type=client_credentials`,
   }).then((r) => {
-    return r.data['access_token'] 
-  })
+    return r.data["access_token"];
+  });
 }
 
 router.post("/webhooks/twitch/create-webhook", async (req, res) => {
-  const temp_bearer = get_twitch_bearer()
-  const target_type = req.body['target_type']
+  const temp_bearer = get_twitch_bearer();
+  const target_type = req.body["target_type"];
   const body = {
-    "type": req.body['webhook_type'],
-    "version": "1",
-    "condition": {
+    type: req.body["webhook_type"],
+    version: "1",
+    condition: {},
+    transport: {
+      method: "webhook",
+      callback: "",
+      secret: crypto.randomBytes(10).toString("hex"),
     },
-    "transport": {
-        "method": "webhook",
-        "callback": "",
-        "secret": crypto.randomBytes(10).toString('hex')
-    }
-  }
-  body['condition'][target_type] = req.body['condition_value']
+  };
+  body["condition"][target_type] = req.body["condition_value"];
   await axios({
     method: "post",
     url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-    headers: { 'Authorization': `Bearer ${temp_bearer}`,
-          "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe" },
-    data : body
+    headers: {
+      Authorization: `Bearer ${temp_bearer}`,
+      "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe",
+    },
+    data: body,
   }).then((r) => {
-      console.log(r.data)
-      res.status(200).send(r.data)
-  })
-
-})
+    console.log(r.data);
+    res.status(200).send(r.data);
+  });
+});
 
 router.post("/webhooks/twitch/get-webhook", async (req, res) => {
-  const temp_bearer = await get_twitch_bearer()
-  console.log(temp_bearer)
-  res.send("")
+  const temp_bearer = await get_twitch_bearer();
+  console.log(temp_bearer);
+  res.send("");
   /*
   await axios({
     method: "get",
@@ -306,11 +326,8 @@ router.post("/webhooks/twitch/get-webhook", async (req, res) => {
       res.status(200).send(r.data)
   })
 */
-})
+});
 
-router.post("/webhooks/twitter/create", (req, res) => {
-
-})
-
+router.post("/webhooks/twitter/create", (req, res) => {});
 
 module.exports = router;

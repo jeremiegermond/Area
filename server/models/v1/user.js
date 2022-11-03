@@ -24,9 +24,9 @@ const User = new Schema(
     ],
     actionReaction: [
       {
-          type: Schema.ObjectId,
-          ref: "ActionReaction"
-      }
+        type: Schema.ObjectId,
+        ref: "ActionReaction",
+      },
     ],
   },
   {
@@ -45,6 +45,18 @@ User.pre("save", function (next) {
 User.methods.isValidPassword = async function (password) {
   const user = this;
   return await bcrypt.compare(password, user.password);
+};
+
+User.methods.addApiKey = async function (key, service) {
+  try {
+    const user = this;
+    const id = await new UserKeys({ service: service, keys: key }).save();
+    await user.keys.push(id);
+    await user.save();
+    return `${service} key added to ${user.username}`;
+  } catch (e) {
+    throw `Couldn't add ${service}`;
+  }
 };
 
 module.exports = mongoose.model("User", User);
