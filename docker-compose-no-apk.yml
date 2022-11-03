@@ -36,7 +36,7 @@ services:
       - REDDIT_APP_ID=${REDDIT_APP_ID:-isUVYO3_2jTORpYN_SVSZA}
       - REDDIT_APP_SECRET=${REDDIT_APP_SECRET:-3X7O0lsVJ5HjWE3YC2QB7OBKZxOXtQ}
       - TWITCH_APP_ID=${TWITCH_APP_ID:-vi9za74j91x41dxvhmdsyjzau002xe}
-      - TWITCH_APP_SECRET=${TWITCH_APP_SECRET:-w8uctolncjd2ltopsb2zh1c0ok250g}
+      - TWITCH_APP_SECRET=${TWITCH_APP_SECRET:-wteackfgzu4nqmj72azqg5bts4rduq}
 
   mongo:
     container_name: mongo-prod
