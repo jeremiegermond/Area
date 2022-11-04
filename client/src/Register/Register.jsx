@@ -1,19 +1,28 @@
 import "./Register.css";
 import { FaFacebook, FaGoogle, FaTwitter } from "react-icons/fa";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import { Link, useNavigate } from "react-router-dom";
 
 const cookies = new Cookies();
-const auth = cookies.get("TOKEN");
 
 export default function Register() {
-  useState(() => {
-    if (auth != null ) {
-      window.location.href="/home"
+  const navigate = useNavigate();
+  useEffect(() => {
+    const auth = cookies.get("TOKEN") ?? "";
+    if (auth.length > 0) {
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/user/profile`, {
+          headers: { Authorization: `Bearer ${auth}` },
+        })
+        .then(async () => {
+          navigate("/home");
+        })
+        .catch(() => {});
     }
-  }, [])
+  }, [navigate]);
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [register, setRegister] = useState(false);
@@ -34,10 +43,10 @@ export default function Register() {
         cookies.set("TOKEN", res.data.token, {
           path: "/",
         });
-        window.location.href = "../home";
+        navigate("/home");
       })
-      .catch((error) => {
-        error = new Error();
+      .catch(() => {
+        console.log("Submit error");
       });
   };
 
@@ -98,7 +107,7 @@ export default function Register() {
             )}
           </Form>
           <p>
-            You already have an account ? Go to <a href="../login">login</a>
+            You already have an account ? Go to <Link to="/login">login</Link>
           </p>
         </div>
       </div>

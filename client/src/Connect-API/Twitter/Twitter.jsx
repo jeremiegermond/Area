@@ -1,16 +1,18 @@
-import React from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import queryString from "query-string";
 import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
 
-const cookies = new Cookies();
-const auth = cookies.get("TOKEN");
+const auth = new Cookies().get("TOKEN");
 
-export default class Twitter extends React.Component {
-  componentDidMount() {
+export default function Twitter() {
+  const navigate = useNavigate();
+  useEffect(() => {
     const { oauth_token, oauth_verifier } = queryString.parse(
       window.location.search
     );
+    console.log({ oauth_token, oauth_verifier });
     if (oauth_token && oauth_verifier) {
       try {
         axios({
@@ -22,14 +24,12 @@ export default class Twitter extends React.Component {
             oauth_verifier,
           },
         }).then(() => {
-          window.location.href = `${process.env.REACT_APP_CALLBACK_URL}/connect-api/`;
+          navigate("/connect-api", { replace: true });
         });
       } catch (error) {
         console.error(error);
       }
     }
-  }
-  render() {
-    return null;
-  }
+  }, [navigate]);
+  return null;
 }
