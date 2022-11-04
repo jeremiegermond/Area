@@ -1,33 +1,30 @@
 const express = require("express");
 const User = require("../../../models/v1/user");
 const axios = require("axios");
-const UserKeys = require("../../../models/v1/userkeys");
 const router = express.Router();
 
 router.post("/callback", async (req, res) => {
-  const { code } = req.body;
+  console.log(req.body);
+  const { user_cookie } = req.body;
   try {
-    await User.findOne({ username: req.user.username }).then(async (user) => {
-      new UserKeys({
-        service: "reddit",
-        keys: map,
-      })
-        .save()
-        .then((key) => {
-          console.log(user);
-          user.keys.push(key);
-          user.save().then(() => {
-            console.log(`Reddit key added to ${user.username}`);
-            res.status(201).json({
-              message: `response`,
-            });
-          });
-        });
-    });
+    const user = await User.findOne({ username: req.user.username });
+    const map = new Map([["user_cookie", user_cookie.toString()]]);
+    user.addApiKey(map, "epitech").then((e) => res.status(201).send(e));
   } catch (e) {
     console.log(e);
     res.status(500).send(e);
   }
+});
+
+router.get("/addAccount", async (req, res) => {
+  const uri = await axios
+    .get("https://intra.epitech.eu")
+    .then((r) => console.log(r.data))
+    .catch((e) => {
+      const { office_auth_uri } = e.response.data;
+      return office_auth_uri;
+    });
+  res.status(200).send({ path: uri });
 });
 
 module.exports = router;

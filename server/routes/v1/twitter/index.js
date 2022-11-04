@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const OAuth = require("oauth");
 const User = require("../../../models/v1/user");
-const UserKeys = require("../../../models/v1/userkeys");
+
 function consumer() {
   return new OAuth.OAuth(
     "https://api.twitter.com/oauth/request_token",
@@ -26,26 +26,12 @@ router.post("/callback", function (req, res) {
           console.log(error);
           res.status(500).send(error + " " + results);
         } else {
-          let usr = await User.findOne({ username: req.user.username });
-          console.log(usr.keys);
-          console.log(oauthAccessToken + " " + oauthAccessTokenSecret);
-          const map = new Map()
-            .set("public", oauthAccessToken.toString())
-            .set("secret", oauthAccessTokenSecret.toString());
-          new UserKeys({
-            service: "twitter",
-            keys: map,
-          })
-            .save()
-            .then((data) => {
-              usr.keys.push(data);
-              usr.save().then(() => {
-                console.log(`Twitter key added to ${usr.username}`);
-                res.status(201).json({
-                  message: `response`,
-                });
-              });
-            });
+          const user = await User.findOne({ username: req.user.username });
+          const map = new Map([
+            ["public", oauthAccessToken.toString()],
+            ["secret", oauthAccessTokenSecret.toString()],
+          ]);
+          user.addApiKey(map, "twitter").then((e) => res.status(201).send(e));
         }
       }
     );
