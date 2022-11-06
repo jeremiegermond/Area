@@ -12,9 +12,10 @@ router.post("/callback", async (req, res) => {
       method: "post",
       url: url,
     }).then((r) => {
-      const map = new Map()
-        .set("access_token", r.data["access_token"].toString())
-        .set("refresh_token", r.data["refresh_token"].toString());
+      const map = new Map([
+        ["access_token", r.data["access_token"].toString()],
+        ["refresh_token", r.data["refresh_token"].toString()],
+      ]);
       user.addApiKey(map, "twitch").then((e) => res.status(201).send(e));
     });
   } catch (e) {

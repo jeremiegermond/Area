@@ -4,6 +4,7 @@ import {Toast} from '../../components/Toast';
 import {postApi} from '../../api';
 import {getItem} from '../../data';
 import {NativeEvent} from 'react-native-reanimated/lib/types';
+import CookieManager from '@react-native-cookies/cookies';
 
 class BrowserScreen extends React.Component {
   render() {
@@ -16,7 +17,15 @@ class BrowserScreen extends React.Component {
       />
     );
   }
-
+  postParams = (api, params, navigation) => {
+    postApi(api, params)
+      .then(() => console.log(`${api} added`))
+      .catch(e => {
+        console.log(e);
+        Toast('Error connecting to API');
+      });
+    navigation.goBack();
+  };
   handleEvent = async (event: NativeEvent, navigation, route) => {
     const {url} = event;
     console.log(event);
@@ -30,13 +39,15 @@ class BrowserScreen extends React.Component {
       while ((match = regex.exec(url))) {
         params[match[1]] = match[2];
       }
-      postApi(route.params.api, params)
-        .then(() => console.log(`${route.params.api} added`))
-        .catch(e => {
-          console.log(e);
-          Toast('Error connecting to API');
-        });
-      navigation.goBack();
+      this.postParams(route.params.api, params, navigation);
+    } else if (url.startsWith('https://intra.epitech.eu/')) {
+      CookieManager.get('https://intra.epitech.eu/')
+        .then(cookie => {
+          console.log(cookie.user);
+          const params = {user_cookie: cookie.user.value};
+          this.postParams(route.params.api, params, navigation);
+        })
+        .catch(e => console.log(e));
     }
   };
 }

@@ -17,6 +17,7 @@ import ProtectedRoutes from "./Component/ProtectedRoutes";
 import Action from "./Action/Action";
 import Reaction from "./Reaction/Reaction";
 import Download from "./Download/Download";
+import Epitech from "./Connect-API/Epitech/Epitech";
 
 const App = () => {
   return (
@@ -25,48 +26,16 @@ const App = () => {
         <Route exact path="/" element={<Register />} />
         <Route exact path="/register" element={<Register />} />
         <Route exact path="/login" element={<Login />} />
-        <Route exact path="/connect-api" element={
-          <ProtectedRoutes>
-            <ConnectAPI />
-          </ProtectedRoutes>
-          } 
-        />
-        <Route exact path="/connect-api/twitter" element={
-          <ProtectedRoutes>
-            <Twitter />
-          </ProtectedRoutes>
-          }
-        />
-        <Route exact path="/connect-api/reddit" element={
-          <ProtectedRoutes>
-            <Reddit />
-          </ProtectedRoutes>
-          } 
-        />
-        <Route exact path="/connect-api/twitch" element={
-          <ProtectedRoutes>
-            <Twitch />         
-          </ProtectedRoutes>
-          }
-        />
-        <Route exact path="/action" element={
-          <ProtectedRoutes>
-            <Action />
-          </ProtectedRoutes>
-          } 
-        />
-        <Route exact path="/reaction" element={
-          <ProtectedRoutes>
-            <Reaction />
-          </ProtectedRoutes>
-          } 
-        />
-        <Route exact path="/home" element={
-            <ProtectedRoutes>
-              <Home />
-            </ProtectedRoutes>
-          }
-        />
+        <Route element={<ProtectedRoutes />}>
+          <Route exact path="/home" element={<Home />} />
+          <Route exact path="/action" element={<Action />} />
+          <Route exact path="/reaction" element={<Reaction />} />
+          <Route path="/connect-api" element={<ConnectAPI />} />
+          <Route path="/connect-api/twitter" element={<Twitter />} />
+          <Route path="/connect-api/twitch" element={<Twitch />} />
+          <Route path="/connect-api/reddit" element={<Reddit />} />
+          <Route path="/connect-api/epitech" element={<Epitech />} />
+        </Route>
         <Route exact path="/base.apk" element={<Download />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

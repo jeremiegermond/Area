@@ -1,72 +1,38 @@
 import "./Connect.css";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Cookies from "universal-cookie";
-
-const cookies = new Cookies();
-const auth = cookies.get("TOKEN");
+import { Link } from "react-router-dom";
+import { deleteServer, getServer } from "../api";
 
 export default function Connect() {
   const [twitch, setTwitch] = useState(false);
   const [twitter, setTwitter] = useState(false);
   const [reddit, setReddit] = useState(false);
-  const hasApi = (api, setter) => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/user/hasApi/${api}`, {
-        headers: { Authorization: `Bearer ${auth}` },
-      })
-      .then((res) => {
-        setter(res.data);
-      })
-      .catch((e) => {
-        console.log("error", e);
-      });
+  const [epitech, setEpitech] = useState(false);
+
+  const toggleApi = (api: string, state: boolean, setter) => {
+    if (state) {
+      deleteServer("user/deleteAPI/" + api)
+        .then(() => setter(false))
+        .catch(() => {});
+      return;
+    }
+    getServer(`user/${api}/addAccount`).then(
+      (res) => (window.location.href = res.data["path"])
+    );
   };
   useEffect(() => {
-    console.log();
+    const hasApi = (api, setter) => {
+      getServer("user/hasApi/" + api)
+        .then((res) => {
+          setter(res.data);
+        })
+        .catch(() => console.log(`Couldn't get ${api} status`));
+    };
     hasApi("reddit", setReddit);
     hasApi("twitter", setTwitter);
     hasApi("twitch", setTwitch);
+    hasApi("epitech", setEpitech);
   }, []);
-
-  const handleSubmitTwitter = async (e) => {
-    e.preventDefault();
-    await axios
-      .get(`${process.env.REACT_APP_API_URL}/user/twitter/addAccount`, {
-        headers: { Authorization: `Bearer ${auth}` },
-      })
-      .then((res) => {
-        console.log(res.status);
-        console.log(res.data);
-        window.location.href = res.data["path"];
-      });
-  };
-
-  const handleSubmitReddit = async (e) => {
-    e.preventDefault();
-    await axios
-      .get(`${process.env.REACT_APP_API_URL}/user/reddit/addAccount`, {
-        headers: { Authorization: `Bearer ${auth}` },
-      })
-      .then((res) => {
-        console.log(res.status);
-        console.log(res.data);
-        window.location.href = res.data["path"];
-      });
-  };
-
-  const handleSubmitTwitch = async (e) => {
-    e.preventDefault();
-    await axios
-      .get(`${process.env.REACT_APP_API_URL}/user/twitch/addAccount`, {
-        headers: { Authorization: `Bearer ${auth}` },
-      })
-      .then((res) => {
-        console.log(res.status);
-        console.log(res.data);
-        window.location.href = res.data["path"];
-      });
-  };
 
   return (
     <section className="connect-page">
@@ -77,23 +43,36 @@ export default function Connect() {
           type="submit"
           value="Twitch"
           className={twitch ? "api-btn-connected" : "api-btn"}
-          onClick={handleSubmitTwitch}
+          onClick={() => toggleApi("twitch", twitch, setTwitch)}
         />
         <input
           type="submit"
           value="Reddit"
           className={reddit ? "api-btn-connected" : "api-btn"}
-          onClick={(e) => handleSubmitReddit(e)}
+          onClick={() => toggleApi("reddit", reddit, setReddit)}
         />
         <input
           type="submit"
           value="Twitter"
           className={twitter ? "api-btn-connected" : "api-btn"}
-          onClick={handleSubmitTwitter}
+          onClick={() => toggleApi("twitter", twitter, setTwitter)}
         />
+        <Link
+          to="epitech"
+          value="Epitech"
+          className={epitech ? "api-btn-connected" : "api-btn"}
+          onClick={(e) => {
+            if (epitech) {
+              e.preventDefault();
+              toggleApi("epitech", epitech, setEpitech);
+            }
+          }}
+        >
+          Epitech
+        </Link>
       </div>
       <h6>
-        Back to <a href="../home">home</a>
+        Back to <Link to="/home">home</Link>
       </h6>
     </section>
   );

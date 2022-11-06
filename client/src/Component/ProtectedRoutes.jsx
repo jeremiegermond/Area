@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
-import Cookies from "universal-cookie";
+import React, { useEffect, useState } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { isConnected } from "../api";
 
-const cookies = new Cookies();
-const auth = cookies.get("TOKEN");
-
-export default function ProtectedRoutes(props) {
-  useState(() => {
-    if (auth == null ) {
-      window.location.href="/login"
-    }
-  }, [])
-  return auth.length <= 0 ? <Outlet /> : <>{props.children}</>;
+export default function ProtectedRoutes() {
+  const [element, setElement] = useState(<></>);
+  useEffect(() => {
+    isConnected()
+      .then(() => setElement(<Outlet />))
+      .catch(() => setElement(<Navigate to={"/login"} />));
+  }, []);
+  return element;
 }

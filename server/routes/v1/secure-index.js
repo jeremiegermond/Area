@@ -20,11 +20,6 @@ router.use("/epitech", epitech);
 router.use("/", api);
 
 router.get("/profile", async (req, res) => {
-  const { keys } = await User.findOne({ username: req.user.username }).populate(
-    "keys"
-  );
-  // user.populate("keys");
-  console.log(keys);
   res.json({
     message: "You made it to the secure route",
     user: req.user,

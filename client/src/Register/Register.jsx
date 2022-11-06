@@ -1,19 +1,18 @@
 import "./Register.css";
 import { FaFacebook, FaGoogle, FaTwitter } from "react-icons/fa";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import axios from "axios";
-import Cookies from "universal-cookie";
-
-const cookies = new Cookies();
-const auth = cookies.get("TOKEN");
+import { Link, useNavigate } from "react-router-dom";
+import { isConnected, postServer } from "../api";
+import { setCookie } from "../cookie";
 
 export default function Register() {
-  useState(() => {
-    if (auth != null ) {
-      window.location.href="/home"
-    }
-  }, [])
+  const navigate = useNavigate();
+  useEffect(() => {
+    isConnected()
+      .then(() => navigate("/home"))
+      .catch(() => {});
+  }, [navigate]);
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [register, setRegister] = useState(false);
@@ -25,20 +24,13 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(client);
-    axios
-      .post(`${process.env.REACT_APP_API_URL}/signup`, client)
+    postServer("signup", client)
       .then((res) => {
         setRegister(true);
-        console.log(res);
-        console.log(res.data);
-        cookies.set("TOKEN", res.data.token, {
-          path: "/",
-        });
-        window.location.href = "../home";
+        setCookie("TOKEN", res.data.token);
+        navigate("/home");
       })
-      .catch((error) => {
-        error = new Error();
-      });
+      .catch(() => console.log("Submit error"));
   };
 
   return (
@@ -98,7 +90,7 @@ export default function Register() {
             )}
           </Form>
           <p>
-            You already have an account ? Go to <a href="../login">login</a>
+            You already have an account ? Go to <Link to="/login">login</Link>
           </p>
         </div>
       </div>
