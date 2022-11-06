@@ -1,69 +1,19 @@
-/* Header */
-
-.home-header {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    width: 25%;
-    height: 10vh;
-    margin-left: 75%;
-    margin-top: 20px;
-}
-
-.home-header a {
-    display: flex;
-    justify-content: right;
-    flex-direction: row;
-    align-items: center;
-    color: black;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-.home-header .home-api {
-    display: flex;
-    align-items: center;
-    height: 5vh;
-    width: 100%;
-}
-
-.home-header .home-username {
-    width: 36%;
-    height: 5vh;
-}
-
-.home-header .home-username .icon {
-    margin-left: 15px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-}
-
-.home-header .logout {
-    border: 1px solid red;
-    width: 30%;
-    height: 5vh;
-    margin: 0 20px;
-    background: #b10003;
-    color: white;
-}
-
-.home-header .icon {
-    transform: scale(1.2);
-    padding-top: 5px;
-}
-
-/* Container */
-
-.home-page h1 {
-    text-align: center;
+.home-content h1 {
     font-size: 48px;
     font-weight: 400;
+    margin: 50px 0;
+}
+
+.home-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .home-container {
-    width: 70%;
-    margin: 50px 15%;
+    width: 50%;
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
+    column-gap: 2%;
 }

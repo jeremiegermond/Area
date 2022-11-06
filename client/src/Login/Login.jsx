@@ -61,6 +61,11 @@ export default function Login() {
                   placeholder="Password"
                   className="btn"
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      handleSubmit(event);
+                    }
+                  }}
                   required
                 />
               </Form.Group>

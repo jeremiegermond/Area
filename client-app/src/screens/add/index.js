@@ -64,9 +64,7 @@ const AddScreen = ({navigation}) => {
         action_params: actionParams,
         reaction_params: params,
       })
-        .then(() => {
-          navigation.navigate('Home');
-        })
+        .then(() => navigation.navigate('Home'))
         .catch(e => console.log(e));
     } else {
       setActionId(item._id);

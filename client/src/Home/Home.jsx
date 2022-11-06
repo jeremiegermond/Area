@@ -1,39 +1,34 @@
 import "./Home.css";
-import HomeBox from "../Component/Home-Box";
-import { FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { removeCookie } from "../cookie";
+import HomeBox, { Box } from "../Component/Home-Box";
+import { useEffect, useState } from "react";
+import { getServer } from "../api";
+import { FaPlusCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const logout = async () => {
-    await removeCookie("TOKEN");
-    window.location.href = "/login";
-    return false;
+  const navigate = useNavigate();
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    getServer("user/getActionReaction").then((r) => setList(r.data));
+  }, []);
+  const filterList = (id: string) => {
+    setList(list.filter(({ _id }) => _id !== id));
   };
-
   return (
-    <section className="home-page">
-      <div className="home-header">
-        <Link to="/connect-api" className="home-api">
-          Connect another API
-        </Link>
-        <Link className="home-username" to="/home">
-          <div className="icon">
-            <FaUser />
-          </div>
-          Username
-        </Link>
-        <button onClick={logout} className="logout">
-          Logout
-        </button>
-      </div>
-      <h1>Select or edit your action</h1>
+    <div className="home-content">
+      <h1>Select or edit your action</h1>{" "}
       <div className="home-container">
-        <HomeBox />
-        <HomeBox />
-        <HomeBox />
-        <HomeBox />
+        {list.map((e) => {
+          return (
+            <HomeBox key={e._id} data={e} onDelete={() => filterList(e._id)} />
+          );
+        })}
       </div>
-    </section>
+      <div className="home-container">
+        <Box onClick={() => navigate("/action")}>
+          <FaPlusCircle size={80} />
+        </Box>
+      </div>
+    </div>
   );
 }

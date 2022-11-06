@@ -30,7 +30,7 @@ const App = () => {
           <Route exact path="/home" element={<Home />} />
           <Route exact path="/action" element={<Action />} />
           <Route exact path="/reaction" element={<Reaction />} />
-          <Route path="/connect-api" element={<ConnectAPI />} />
+          <Route exact path="/connect-api" element={<ConnectAPI />} />
           <Route path="/connect-api/twitter" element={<Twitter />} />
           <Route path="/connect-api/twitch" element={<Twitch />} />
           <Route path="/connect-api/reddit" element={<Reddit />} />

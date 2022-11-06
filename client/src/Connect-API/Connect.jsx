@@ -35,7 +35,7 @@ export default function Connect() {
   }, []);
 
   return (
-    <section className="connect-page">
+    <div className="connect-page">
       <h1>Connect to your API's</h1>
       <h3>By doing this, you consent the usage of your data</h3>
       <div className="api-buttons">
@@ -71,9 +71,6 @@ export default function Connect() {
           Epitech
         </Link>
       </div>
-      <h6>
-        Back to <Link to="/home">home</Link>
-      </h6>
-    </section>
+    </div>
   );
 }

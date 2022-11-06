@@ -26,13 +26,9 @@ const HomeScreen = ({navigation}) => {
   }, [navigation]);
 
   function deleteId(id: string) {
-    console.log(id);
     deleteServer(`user/deleteActionReaction/${id}`)
-      .then(r => {
-        console.log(r.data);
-      })
+      .then(() => setList(list.filter(({_id}) => _id !== id)))
       .catch(e => console.log(e));
-    setList(list.filter(({_id}) => _id !== id));
   }
 
   return (
