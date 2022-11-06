@@ -13,6 +13,9 @@ const ActionReaction = new Schema(
             ref: "Reaction",
             required: [true, "Reaction is required"],
         },
+        webhook_uid: {
+            type: String
+        },
         action_params: [{
             name: {type: String},
             value: {type: String}
@@ -20,7 +23,14 @@ const ActionReaction = new Schema(
         reaction_params: [{
             name: {type: String},
             value: {type: String}
-        }]
+        }],
+        memory: {
+          type: Array,
+        },
+        user: {
+            type: Schema.ObjectId,
+            ref: 'User'
+        }
     }
 )
 

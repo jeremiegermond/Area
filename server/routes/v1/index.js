@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const Services = require("../../models/v1/services.js");
 const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
+const Api_call = require("../../models/v1/api_call.js");
+const Webhook = require("../../models/v1/webhook");
 const { db } = require("../../models/v1/action.js");
 const User = require("../../models/v1/user");
 const crypto = require("crypto");
@@ -75,39 +77,47 @@ router.post("/addService", (req, res, next) => {
     });
 });
 
+async function addApiAction(body) {
+  const interleave = (arr, x) => arr.flatMap((e) => [e, x]).slice(0, -1);
+  const {service, name, desc, method, endpointUrl, header, rbody, trigger, userKey, options} = body;
+  console.log(userKey);
+  let trigger_arr = trigger.split(/(&&|\|\|)/);
+  trigger_arr.forEach((elem, index) => {
+    if (elem !== "&&" || elem !== "||") trigger_arr[index] = elem.split(",");
+  });
+  console.log(trigger_arr);
+  const newApi_call = new Api_call({
+    method: method,
+    endpointUrl: endpointUrl,
+    header: header,
+    body: rbody,
+    trigger: trigger_arr,
+    userKey: userKey === "true"
+  })
+  await newApi_call.save()
+  return newApi_call
+}
+
+async function addWebhookAction (body) {
+  const {target_type, webhook_type, condition_value} = body;
+  return await new Webhook({
+    target_type: target_type,
+    webhook_type: webhook_type,
+    condition_value: condition_value
+  }).save()
+}
+
 router.post("/addAction", async (req, res, next) => {
   try {
-    const interleave = (arr, x) => arr.flatMap((e) => [e, x]).slice(0, -1);
-    const {
-      service,
-      name,
-      desc,
-      method,
-      endpointUrl,
-      header,
-      body,
-      trigger,
-      userKey,
-      options,
-    } = req.body;
-    console.log(userKey);
-    let trigger_arr = trigger.split(/(&&|\|\|)/);
-    trigger_arr.forEach((elem, index) => {
-      if (elem !== "&&" || elem !== "||") trigger_arr[index] = elem.split(",");
-    });
-    console.log(trigger_arr);
+    const {service, name, desc, method, endpointUrl, header, rbody, trigger, userKey, options} = req.body;
     const newAction = new Action({
       name: name,
       description: desc,
-      method: method,
-      endpointUrl: endpointUrl,
-      header: header,
-      body: body,
-      trigger: trigger_arr,
-      memory: ["unset"],
-      userKey: userKey === "true",
       options: JSON.parse(options),
+      webhook: typeof method === 'undefined' ? await addWebhookAction(req.body) : null,
+      api_call: typeof method !== 'undefined' ? await addApiAction(req.body) : null
     });
+    console.log(method)
     await db
       .collection("services")
       .findOneAndUpdate(
@@ -118,17 +128,14 @@ router.post("/addAction", async (req, res, next) => {
       .then((data) => {
         newAction.service = data.value._id;
       });
-    newAction
-      .save()
-      .then(() => {
-        res.status(201).json({
-          message: `Action added successfully to service ${service}!`,
-        });
-      })
+    newAction.save().then(() => { return true})
       .catch((error) => {
         console.log(error);
-        res.status(400).json({ error: error });
+        return false
       });
+    res.status(201).json({
+      message: `Action added successfully to service ${req.body.service}!`,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: error });
@@ -137,17 +144,7 @@ router.post("/addAction", async (req, res, next) => {
 
 router.post("/addReaction", async (req, res, next) => {
   try {
-    const {
-      service,
-      name,
-      method,
-      desc,
-      header,
-      body,
-      endpointUrl,
-      userKey,
-      options,
-    } = req.body;
+    const {service, name, method, desc, header, body, endpointUrl, userKey, options} = req.body;
     const newReaction = new Reaction({
       name: name,
       description: desc,
@@ -264,6 +261,7 @@ router.post("/webhooks/twitter", (req, res) => {
 
 
 const twitch = require("./twitch/webhook");
+const api_call = require("../../models/v1/api_call.js");
 router.use("/twitch", twitch)
 
 module.exports = router;

@@ -60,10 +60,11 @@ async function checkActions() {
           user.populate("actionReaction").then(() => {
             user.actionReaction.forEach(async (ar) => {
               await ar.populate("action")
-              if ((await ar.action.check(user, ar.action_params)) === true)
-              ar.populate("reaction").then(async () => {
-                await ar.reaction.exec(user, ar.reaction_params);
-              });
+              if (ar.webhook_uid === '')
+                if (await ar.action.check(user, ar) === true)
+                  ar.populate("reaction").then(async () => {
+                    await ar.reaction.exec(user, ar.reaction_params);
+                  });
             })
           })
         } catch (error) {

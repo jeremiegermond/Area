@@ -1,9 +1,11 @@
+const axios = require("axios");
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/v1/user.js");
 const ActionReaction = require("../../models/v1/actionreaction.js");
 const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
+const crypto = require("crypto");
 
 const twitter = require("./twitter");
 const twitch = require("./twitch");
@@ -117,6 +119,76 @@ router.delete("/deleteActionReaction/:id", async (req, res) => {
   }
 });
 
+function get_twitch_bearer() {
+     return axios({
+      method: "post",
+      url: `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_APP_ID}&client_secret=${process.env.TWITCH_APP_SECRET}&grant_type=client_credentials`,
+    }).then((r) => {
+      console.log(r.data["access_token"])
+      return r.data["access_token"];
+    });
+  }
+
+async function check_current_subscription(target_type, webhook_type, condition_value) {
+  const temp_bearer = await get_twitch_bearer();
+  let id = ''
+  const {data} = await axios({
+    method: "get",
+    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+    headers: { 'Authorization': `Bearer ${temp_bearer}`,
+          "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe" },
+  })
+  data.data.forEach(function(webhook) {
+    console.log(webhook)
+    if(webhook['status'] == 'enabled' && webhook['type'] == webhook_type && webhook['condition'][target_type] == condition_value)
+      id = webhook['id']
+  });
+  return id
+}
+
+function complete_param(url, params) {
+  params.forEach((p) => {
+    url = url.replaceAll("{" + p.name + "}", p.value);
+  });
+  return url;
+}
+
+async function linkWebhook(webhook, params) {
+  console.log("\n\n\n")
+  console.log(webhook)
+  const target_type = complete_param(webhook.target_type, params)
+  const webhook_type = complete_param(webhook.webhook_type, params)
+  const condition_value = complete_param(webhook.condition_value, params)
+  let id = await check_current_subscription(target_type, webhook_type, condition_value);
+  console.log(condition_value)
+  if (id != '') {
+    console.log("Webhook already exists")
+    return id
+  }
+  const data = {
+    type: webhook.webhook_type,
+    version: "1",
+    condition: {},
+    transport: {
+    method: "webhook",
+    callback: "https://6262-89-158-233-169.eu.ngrok.io/twitch/webhook",
+    secret: crypto.randomBytes(10).toString("hex"),
+    },
+  };
+  data["condition"][target_type] = condition_value;
+  axios({
+      method: "post",
+      url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+      headers: {
+      Authorization: `Bearer ${await get_twitch_bearer()}`,
+      "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe",
+      },
+      data: data
+  }).then(async (r) => {
+    return r.data['data']['id']
+  })
+}
+
 router.post("/addActionReaction", async (req, res) => {
   try {
     const split_params = (params, dest) => {
@@ -130,17 +202,22 @@ router.post("/addActionReaction", async (req, res) => {
     const user = await User.findOne({ name: req.user.username });
     const action = await Action.findById(action_id);
     const reaction = await Reaction.findById(reaction_id);
-    console.log(action);
-    const newActionReaction = await new ActionReaction({
+    const newAR = new ActionReaction({
       action: action._id,
       reaction: reaction._id,
+      memory: ["unset"],
+      webhook_uid: '',
+      user: user
     });
-    split_params(action_params, newActionReaction.action_params);
-    split_params(reaction_params, newActionReaction.reaction_params);
-    newActionReaction.save().then(() => {
-      console.log(newActionReaction);
-      user.actionReaction.push(newActionReaction);
-      console.log(user);
+    split_params(action_params, newAR.action_params);
+    split_params(reaction_params, newAR.reaction_params);
+    console.log(action.webhook)
+    if (action.webhook) {
+      await action.populate('webhook')
+      newAR.webhook_uid = await linkWebhook(action.webhook, newAR.action_params)
+    }
+    newAR.save().then(() => {
+      user.actionReaction.push(newAR);
       user.save().then(() => {
         res.status(201).json({
           message: `action ${action.name} and reaction ${reaction.name} successfully added to user ${req.user.username}`,
