@@ -1,14 +1,12 @@
 import "./Home.css";
 import HomeBox from "../Component/Home-Box";
 import { FaUser } from "react-icons/fa";
-import Cookies from "universal-cookie";
 import { Link } from "react-router-dom";
-
-const cookies = new Cookies();
+import { removeCookie } from "../cookie";
 
 export default function Home() {
   const logout = async () => {
-    await cookies.remove("TOKEN");
+    await removeCookie("TOKEN");
     window.location.href = "/login";
     return false;
   };

@@ -69,6 +69,14 @@
 }
 
 .connect-page .api-buttons .api-btn:hover {
+    background-color: rgba(0, 255, 0, 0.3);
+    transform: scale(1.1);
+    transition: 0.3s ease;
+}
+
+.connect-page .api-btn-connected:hover {
+    border-color: black;
+    background-color: rgba(255, 0, 0, 0.3);
     transform: scale(1.1);
     transition: 0.3s ease;
 }

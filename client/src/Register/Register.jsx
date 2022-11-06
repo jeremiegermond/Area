@@ -2,26 +2,16 @@ import "./Register.css";
 import { FaFacebook, FaGoogle, FaTwitter } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import axios from "axios";
-import Cookies from "universal-cookie";
 import { Link, useNavigate } from "react-router-dom";
-
-const cookies = new Cookies();
+import { isConnected, postServer } from "../api";
+import { setCookie } from "../cookie";
 
 export default function Register() {
   const navigate = useNavigate();
   useEffect(() => {
-    const auth = cookies.get("TOKEN") ?? "";
-    if (auth.length > 0) {
-      axios
-        .get(`${process.env.REACT_APP_API_URL}/user/profile`, {
-          headers: { Authorization: `Bearer ${auth}` },
-        })
-        .then(async () => {
-          navigate("/home");
-        })
-        .catch(() => {});
-    }
+    isConnected()
+      .then(() => navigate("/home"))
+      .catch(() => {});
   }, [navigate]);
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
@@ -34,20 +24,13 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(client);
-    axios
-      .post(`${process.env.REACT_APP_API_URL}/signup`, client)
+    postServer("signup", client)
       .then((res) => {
         setRegister(true);
-        console.log(res);
-        console.log(res.data);
-        cookies.set("TOKEN", res.data.token, {
-          path: "/",
-        });
+        setCookie("TOKEN", res.data.token);
         navigate("/home");
       })
-      .catch(() => {
-        console.log("Submit error");
-      });
+      .catch(() => console.log("Submit error"));
   };
 
   return (

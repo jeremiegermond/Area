@@ -1,29 +1,15 @@
 import "./Epitech.css";
-import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import axios from "axios";
-
-const auth = new Cookies().get("TOKEN");
+import { postServer } from "../../api";
 
 export default function Epitech() {
   const navigate = useNavigate();
   const [cookie, setCookie] = useState("");
 
   function handleSubmit() {
-    axios
-      .post(
-        "http://localhost:8080/user/epitech/callback",
-        {
-          user_cookie: cookie,
-        },
-        {
-          headers: { Authorization: `Bearer ${auth}` },
-        }
-      )
-      .then(() => {
-        navigate("/connect-api", { replace: true });
-      })
+    postServer("user/epitech/callback", { user_cookie: cookie })
+      .then(() => navigate("/connect-api", { replace: true }))
       .catch((e) => {
         console.log("error", e);
       });

@@ -1,45 +1,38 @@
 import "./Connect.css";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Cookies from "universal-cookie";
 import { Link } from "react-router-dom";
+import { deleteServer, getServer } from "../api";
 
 export default function Connect() {
-  const auth = new Cookies().get("TOKEN");
   const [twitch, setTwitch] = useState(false);
   const [twitter, setTwitter] = useState(false);
   const [reddit, setReddit] = useState(false);
   const [epitech, setEpitech] = useState(false);
 
-  const addApi = (api) => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/user/${api}/addAccount`, {
-        headers: { Authorization: `Bearer ${auth}` },
-      })
-      .then((res) => {
-        console.log(res.status);
-        console.log(res.data);
-        window.location.href = res.data["path"];
-      });
+  const toggleApi = (api: string, state: boolean, setter) => {
+    if (state) {
+      deleteServer("user/deleteAPI/" + api)
+        .then(() => setter(false))
+        .catch(() => {});
+      return;
+    }
+    getServer(`user/${api}/addAccount`).then(
+      (res) => (window.location.href = res.data["path"])
+    );
   };
   useEffect(() => {
     const hasApi = (api, setter) => {
-      axios
-        .get(`${process.env.REACT_APP_API_URL}/user/hasApi/${api}`, {
-          headers: { Authorization: `Bearer ${auth}` },
-        })
+      getServer("user/hasApi/" + api)
         .then((res) => {
           setter(res.data);
         })
-        .catch(() => {
-          console.log(`Couldn't get ${api} status`);
-        });
+        .catch(() => console.log(`Couldn't get ${api} status`));
     };
     hasApi("reddit", setReddit);
     hasApi("twitter", setTwitter);
     hasApi("twitch", setTwitch);
     hasApi("epitech", setEpitech);
-  }, [auth]);
+  }, []);
 
   return (
     <section className="connect-page">
@@ -50,24 +43,30 @@ export default function Connect() {
           type="submit"
           value="Twitch"
           className={twitch ? "api-btn-connected" : "api-btn"}
-          onClick={() => addApi("twitch")}
+          onClick={() => toggleApi("twitch", twitch, setTwitch)}
         />
         <input
           type="submit"
           value="Reddit"
           className={reddit ? "api-btn-connected" : "api-btn"}
-          onClick={() => addApi("reddit")}
+          onClick={() => toggleApi("reddit", reddit, setReddit)}
         />
         <input
           type="submit"
           value="Twitter"
           className={twitter ? "api-btn-connected" : "api-btn"}
-          onClick={() => addApi("twitter")}
+          onClick={() => toggleApi("twitter", twitter, setTwitter)}
         />
         <Link
           to="epitech"
           value="Epitech"
           className={epitech ? "api-btn-connected" : "api-btn"}
+          onClick={(e) => {
+            if (epitech) {
+              e.preventDefault();
+              toggleApi("epitech", epitech, setEpitech);
+            }
+          }}
         >
           Epitech
         </Link>
