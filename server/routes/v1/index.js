@@ -264,4 +264,23 @@ const twitch = require("./twitch/webhook");
 const api_call = require("../../models/v1/api_call.js");
 router.use("/twitch", twitch)
 
+
+router.get('/google',
+  passport.authenticate('google', { scope: [ 'email', 'profile' ] })
+);
+
+router.get('/google/callback', (req, res) => {
+  passport.authenticate( 'google', {},(issuer, profile, cb) => {
+    console.log({issuer, profile, cb})
+    const token = jwt.sign({user: {_id: profile.googleId, username: "CHANGETHIS"}}, "TOP_SECRET");
+    res.redirect('http://localhost:8081/callback&jwt='+ token);
+  })(req, res);
+})
+
+router.get('/logout', (req, res) => { 
+  req.logout();
+  req.session.destroy();
+  res.send('Goodbye!');
+});
+
 module.exports = router;

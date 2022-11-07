@@ -8,8 +8,10 @@ const cors = require("cors");
 const Users = require("./models/v1/user");
 const https = require("https");
 const fs = require("fs");
+const session = require("express-session");
 
 require("./auth/auth");
+require("./auth/oauth");
 
 const port = process.env.PORT || 8080;
 mongodb.initDbConnection();
@@ -23,6 +25,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(logger("dev"));
 app.use(express.json());
+app.use(session({
+  secret: "secret",
+  resave: false ,
+  saveUninitialized: true ,
+}))
+app.use(passport.session());
 
 app.use(
   cors({

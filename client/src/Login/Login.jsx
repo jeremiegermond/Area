@@ -75,9 +75,9 @@ export default function Login() {
                 <div className="line"></div>
               </div>
               <div className="login-box-icons">
-                <FaTwitter className="icon" />
-                <FaGoogle className="icon" />
-                <FaFacebook className="icon" />
+                <a href="http://localhost:8080/google/">
+                  <FaGoogle className="icon" />
+                </a>   
               </div>
             </div>
             <Button

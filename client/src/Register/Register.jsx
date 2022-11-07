@@ -1,5 +1,5 @@
 import "./Register.css";
-import { FaFacebook, FaGoogle, FaTwitter } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -75,9 +75,9 @@ export default function Register() {
                 <div className="line"></div>
               </div>
               <div className="register-box-icons">
-                <FaTwitter className="icon" />
-                <FaGoogle className="icon" />
-                <FaFacebook className="icon" />
+                <a href="http://localhost:8080/google/">
+                  <FaGoogle className="icon" />
+                </a>                
               </div>
             </div>
             <Button

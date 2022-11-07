@@ -81,13 +81,26 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    width: 50%;
+    flex-direction: column;
+    text-align: row;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 10px;
 }
 
 .register-box-btns .register-box-icons .icon {
     transform: scale(1.5);
     cursor: pointer;
     transition: 0.3s ease;
+    color: black;
+}
+
+.register-box-btns .register-box-icons .icon {
+    transform: scale(1.5);
+    cursor: pointer;
+    transition: 0.3s ease;
+    color: black;
 }
 
 .register-box-btns .register-box-icons .icon:hover {
