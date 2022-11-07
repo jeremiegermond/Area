@@ -6,9 +6,13 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
 const Users = require("./models/v1/user");
+const Actions = require("./models/v1/action");
+const Reactions = require("./models/v1/reaction");
 const https = require("https");
 const fs = require("fs");
 const session = require("express-session");
+const db_json = require("./db.json");
+const utils = require("./utils.js")
 
 require("./auth/auth");
 require("./auth/oauth");
@@ -18,6 +22,8 @@ mongodb.initDbConnection();
 
 const routes = require("./routes/v1/index");
 const secureRoute = require("./routes/v1/secure-index");
+const { default: axios } = require("axios");
+const Services = require("./models/v1/services");
 
 const app = express();
 app.use(passport.initialize());
@@ -53,6 +59,34 @@ if (process.env.HTTPS === "true") {
 } else {
   app.listen(port);
 }
+
+
+async function build_db(file) {
+  try {
+    file.services.forEach(async (service) => {
+      const arr = await Services.find({name: service.name})
+      if (arr.length === 0)
+        await utils.addService({name: service.name, desc: service.desc, appKeys: service.appKeys})
+        .then(() => {
+      service.actions.forEach(async (action) => {
+        action.service = service.name
+        const arr = await Actions.find({name: service.name})
+        if (arr.length === 0)
+          await utils.addAction(action)
+      })
+      service.reactions.forEach(async (reaction) => {
+        reaction.service = service.name
+        const arr = await Reactions.find({name: service.name})
+        if (arr.length === 0)
+          utils.addReaction(reaction)
+      })})
+    })
+  } catch (error) {
+    console.log("Server was unable to build database")
+    return
+  }
+}
+build_db(db_json)
 
 console.log(`Server listening on port ${port}`);
 

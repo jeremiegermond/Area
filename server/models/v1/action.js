@@ -6,6 +6,8 @@ const Schema = mongoose.Schema;
 const Action = new Schema({
   name: {
     type: String,
+    required: [true, "Name is required"],
+    unique: true,
   },
   description: {
     type: String,

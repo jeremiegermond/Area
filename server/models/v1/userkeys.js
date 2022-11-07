@@ -8,7 +8,7 @@ const UserKeys = new Schema({
     },
     keys: {
         type : Map
-    },
+    }
 })
 
 module.exports = mongoose.model('UserKeys', UserKeys)

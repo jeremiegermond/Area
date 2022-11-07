@@ -1,0 +1,60 @@
+{
+    "services" : [
+        {
+            "name" : "twitter",
+            "desc" : "twitter service",
+            "appKeys" : "appkey:AAAAAAAAAAAAAAAAAAAAAOj6hwEAAAAAdyivOyWoWoLBNBFGdgccYLpF%2FBM%3DeTsVAZmJD8fZV9PbEOhiny1QDNXmOeGwaz2mglLl7417OJlWwQ",
+            "actions" : [
+                {
+                    "name" : "New tweet",
+                    "desc" : "User {ID} posted a new tweet",
+                    "method": "get",
+                    "endpointUrl": "https://api.twitter.com/2/users/{ID}/tweets?exclude=retweets&max_results=5",
+                    "header": "Bearer:appkey",
+                    "trigger": "dataChanged,meta.newest_id&&codeIs,200",
+                    "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitter account id\",\"keyboard\":\"number-pad\"}]"
+                }
+            ],
+            "reactions" : [
+
+            ]   
+        },
+        {
+            "name" : "reddit",
+            "desc" : "reddit service",
+            "appKeys" : "appkey:1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA",
+            "actions" : [
+
+            ],
+            "reactions" : [
+                {
+                    "name": "reddit test",
+                    "desc": "post on r/test",
+                    "method": "post",
+                    "options": "",
+                    "endpointUrl": "https://oauth.reddit.com/api/submit?sr=test&text=Un tweet a  été posté&title=le titre&kind=self",
+                    "header": "Bearer:access_token",
+                    "body": "{\"resubmit\" : \"true\",\"send_replies\" : \"true\",\"api_type\" : \"json\"}"
+                }
+            ]
+        },
+        {
+            "name" : "twitch",
+            "desc" : "twitch service",
+            "appKeys" : "",
+            "actions" : [
+                {
+                    "service": "twitch",
+                    "name": "twitch webhook test user.update",
+                    "desc": "webhook test",
+                    "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitch account id\",\"keyboard\":\"number-pad\"}]",
+                    "webhook_type": "user.update",
+                    "condition_value": "{ID}",
+                    "target_type": "user_id"
+                }
+            ],
+            "reactions" : [
+            ]
+        }
+    ]
+}
