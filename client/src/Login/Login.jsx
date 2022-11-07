@@ -1,5 +1,5 @@
 import "./Login.css";
-import { FaFacebook, FaGoogle, FaTwitter } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -49,7 +49,6 @@ export default function Login() {
                   placeholder="Username"
                   className="btn"
                   onChange={(e) => setUser(e.target.value)}
-                  required
                 />
               </Form.Group>
               <Form.Group controlId="formPassword">
@@ -66,7 +65,6 @@ export default function Login() {
                       handleSubmit(event);
                     }
                   }}
-                  required
                 />
               </Form.Group>
               <div className="separator">
@@ -76,23 +74,23 @@ export default function Login() {
               </div>
               <div className="login-box-icons">
                 <a href="http://localhost:8080/google/">
-                  <FaGoogle className="icon" />
+                  <div className="oauth-button">
+                    <FcGoogle className="icon" />
+                    <h6>Log in with google</h6>
+                  </div>
                 </a>   
               </div>
             </div>
-            <Button
-              variant="primary"
-              type="submit"
-              className="login-btn"
-              onClick={(e) => handleSubmit(e)}
-            >
+            <Button variant="primary" type="submit" className="login-btn" onClick={(e) => handleSubmit(e)}>
               Login
             </Button>
-            {login ? (
-              <p className="text-success">You are logged in</p>
-            ) : (
-              <p className="text-danger">You are not logged in</p>
-            )}
+            {
+              login ? (
+                <p className="text-success">You are logged in</p>
+              ) : (
+                <p className="text-danger">You are not logged in</p>
+              )
+            }
           </Form>
           <p>
             You don't have an account ? Back to{" "}

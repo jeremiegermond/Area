@@ -84,16 +84,36 @@
     flex-direction: column;
     text-align: row;
     width: 100%;
-    border: 1px solid black;
-    border-radius: 20px;
-    padding: 10px;
 }
 
-.register-box-btns .register-box-icons .icon {
-    transform: scale(1.5);
+.register-box-btns .register-box-icons .oauth-button {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+    color: black;
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    width: 200px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.384);
+}
+
+.register-box-btns .register-box-icons .oauth-button h6 {
+    margin: 0;
+    padding: 0;
+}
+
+.register-box-btns .register-box-icons a {
+    text-decoration: none;
+    color: black;
+    transition: 0.3s ease;
+}
+
+.register-box-btns .register-box-icons a:hover {
+    transform: scale(1.02);
     cursor: pointer;
     transition: 0.3s ease;
-    color: black;
 }
 
 .register-box-btns .register-box-icons .icon {

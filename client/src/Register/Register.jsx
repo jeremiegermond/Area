@@ -1,10 +1,11 @@
 import "./Register.css";
-import { FaGoogle } from "react-icons/fa";
+
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { isConnected, postServer } from "../api";
 import { setCookie } from "../cookie";
+import { FcGoogle } from "react-icons/fc"
 
 export default function Register() {
   const navigate = useNavigate();
@@ -76,7 +77,10 @@ export default function Register() {
               </div>
               <div className="register-box-icons">
                 <a href="http://localhost:8080/google/">
-                  <FaGoogle className="icon" />
+                  <div className="oauth-button">
+                    <FcGoogle className="icon" />
+                    <h6>Log in with google</h6>
+                  </div>
                 </a>                
               </div>
             </div>
