@@ -9,7 +9,7 @@ export default function Reddit() {
     try {
       const { code } = queryString.parse(window.location.search);
       if (code) {
-        postServer("user/reddit/callback").then(() =>
+        postServer("user/reddit/callback", { code }).then(() =>
           navigate("/connect-api", { replace: true })
         );
       }
