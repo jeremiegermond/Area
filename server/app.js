@@ -12,10 +12,9 @@ const https = require("https");
 const fs = require("fs");
 const session = require("express-session");
 const db_json = require("./db.json");
-const utils = require("./utils.js")
+const utils = require("./utils.js");
 
 require("./auth/auth");
-require("./auth/oauth");
 
 const port = process.env.PORT || 8080;
 mongodb.initDbConnection();
@@ -31,11 +30,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(logger("dev"));
 app.use(express.json());
-app.use(session({
-  secret: "secret",
-  resave: false ,
-  saveUninitialized: true ,
-}))
+app.use(
+  session({
+    secret: "TOP_SECRET",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 app.use(passport.session());
 
 app.use(
@@ -59,7 +60,6 @@ if (process.env.HTTPS === "true") {
 } else {
   app.listen(port);
 }
-
 
 async function build_db(file) {
   try {
@@ -86,7 +86,7 @@ async function build_db(file) {
     return
   }
 }
-build_db(db_json)
+build_db(db_json);
 
 console.log(`Server listening on port ${port}`);
 
@@ -101,14 +101,14 @@ async function checkActions() {
         try {
           user.populate("actionReaction").then(() => {
             user.actionReaction.forEach(async (ar) => {
-              await ar.populate("action")
-              if (ar.webhook_uid === '')
-                if (await ar.action.check(user, ar) === true)
+              await ar.populate("action");
+              if (ar.webhook_uid === "")
+                if ((await ar.action.check(user, ar)) === true)
                   ar.populate("reaction").then(async () => {
                     await ar.reaction.exec(user, ar.reaction_params);
                   });
-            })
-          })
+            });
+          });
         } catch (error) {
           console.log(error);
         }

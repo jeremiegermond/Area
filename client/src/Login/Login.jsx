@@ -2,17 +2,22 @@ import "./Login.css";
 import { FcGoogle } from "react-icons/fc";
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { isConnected, postServer } from "../api";
 import { setCookie } from "../cookie";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.has("jwt")) {
+      setCookie("TOKEN", params.get("jwt"));
+    }
     isConnected()
       .then(() => navigate("/home"))
       .catch(() => {});
-  }, [navigate]);
+  }, [location, navigate]);
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState(false);
@@ -23,7 +28,7 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(client);
+    if (client.password.length < 1) return;
     postServer("login", client)
       .then((res) => {
         setLogin(true);
@@ -78,19 +83,22 @@ export default function Login() {
                     <FcGoogle className="icon" />
                     <h6>Log in with google</h6>
                   </div>
-                </a>   
+                </a>
               </div>
             </div>
-            <Button variant="primary" type="submit" className="login-btn" onClick={(e) => handleSubmit(e)}>
+            <Button
+              variant="primary"
+              type="submit"
+              className="login-btn"
+              onClick={(e) => handleSubmit(e)}
+            >
               Login
             </Button>
-            {
-              login ? (
-                <p className="text-success">You are logged in</p>
-              ) : (
-                <p className="text-danger">You are not logged in</p>
-              )
-            }
+            {login ? (
+              <p className="text-success">You are logged in</p>
+            ) : (
+              <p className="text-danger">You are not logged in</p>
+            )}
           </Form>
           <p>
             You don't have an account ? Back to{" "}
