@@ -9,7 +9,7 @@ export default function Twitch() {
     try {
       const { code } = queryString.parse(window.location.search);
       if (code) {
-        postServer("user/twitch/callback").then(() =>
+        postServer("user/twitch/callback", { code }).then(() =>
           navigate("/connect-api", { replace: true })
         );
       }
