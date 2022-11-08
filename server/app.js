@@ -21,7 +21,6 @@ mongodb.initDbConnection();
 
 const routes = require("./routes/v1/index");
 const secureRoute = require("./routes/v1/secure-index");
-const { default: axios } = require("axios");
 const Services = require("./models/v1/services");
 
 const app = express();

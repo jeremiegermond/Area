@@ -199,7 +199,7 @@ router.post("/addActionReaction", async (req, res) => {
       });
     };
     const { action_id, reaction_id, action_params, reaction_params } = req.body;
-    const user = await User.findOne({ name: req.user.username });
+    const user = await User.findOne({ username: req.user.username });
     const action = await Action.findById(action_id);
     const reaction = await Reaction.findById(reaction_id);
     const newAR = new ActionReaction({
