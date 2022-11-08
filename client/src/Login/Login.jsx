@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { isConnected, postServer } from "../api";
+import { craftUri, isConnected, postServer } from "../api";
 import { setCookie } from "../cookie";
 
 export default function Login() {
@@ -78,7 +78,7 @@ export default function Login() {
                 <div className="line"></div>
               </div>
               <div className="login-box-icons">
-                <a href="http://localhost:8080/google/">
+                <a href={craftUri("google")}>
                   <div className="oauth-button">
                     <FcGoogle className="icon" />
                     <h6>Log in with google</h6>

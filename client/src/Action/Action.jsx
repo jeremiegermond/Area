@@ -1,7 +1,7 @@
 import "./Action.css";
 import { useEffect, useState } from "react";
 import { getServer } from "../api";
-import { FaReddit, FaTwitter } from "react-icons/fa";
+import { FaReddit, FaTwitch, FaTwitter } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 function Action() {
@@ -84,5 +84,6 @@ function Action() {
 export const icons = {
   twitter: <FaTwitter size={40} />,
   reddit: <FaReddit size={40} />,
+  twitch: <FaTwitch size={40} />,
 };
 export default Action;

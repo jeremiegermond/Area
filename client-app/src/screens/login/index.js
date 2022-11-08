@@ -1,25 +1,66 @@
 import React, {useRef, useState} from 'react';
-import {Keyboard, StyleSheet, Text, TextInput, View} from 'react-native';
-import PressableIcon from '../../components/PressableIcon';
 import {
-  faFacebook,
-  faGoogle,
-  faTwitter,
-} from '@fortawesome/free-brands-svg-icons';
+  Button,
+  Keyboard,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import PressableIcon from '../../components/PressableIcon';
+import {faGoogle} from '@fortawesome/free-brands-svg-icons';
 import Gradient from '../../components/Gradient';
 import DefaultPressable from '../../components/DefaultPressable';
-import {userExist, userLogin} from '../../api';
+import {setToken, userExist, userLogin} from '../../api';
 import {Toast} from '../../components/Toast';
-import Animated, {BounceIn, BounceOut} from 'react-native-reanimated';
+import Animated, {
+  BounceIn,
+  BounceInUp,
+  BounceOut,
+} from 'react-native-reanimated';
 import {AnimatedGradient} from '../../utils/animated';
+import WebView from 'react-native-webview';
+import {getItem, getParams} from '../../data';
 
 const LoginScreen = ({handleLogin}) => {
   const [login, setLogin] = useState(false);
   const [username, onChangeUser] = useState('');
   const [password, onChangePassword] = useState('');
+  const [modal, setModal] = useState(false);
+  const [ip, setIp] = useState('');
+  const [url, setUrl] = useState('');
   const ref_password = useRef();
+  getItem('@ip').then(setIp);
+  const handleBrowserEvent = async ({nativeEvent}) => {
+    console.log('hanlde', nativeEvent.url);
+    if (nativeEvent.url.startsWith(ip + ':8081/login')) {
+      const params = getParams(nativeEvent.url);
+      console.log('logged In', params);
+      setToken(params.jwt).then(handleLogin);
+    } else if (nativeEvent.url.startsWith('http://localhost')) {
+      const newUrl = nativeEvent.url.replace('http://localhost', ip);
+      setUrl(newUrl);
+    }
+  };
   return (
     <AnimatedGradient>
+      <Modal
+        transparent={true}
+        visible={modal}
+        onRequestClose={() => setModal(false)}>
+        <Animated.View
+          style={styles.modalBox}
+          entering={BounceInUp.delay(100).duration(500)}>
+          <WebView
+            source={{uri: url}}
+            userAgent={'Mozilla/5.0 Mobile Safari/605.1.15'}
+            onLoad={handleBrowserEvent}
+            onError={handleBrowserEvent}
+          />
+          <Button title="Close" onPress={() => setModal(false)} />
+        </Animated.View>
+      </Modal>
       <Animated.View
         style={styles.loginBox}
         entering={BounceIn}
@@ -54,9 +95,9 @@ const LoginScreen = ({handleLogin}) => {
             secureTextEntry={true}
             value={password}
             onChangeText={onChangePassword}
-            onSubmitEditing={async () => {
+            onSubmitEditing={() => {
               if (username.length > 0 && password.length > 0) {
-                await userLogin(username, password)
+                userLogin(username, password)
                   .then(() => handleLogin())
                   .catch(e => {
                     console.log(e.message);
@@ -73,21 +114,10 @@ const LoginScreen = ({handleLogin}) => {
           </View>
           <View style={styles.loginBoxIcons}>
             <PressableIcon
-              icon={faTwitter}
-              onPress={() => {
-                console.log('twitter pressed');
-              }}
-            />
-            <PressableIcon
               icon={faGoogle}
               onPress={() => {
-                console.log('google pressed');
-              }}
-            />
-            <PressableIcon
-              icon={faFacebook}
-              onPress={() => {
-                console.log('facebook pressed');
+                setUrl(ip + ':8080/google');
+                setModal(true);
               }}
             />
           </View>
@@ -98,9 +128,9 @@ const LoginScreen = ({handleLogin}) => {
             height={'100%'}
             radius={50}
             disabled={username.length < 1 || password.length < 1}
-            onPress={async () => {
+            onPress={() => {
               Keyboard.dismiss();
-              await userLogin(username, password)
+              userLogin(username, password)
                 .then(() => handleLogin())
                 .catch(e => {
                   console.log(e.message);
@@ -190,6 +220,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
+  },
+  modalBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: 'red',
+    width: '95%',
+    height: '95%',
+    marginTop: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowRadius: 20,
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.3,
+    elevation: 7,
   },
 });
 
