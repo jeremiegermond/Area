@@ -56,7 +56,7 @@ exports.addAction = async (body) => {
     const newAction = new Action({
       name: name,
       description: desc,
-      options: !options ? null : JSON.parse(options),
+      options: JSON.parse(options ?? '[]'),
       webhook: !method ? await addWebhookAction(body) : null,
       api_call: method ? await addApiAction(body) : null
     });
@@ -88,7 +88,7 @@ exports.addReaction = async (body) => {
       header: header,
       body: rbody,
       userKey: userKey === "true",
-      options: !options ? null : JSON.parse(options),
+      options: JSON.parse(options ?? '[]'),
     });
     await db
     .collection("services")

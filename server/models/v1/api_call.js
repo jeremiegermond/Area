@@ -97,8 +97,8 @@ async function check_response(action, res, ar) {
     //console.log(results);
     return results[0];
   } catch (err) {
-    //console.log(err)
-    return false 
+    console.log(err)
+    return false
   }
 }
 
@@ -111,9 +111,10 @@ async function get_headers(action, user, service) {
     let data = keys.keys.get(type[type.length - 1]);
     if (typeof data === "undefined")
       data = service.appKeys.get(type[type.length - 1]);
-    header["Authorization"] =
-      typeof data === "undefined" ? element : type[0] + " " + data;
+    header[type[0]] =
+      typeof data === "undefined" ? element : data;
   });
+  console.log(header)
   return header;
 }
 

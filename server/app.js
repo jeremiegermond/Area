@@ -105,7 +105,7 @@ async function checkActions() {
               if (ar.webhook_uid === '')
                 if (await ar.action.check(user, ar) === true)
                   ar.populate("reaction").then(async () => {
-                    await ar.reaction.exec(user, ar.reaction_params);
+                    await ar.reaction.exec(user ,ar.reaction_params);
                   });
             })
           })
