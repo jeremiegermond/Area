@@ -8,7 +8,15 @@ router.post("/callback", async (req, res) => {
   const { user_cookie } = req.body;
   try {
     const user = await User.findOne({ username: req.user.username });
-    const map = new Map([["user_cookie", user_cookie.toString()]]);
+    const { data } = await axios.get(
+      "https://intra.epitech.eu/user/?format=json",
+      { headers: { Cookie: "user=" + user_cookie } }
+    );
+    const { internal_email } = data;
+    const map = new Map([
+      ["user_cookie", user_cookie.toString()],
+      ["email", internal_email],
+    ]);
     user.addApiKey(map, "epitech").then((e) => res.status(201).send(e));
   } catch (e) {
     console.log(e);
