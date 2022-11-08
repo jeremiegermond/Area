@@ -2,7 +2,7 @@ import React from 'react';
 import WebView from 'react-native-webview';
 import {Toast} from '../../components/Toast';
 import {postApi} from '../../api';
-import {getItem} from '../../data';
+import {getItem, getParams} from '../../data';
 import {NativeEvent} from 'react-native-reanimated/lib/types';
 import CookieManager from '@react-native-cookies/cookies';
 
@@ -33,12 +33,7 @@ class BrowserScreen extends React.Component {
       url.startsWith('http://localhost:8081/connect-api/') ||
       url.startsWith(`${await getItem('@ip')}:8081/connect-api/`)
     ) {
-      const regex = /[?&]([^=#]+)=([^&#]*)/g;
-      const params = {};
-      let match;
-      while ((match = regex.exec(url))) {
-        params[match[1]] = match[2];
-      }
+      const params = getParams(url);
       this.postParams(route.params.api, params, navigation);
     } else if (url.startsWith('https://intra.epitech.eu/')) {
       CookieManager.get('https://intra.epitech.eu/')

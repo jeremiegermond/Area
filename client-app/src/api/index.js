@@ -45,6 +45,13 @@ export async function userExist(user: string = '') {
   return await getServer(`exist/${user}`);
 }
 
+export async function setToken(jwt: string) {
+  if (jwt.length > 1) {
+    return await setItem('@token', jwt);
+  }
+  throw 'Token error';
+}
+
 export async function userLogin(username: string, password: string) {
   const user = {
     username: username,
@@ -54,11 +61,7 @@ export async function userLogin(username: string, password: string) {
     .then(e => e.data)
     .catch(e => console.log(e));
   await postServer(exist ? 'login' : 'signup', user).then(async r => {
-    if (r.data.token.length > 1) {
-      await setItem('@token', r.data.token);
-    } else {
-      throw 'Wrong token';
-    }
+    return await setToken(r.data.token);
   });
 }
 

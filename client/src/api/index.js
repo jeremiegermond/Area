@@ -5,7 +5,7 @@ function token() {
   return getCookie("TOKEN");
 }
 
-function craftUri(endpoint: string) {
+export function craftUri(endpoint: string) {
   const uri = new URL(process.env.REACT_APP_API_URL);
   uri.pathname = endpoint;
   return uri;

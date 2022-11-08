@@ -29,3 +29,13 @@ export async function removeItem(key: string) {
     console.log(e);
   }
 }
+
+export function getParams(url: string) {
+  const regex = /[?&]([^=#]+)=([^&#]*)/g;
+  const params = {};
+  let match;
+  while ((match = regex.exec(url))) {
+    params[match[1]] = match[2];
+  }
+  return params;
+}

@@ -14,7 +14,6 @@ const User = new Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
     },
     keys: [
       {

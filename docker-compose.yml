@@ -45,6 +45,8 @@ services:
       - REDDIT_APP_SECRET=${REDDIT_APP_SECRET:-3X7O0lsVJ5HjWE3YC2QB7OBKZxOXtQ}
       - TWITCH_APP_ID=${TWITCH_APP_ID:-vi9za74j91x41dxvhmdsyjzau002xe}
       - TWITCH_APP_SECRET=${TWITCH_APP_SECRET:-wteackfgzu4nqmj72azqg5bts4rduq}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-257681430348-9r8vob0chstjb5to7atf9mr25fllnvkv.apps.googleusercontent.com}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-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}
 
   mongo:
     container_name: mongo-prod

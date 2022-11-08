@@ -2,7 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import DefaultBox from '../../components/DefaultBox';
 import DefaultView from '../../components/DefaultView';
-import {faReddit, faTwitter} from '@fortawesome/free-brands-svg-icons';
+import {
+  faReddit,
+  faTwitch,
+  faTwitter,
+} from '@fortawesome/free-brands-svg-icons';
 import DefaultPressable from '../../components/DefaultPressable';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {getServer, postServer} from '../../api';
@@ -107,11 +111,7 @@ const AddScreen = ({navigation}) => {
                   onPress={() => {
                     handleItemClick(item);
                   }}>
-                  <FontAwesomeIcon
-                    icon={icons[item.service.name]}
-                    size={50}
-                    style={styles.arIcon}
-                  />
+                  {icons[item.service.name]}
                   <Text style={styles.arText}>{item.name}</Text>
                 </DefaultPressable>
               </DefaultBox>
@@ -131,11 +131,6 @@ const AddScreen = ({navigation}) => {
   );
 };
 
-const icons = {
-  twitter: faTwitter,
-  reddit: faReddit,
-};
-
 const styles = StyleSheet.create({
   boxesView: {
     justifyContent: 'space-evenly',
@@ -153,5 +148,11 @@ const styles = StyleSheet.create({
   greenBg: {backgroundColor: 'lightgreen'},
   connectApiBox: {width: '100%', height: '100%', borderRadius: 40},
 });
+
+const icons = {
+  twitter: <FontAwesomeIcon icon={faTwitter} size={50} style={styles.arIcon} />,
+  reddit: <FontAwesomeIcon icon={faReddit} size={50} style={styles.arIcon} />,
+  twitch: <FontAwesomeIcon icon={faTwitch} size={50} style={styles.arIcon} />,
+};
 
 export default AddScreen;

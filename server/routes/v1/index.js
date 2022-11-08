@@ -2,21 +2,17 @@ const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const Services = require("../../models/v1/services.js");
-const Action = require("../../models/v1/action.js");
-const Reaction = require("../../models/v1/reaction.js");
-const Api_call = require("../../models/v1/api_call.js");
-const Webhook = require("../../models/v1/webhook");
+const { db } = require("../../models/v1/action.js");
 const User = require("../../models/v1/user");
 const crypto = require("crypto");
-const axios = require("axios");
-const utils = require("../../utils.js")
+const utils = require("../../utils.js");
 
 const router = express.Router();
 
 router.post(
   "/signup",
   passport.authenticate("signup", { session: false }),
-  async (req, res, next) => {
+  async (req, res) => {
     const user = req.user;
     const token = jwt.sign(
       { user: { _id: user._id, username: user.username } },
@@ -30,7 +26,7 @@ router.post(
 );
 
 router.post("/login", async (req, res, next) => {
-  passport.authenticate("login", async (err, user, info) => {
+  passport.authenticate("login", async (err, user) => {
     try {
       if (err || !user) {
         const error = new Error("An error occurred.");
@@ -48,40 +44,41 @@ router.post("/login", async (req, res, next) => {
   })(req, res, next);
 });
 
-router.post("/addService", (req, res, next) => {
-  utils.addService(req.body)
-  .then(() => {
-    res.status(201).json({
-      message: "Service saved successfully!",
+router.post("/addService", (req, res) => {
+  utils
+    .addService(req.body)
+    .then(() => {
+      res.status(201).json({
+        message: "Service saved successfully!",
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).json({
+        error: error,
+      });
     });
-  })
-  .catch((error) => {
-    console.log(error);
-    res.status(400).json({
-      error: error,
-    });
-  });
 });
 
-router.post("/addAction", (req, res, next) => {
+router.post("/addAction", (req, res) => {
   try {
-    utils.addAction(req.body)
-    .then(() => {
+    utils.addAction(req.body).then(() => {
       res.status(201).json({
         message: `Action added successfully to service ${req.body.service}!`,
       });
-    })
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: error });
   }
 });
 
-router.post("/addReaction", async (req, res, next) => {
-    utils.addReaction(req.body)
+router.post("/addReaction", async (req, res) => {
+  utils
+    .addReaction(req.body)
     .then(() => {
       res.status(201).json({
-        message: `Reaction added successfully to service ${service}!`,
+        message: `Reaction added successfully to service ${req.body.service}!`,
       });
     })
     .catch((error) => {
@@ -90,7 +87,7 @@ router.post("/addReaction", async (req, res, next) => {
     });
 });
 
-router.get("/ping", async (req, res, next) => {
+router.get("/ping", async (req, res) => {
   try {
     let result = await db.collection("services").findOne({ name: "test" });
     console.log(result);
@@ -109,7 +106,7 @@ router.get("/ping", async (req, res, next) => {
   }
 });
 
-router.get("/ping2", async (req, res, next) => {
+router.get("/ping2", async (req, res) => {
   return res.status(200).json(true);
 });
 
@@ -127,7 +124,7 @@ router.get("/exist/:name", async (req, res) => {
   }
 });
 
-router.get("/about.json", async (req, res, next) => {
+router.get("/about.json", async (req, res) => {
   try {
     const ip = req.ip.split(":")[3];
     const services = await Services.find()
@@ -164,29 +161,26 @@ router.post("/webhooks/twitter", (req, res) => {
   res.status(200).json({ response_token: `sha256=${crc_response}` });
 });
 
-
-
 const twitch = require("./twitch/webhook");
-const api_call = require("../../models/v1/api_call.js");
-router.use("/twitch", twitch)
+router.use("/twitch", twitch);
 
-
-router.get('/google',
-  passport.authenticate('google', { scope: [ 'email', 'profile' ] })
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
-router.get('/google/callback', (req, res) => {
-  passport.authenticate( 'google', {},(issuer, profile, cb) => {
-    console.log({issuer, profile, cb})
-    const token = jwt.sign({user: {_id: profile.googleId, username: "CHANGETHIS"}}, "TOP_SECRET");
-    res.redirect('http://localhost:8081/callback&jwt='+ token);
+router.get("/google/callback", (req, res) => {
+  passport.authenticate("google", {}, async (issuer, user, profile) => {
+    console.log({ user, profile });
+    const token = jwt.sign({ user: user }, "TOP_SECRET");
+    res.redirect(process.env.BASE_URL + ":8081/login?jwt=" + token);
   })(req, res);
-})
+});
 
-router.get('/logout', (req, res) => { 
+router.get("/logout", (req, res) => {
   req.logout();
   req.session.destroy();
-  res.send('Goodbye!');
+  res.send("Goodbye!");
 });
 
 module.exports = router;
