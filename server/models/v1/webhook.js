@@ -14,12 +14,4 @@ const Webhook = new Schema({
     },
 })
 
-Webhook.methods.check = async function (user, params, memory) {
-    try {
-
-    } catch (error) {
-        console.log(error)
-    }
-}
-
 module.exports = mongoose.model("Webhook", Webhook);
