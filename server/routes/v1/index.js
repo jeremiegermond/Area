@@ -2,6 +2,8 @@ const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const Services = require("../../models/v1/services.js");
+const Actions = require("../../models/v1/action.js");
+const Reactions = require("../../models/v1/reaction.js");
 const { db } = require("../../models/v1/action.js");
 const User = require("../../models/v1/user");
 const crypto = require("crypto");
@@ -173,6 +175,100 @@ router.post("/addReaction", async (req, res) => {
       res.status(400).json({ error: error });
     });
 });
+
+router.delete("/removeService/:service", async (req, res) => {
+  try {
+    const {service} = req.params
+    await Services.findOneAndDelete({name: service})
+    fs.readFile("db.json", "utf-8", async (err, data) => {
+      if (err) throw err
+      updtd_data = JSON.parse(data)
+      updtd_data.services.forEach((serv, index) => {
+        if (serv.name === service)
+          updtd_data.services.splice(index, 1)
+      })
+      console.log(updtd_data)
+      fs.writeFile("db.json", JSON.stringify(updtd_data), "utf-8", (err) => {
+        if (err) throw err;
+        console.log(`${service} was removed from db.json`);
+      })
+      res.status(201).json({
+        message: `${service} was removed from db.json`,
+      })
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      error: error,
+    });
+  }
+})
+
+router.delete("/removeAction/:service/:action", async (req, res) => {
+  try {
+    const {service, action} = req.params
+    await Actions.findOneAndDelete({name: action})
+    fs.readFile("db.json", "utf-8", async (err, data) => {
+      if (err) throw err
+      updtd_data = JSON.parse(data)
+      updtd_data.services.forEach((serv, index) => {
+        if (serv.name === service) {
+          updtd_data.services[index].actions.forEach((act, index2) => {
+            if (act.name === action) {
+              updtd_data.services[index].actions.splice(index2, 1)
+            }
+          })
+        }
+      })
+      console.log(updtd_data)
+      fs.writeFile("db.json", JSON.stringify(updtd_data), "utf-8", (err) => {
+        if (err) throw err; 
+        console.log(`${service} was removed from db.json`);
+      })
+      res.status(201).json({
+        message: `${service} was removed from db.json`,
+      })
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      error: error,
+    });
+  }
+})
+
+router.delete("/removeReaction/:service/:reaction", async (req, res) => {
+  try {
+    const {service, reaction} = req.params
+    await Reactions.findOneAndDelete({name: reaction})
+    fs.readFile("db.json", "utf-8", async (err, data) => {
+      if (err) throw err
+      updtd_data = JSON.parse(data)
+      updtd_data.services.forEach((serv, index) => {
+        if (serv.name === service) {
+          updtd_data.services[index].reactions.forEach((act, index2) => {
+            if (act.name === reaction) {
+              updtd_data.services[index].reactions.splice(index2, 1)
+            }
+          })
+        }
+      })
+      console.log(updtd_data)
+      fs.writeFile("db.json", JSON.stringify(updtd_data), "utf-8", (err) => {
+        if (err) throw err; 
+        console.log(`${service} was removed from db.json`);
+      })
+      res.status(201).json({
+        message: `${service} was removed from db.json`,
+      })
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      error: error,
+    });
+  }
+})
 
 router.get("/ping", async (req, res) => {
   try {
