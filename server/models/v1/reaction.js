@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const axios = require("axios");
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose")
+const axios = require("axios")
+const Schema = mongoose.Schema
 
 const Reaction = new Schema({
   name: {
@@ -33,50 +33,45 @@ const Reaction = new Schema({
   options: {
     type: Array,
   },
-});
+})
 
 async function get_headers(action, user, service) {
-  const header = {};
-  await user.populate("keys");
-  let keys = await user.keys.find((e) => e.service === service.name);
+  const header = {}
+  await user.populate("keys")
+  let keys = await user.keys.find((e) => e.service === service.name)
   action.header.split(",").forEach((element) => {
-    let type = element.split(":");
-    let data = keys.keys.get(type[type.length - 1]);
+    let type = element.split(":")
+    let data = keys.keys.get(type[type.length - 1])
     if (typeof data === "undefined")
-      data = service.appKeys.get(type[type.length - 1]);
+      data = service.appKeys.get(type[type.length - 1])
     header[type[0]] =
-      typeof data === "undefined" ? element : data;
-  });
+      typeof data === "undefined" ? element : data
+  })
   console.log(header)
-  return header;
+  return header
 }
 
 function complete_url(url, params) {
   params.forEach((p) => {
-    url = url.replaceAll("{" + p.name + "}", p.value);
-  });
-  return url;
+    url = url.replaceAll("{" + p.name + "}", p.value)
+  })
+  return url
 }
 
 Reaction.methods.exec = async function (user, params) {
-  console.log("\n\nreaction\n\n");
+  console.log("\n\nreaction\n\n")
   try {
-    console.log(
-      `${user.username} : Triggered reaction ${this.name}, ${this.description}`
-    );
-    await this.populate("service");
+    console.log(`${user.username} : Triggered reaction ${this.name}`)
+    await this.populate("service")
     await axios({
       method: this.method,
       url: complete_url(this.endpointUrl, params),
       headers: await get_headers(this, user, this.service),
       data: this.body,
-    }).then((res) => {
-      console.log(res);
-      console.log(res.data);
-    });
+    })
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
-};
+}
 
-module.exports = mongoose.model("Reaction", Reaction);
+module.exports = mongoose.model("Reaction", Reaction)
