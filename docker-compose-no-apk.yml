@@ -39,6 +39,8 @@ services:
       - TWITCH_APP_SECRET=${TWITCH_APP_SECRET:-wteackfgzu4nqmj72azqg5bts4rduq}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-257681430348-9r8vob0chstjb5to7atf9mr25fllnvkv.apps.googleusercontent.com}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-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}
+      - SPOTIFY_APP_ID=${SPOTIFY_APP_ID:-27c89047c1a5470a972174a1f19b54c4}
+      - SPOTIFY_APP_SECRET=${SPOTIFY_APP_SECRET:-b1c0e71d34dd4b3f858561bc2d3ab229}
 
   mongo:
     container_name: mongo-prod

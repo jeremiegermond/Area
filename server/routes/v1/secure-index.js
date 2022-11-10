@@ -9,12 +9,14 @@ const crypto = require("crypto");
 
 const twitter = require("./twitter");
 const twitch = require("./twitch");
+const spotify = require("./spotify");
 const reddit = require("./reddit");
 const epitech = require("./epitech");
 const api = require("./api");
 
 router.use("/twitter", twitter);
 router.use("/twitch", twitch);
+router.use("/spotify", spotify);
 router.use("/reddit", reddit);
 router.use("/epitech", epitech);
 router.use("/", api);

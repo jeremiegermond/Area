@@ -8,6 +8,7 @@ export default function Connect() {
   const [twitter, setTwitter] = useState(false);
   const [reddit, setReddit] = useState(false);
   const [epitech, setEpitech] = useState(false);
+  const [spotify, setSpotify] = useState(false);
 
   const toggleApi = (api: string, state: boolean, setter) => {
     if (state) {
@@ -56,6 +57,12 @@ export default function Connect() {
           value="Twitter"
           className={twitter ? "api-btn-connected" : "api-btn"}
           onClick={() => toggleApi("twitter", twitter, setTwitter)}
+        />
+        <input
+          type="submit"
+          value="Spotify"
+          className={spotify ? "api-btn-connected" : "api-btn"}
+          onClick={() => toggleApi("spotify", spotify, setSpotify)}
         />
         <Link
           to="epitech"

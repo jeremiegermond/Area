@@ -19,6 +19,7 @@ const ProfileScreen = ({handleLogin, navigation}) => {
   const [reddit, setReddit] = useState(false);
   const [twitch, setTwitch] = useState(false);
   const [epitech, setEpitech] = useState(false);
+  const [spotify, setSpotify] = useState(false);
   const xml = `
   <svg viewBox="0 0 290.000000 800.000000">
   <g transform="translate(0.000000,512.000000) scale(0.0600000,-0.0600000)"
@@ -37,9 +38,11 @@ const ProfileScreen = ({handleLogin, navigation}) => {
     updateApi('reddit', setReddit);
     updateApi('twitch', setTwitch);
     updateApi('epitech', setEpitech);
+    updateApi('spotify', setSpotify);
     return navigation.addListener('state', () => {
       setTimeout(() => {
         updateApi('twitter', setTwitter);
+        updateApi('spotify', setSpotify);
         updateApi('reddit', setReddit);
         updateApi('twitch', setTwitch);
         updateApi('epitech', setEpitech);
