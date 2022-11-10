@@ -12,10 +12,12 @@ router.post("/webhook", async (req, res) => {
       res.send(req.body.challenge);
     }
     else if (req.header("Twitch-Eventsub-Message-Type") === "notification") {
+      console.log("twitch webhook triggered")
       console.log(req.body);
       await ActionReaction.find({webhook_uid: req.body.subscription.id}, (err, ars) => {
         if (err)
           console.log(err);
+        console.log(ars);
         ars.forEach(ar => {
           ar.populate("reaction").then(async () => {
             await ar.populate('user')

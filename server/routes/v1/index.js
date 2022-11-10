@@ -6,6 +6,7 @@ const { db } = require("../../models/v1/action.js");
 const User = require("../../models/v1/user");
 const crypto = require("crypto");
 const utils = require("../../utils.js");
+var fs = require('fs');
 
 const router = express.Router();
 
@@ -45,12 +46,33 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.post("/addService", (req, res) => {
+  const {name, desc, appKeys} = req.body;
   utils
     .addService(req.body)
     .then(() => {
-      res.status(201).json({
-        message: "Service saved successfully!",
-      });
+      try {
+        fs.readFile("db.json", "utf-8", (err, data) => {
+          if (err) throw err
+          updtd_data = JSON.parse(data)
+          updtd_data.services.push({
+            "name" : name,
+            "desc" : desc,
+            "appKeys" : appKeys,
+            "actions" : [],
+            "reactions" : []
+          })
+          fs.writeFile("db.json", JSON.stringify(updtd_data), "utf-8", (err) => {
+            if (err) throw err;
+            console.log(`${name} was added to db.json`);
+          })
+        })
+        res.status(201).json({
+          message: "Service saved successfully!",
+        });
+      } catch (err) {
+        console.log(err)
+        res.status(400).json({ error: err })
+      }
     })
     .catch((error) => {
       console.log(error);
@@ -61,25 +83,90 @@ router.post("/addService", (req, res) => {
 });
 
 router.post("/addAction", (req, res) => {
-  try {
-    utils.addAction(req.body).then(() => {
-      res.status(201).json({
-        message: `Action added successfully to service ${req.body.service}!`,
+  const {name, desc, appKeys} = req.body;
+  utils
+    utils.addAction(req.body)
+    .then(() => {
+      try {
+        const {service, name, desc, method, options} = req.body;
+        fs.readFile("db.json", "utf-8", (err, data) => {
+          if (err) throw err
+          new_action = {
+            "name" : name,
+            "desc" : desc,
+            "options" : options,
+          }
+          updtd_data = JSON.parse(data)
+          if (!method) {
+            const {target_type, webhook_type, condition_value} = req.body;
+            new_action = {...new_action,
+            "webhook_type": target_type,
+            "condition_value": webhook_type,
+            "target_type": condition_value}
+          } else {
+            const {endpointUrl, header, rbody, trigger, userKey} = req.body
+            new_action = {...new_action,
+            "method": method,
+            "endpointUrl": endpointUrl,
+            "header": header,
+            "body": rbody,
+            "trigger": trigger,
+            "userKey": userKey === "true"}
+          }
+          updtd_data.services.filter(serv => {return serv.name === service})[0].actions.push(new_action)
+          fs.writeFile("db.json", JSON.stringify(updtd_data), "utf-8", (err) => {
+            if (err) throw err;
+            console.log(`${name} was added to db.json`);
+          })
+        })
+        res.status(201).json({
+          message: `Action added successfully to service ${req.body.service}!`,
+        });
+      } catch (err) {
+          console.log(err)
+          res.status(400).json({ error: err })
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).json({
+        error: error,
       });
     });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: error });
-  }
 });
 
 router.post("/addReaction", async (req, res) => {
   utils
     .addReaction(req.body)
     .then(() => {
-      res.status(201).json({
-        message: `Reaction added successfully to service ${req.body.service}!`,
-      });
+      try {
+        const {service, name, desc, method, options, endpointUrl, header, rbody, trigger, userKey} = req.body;
+        fs.readFile("db.json", "utf-8", (err, data) => {
+          if (err) throw err
+          new_action = {
+            "name" : name,
+            "desc" : desc,
+            "options" : options,
+            "method": method,
+            "endpointUrl": endpointUrl,
+            "header": header,
+            "body": rbody,
+            "userKey": userKey === "true"
+          }
+          updtd_data = JSON.parse(data)
+          updtd_data.services.filter(serv => {return serv.name === service})[0].reactions.push(new_action)
+          fs.writeFile("db.json", JSON.stringify(updtd_data), "utf-8", (err) => {
+            if (err) throw err;
+            console.log(`${name} was added to db.json`);
+          })
+        })
+        res.status(201).json({
+          message: `Reaction added successfully to service ${req.body.service}!`,
+        });
+      } catch (err) {
+          console.log(err)
+          res.status(400).json({ error: err })
+      }
     })
     .catch((error) => {
       console.log(error);

@@ -20,7 +20,7 @@ exports.addService = async (body) => {
         appKeys: map,
     });
     await newService.save()
-    console.log("created service "+name)
+    console.log("Created service "+name)
 }
 
 async function addApiAction(body) {
@@ -52,6 +52,7 @@ async function addWebhookAction (body) {
 }
 
 exports.addAction = async (body) => {
+  try {
     const {service, name, desc, method, endpointUrl, header, rbody, trigger, userKey, options} = body;
     const newAction = new Action({
       name: name,
@@ -60,6 +61,7 @@ exports.addAction = async (body) => {
       webhook: !method ? await addWebhookAction(body) : null,
       api_call: method ? await addApiAction(body) : null
     });
+    await newAction.save()
     await db
       .collection("services")
       .findOneAndUpdate(
@@ -70,16 +72,17 @@ exports.addAction = async (body) => {
       .then((data) => {
         newAction.service = data.value._id;
       });
-    newAction.save().then(() => { return true})
-    .catch((error) => {
-      console.log(error);
-      return false
-    });
+    console.log(service + ": added action " + name)
+    return true
+  } catch(error) {
+    throw(error);
+    return false
+  };
 }
 
 exports.addReaction = async (body) => {
+  try {
     const {service, name, method, desc, header, rbody, endpointUrl, userKey, options} = body;
-    console.log(body)
     const newReaction = new Reaction({
       name: name,
       description: desc,
@@ -100,6 +103,9 @@ exports.addReaction = async (body) => {
     .then((data) => {
       newReaction.service = data.value._id;
     });
-    newReaction
-      .save()
+    await newReaction.save()
+    console.log(service + ": added reaction " + name)
+  } catch(error) {
+    throw error
+  }
 }

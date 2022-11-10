@@ -171,7 +171,7 @@ async function linkWebhook(webhook, params) {
     condition: {},
     transport: {
     method: "webhook",
-    callback: "https://6262-89-158-233-169.eu.ngrok.io/twitch/webhook",
+    callback: "https://359a-163-5-2-51.eu.ngrok.io/twitch/webhook",
     secret: crypto.randomBytes(10).toString("hex"),
     },
   };
