@@ -5,8 +5,8 @@ const Webhook = require("./models/v1/webhook.js");
 const Api_call = require("./models/v1/api_call.js");
 const { db } = require("./models/v1/action.js");
 
-exports.addService = async (body) => {
-    const {name, desc, appKeys} = body;
+exports.addService = async (rbody) => {
+    const {name, desc, appKeys} = rbody;
     const map = new Map();
     appKeys.split(",").forEach((elem) => {
         map.set(
@@ -23,9 +23,9 @@ exports.addService = async (body) => {
     console.log("Created service "+name)
 }
 
-async function addApiAction(body) {
+async function addApiAction(rbody) {
   const interleave = (arr, x) => arr.flatMap((e) => [e, x]).slice(0, -1);
-  const {service, name, desc, method, endpointUrl, header, rbody, trigger, userKey, options} = body;
+  const {method, endpointUrl, header, body, trigger, userKey, data} = rbody;
   let trigger_arr = trigger.split(/(&&|\|\|)/);
   trigger_arr.forEach((elem, index) => {
     if (elem !== "&&" || elem !== "||") trigger_arr[index] = elem.split(",");
@@ -34,16 +34,16 @@ async function addApiAction(body) {
     method: method,
     endpointUrl: endpointUrl,
     header: header,
-    body: rbody,
+    body: body,
     trigger: trigger_arr,
-    userKey: userKey === "true"
+    userKey: userKey === "true",
   })
   await newApi_call.save()
   return newApi_call
 }
 
-async function addWebhookAction (body) {
-  const {target_type, webhook_type, condition_value} = body;
+async function addWebhookAction (rbody) {
+  const {target_type, webhook_type, condition_value} = rbody;
   return await new Webhook({
     target_type: target_type,
     webhook_type: webhook_type,
@@ -51,9 +51,9 @@ async function addWebhookAction (body) {
   }).save()
 }
 
-exports.addAction = async (body) => {
+exports.addAction = async (rbody) => {
   try {
-    const {service, name, desc, method, endpointUrl, header, rbody, trigger, userKey, options} = body;
+    const {service, name, desc, method, endpointUrl, header, body, trigger, userKey, options} = rbody;
     const serv = await Services.findOne({name: service})
     console.log(serv)
     const newAction = new Action({
@@ -61,8 +61,8 @@ exports.addAction = async (body) => {
       description: desc,
       service: serv._id,
       options: JSON.parse(options ?? '[]'),
-      webhook: !method ? await addWebhookAction(body) : null,
-      api_call: method ? await addApiAction(body) : null
+      webhook: !method ? await addWebhookAction(rbody) : null,
+      api_call: method ? await addApiAction(rbody) : null
     });
     await newAction.save()
     await db
@@ -83,9 +83,9 @@ exports.addAction = async (body) => {
   };
 }
 
-exports.addReaction = async (body) => {
+exports.addReaction = async (rbody) => {
   try {
-    const {service, name, method, desc, header, rbody, endpointUrl, userKey, options} = body;
+    const {service, name, method, desc, header, body, endpointUrl, userKey, options, data} = rbody;
     const newReaction = new Reaction({
       name: name,
       description: desc,
@@ -93,7 +93,7 @@ exports.addReaction = async (body) => {
       method: method,
       endpointUrl: endpointUrl,
       header: header,
-      body: rbody,
+      body: body,
       userKey: userKey === "true",
       options: JSON.parse(options ?? '[]'),
     });

@@ -51,11 +51,12 @@ async function get_headers(action, user, service) {
   return header
 }
 
-function complete_string(url, params) {
-  params.forEach((p) => {
-    url = url.replaceAll("{" + p.name + "}", p.value)
-  })
-  return url
+function complete_string(str, params) {
+  if(str && params)
+    params.forEach((p) => {
+      str = str.replaceAll("{" + p.name + "}", p.value);
+    });
+  return str;
 }
 
 Reaction.methods.exec = async function (user, params) {
@@ -63,12 +64,13 @@ Reaction.methods.exec = async function (user, params) {
   try {
     console.log(`${user.username} : Triggered reaction ${this.name}`)
     await this.populate("service")
-    await axios({
+    console.log(await axios({
       method: this.method,
       url: complete_string(this.endpointUrl, params),
       headers: await get_headers(this, user, this.service),
-      data: this.body,
-    })
+      data: complete_string(this.body, params),
+    }))
+    console.log(this.body)
   } catch (e) {
     console.log(e)
   }

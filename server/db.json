@@ -26,11 +26,12 @@
         {
           "name": "reddit test",
           "desc": "post on r/test",
-          "method": "post",
           "options": "[]",
+          "method": "post",
           "endpointUrl": "https://oauth.reddit.com/api/submit?sr=test&text=Un tweet a  été posté&title=le titre&kind=self",
           "header": "Authorization:access_token",
-          "body": "{\"resubmit\" : \"true\",\"send_replies\" : \"true\",\"api_type\" : \"json\"}"
+          "body": "{\"resubmit\" : \"true\",\n    \"send_replies\" : \"true\",\n    \"api_type\" : \"json\"\n}",
+          "userKey": false
         }
       ]
     },
@@ -50,6 +51,35 @@
         }
       ],
       "reactions": []
+    },
+    {
+      "name": "epitech",
+      "desc": "description",
+      "appKeys": "",
+      "actions": [
+        {
+          "name": "epitech",
+          "desc": "test epitech",
+          "options": "[]",
+          "method": "get",
+          "endpointUrl": "https://intra.epitech.eu/user/notification/message?format=json",
+          "header": "Cookie:user_cookie",
+          "trigger": "codeIs,200",
+          "userKey": true
+        }
+      ],
+      "reactions": [
+        {
+          "name": "epitech test",
+          "desc": "test",
+          "options": "[{\"name\":\"LOGIN\",\"placeholder\":\"Your Epitech login\"},{\"name\":\"URL\",\"placeholder\":\"URL to display\"}]",
+          "method": "post",
+          "endpointUrl": "https://intra.epitech.eu/user/{LOGIN}/edit/save?format=json",
+          "header": "Cookie:user_cookie",
+          "body": "website[value]={URL}&website[public]=on&website[adm]=on",
+          "userKey": true
+        }
+      ]
     }
   ]
 }

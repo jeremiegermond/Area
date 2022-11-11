@@ -85,7 +85,6 @@ router.post("/addService", (req, res) => {
 });
 
 router.post("/addAction", (req, res) => {
-  const {name, desc, appKeys} = req.body;
   utils
     utils.addAction(req.body)
     .then(() => {
@@ -106,12 +105,12 @@ router.post("/addAction", (req, res) => {
             "condition_value": webhook_type,
             "target_type": condition_value}
           } else {
-            const {endpointUrl, header, rbody, trigger, userKey} = req.body
+            const {endpointUrl, header, body, trigger, userKey} = req.body
             new_action = {...new_action,
             "method": method,
             "endpointUrl": endpointUrl,
             "header": header,
-            "body": rbody,
+            "body": body,
             "trigger": trigger,
             "userKey": userKey === "true"}
           }
@@ -142,7 +141,7 @@ router.post("/addReaction", async (req, res) => {
     .addReaction(req.body)
     .then(() => {
       try {
-        const {service, name, desc, method, options, endpointUrl, header, rbody, trigger, userKey} = req.body;
+        const {service, name, desc, method, options, endpointUrl, header, body, trigger, userKey} = req.body;
         fs.readFile("db.json", "utf-8", (err, data) => {
           if (err) throw err
           new_action = {
@@ -152,9 +151,10 @@ router.post("/addReaction", async (req, res) => {
             "method": method,
             "endpointUrl": endpointUrl,
             "header": header,
-            "body": rbody,
+            "body": body,
             "userKey": userKey === "true"
           }
+          console.log(body)
           updtd_data = JSON.parse(data)
           updtd_data.services.filter(serv => {return serv.name === service})[0].reactions.push(new_action)
           fs.writeFile("db.json", JSON.stringify(updtd_data), "utf-8", (err) => {

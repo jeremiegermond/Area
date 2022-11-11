@@ -14,7 +14,7 @@ router.post("/callback", async (req, res) => {
     );
     const { internal_email } = data;
     const map = new Map([
-      ["user_cookie", user_cookie.toString()],
+      ["user_cookie", "user=" + user_cookie.toString()],
       ["email", internal_email],
     ]);
     user.addApiKey(map, "epitech").then((e) => res.status(201).send(e));

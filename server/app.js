@@ -8,6 +8,7 @@ const cors = require("cors");
 const Users = require("./models/v1/user");
 const Actions = require("./models/v1/action");
 const Reactions = require("./models/v1/reaction");
+const ActionReaction = require("./models/v1/actionreaction");
 const https = require("https");
 const fs = require("fs");
 const session = require("express-session");
@@ -101,11 +102,14 @@ async function checkActions() {
           user.populate("actionReaction").then(() => {
             user.actionReaction.forEach(async (ar) => {
               await ar.populate("action");
-              if (ar.webhook_uid === "")
-                if ((await ar.action.check(user, ar)) === true)
-                  ar.populate("reaction").then(async () => {
-                    await ar.reaction.exec(user ,ar.reaction_params);
-                  });
+              if (ar.action != null) {
+                if (ar.webhook_uid === "")
+                  if ((await ar.action.check(user, ar)) === true)
+                    ar.populate("reaction").then(async () => {
+                      await ar.reaction.exec(user ,ar.reaction_params);
+                    });
+              } else
+                await ActionReaction.deleteOne({_id: ar._id})
             });
           });
         } catch (error) {
