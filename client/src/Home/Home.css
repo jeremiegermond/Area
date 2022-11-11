@@ -17,3 +17,42 @@
     flex-wrap: wrap;
     column-gap: 2%;
 }
+
+.home-tuto h1, .home-tuto h3 {
+    text-align: center;
+    margin-top: 20%;
+    margin-bottom: 10%;
+}
+
+.home-tuto-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin-left: -60%;
+    width: 220%;
+}
+
+.home-tuto-box .circle {
+    display: flex;
+    border: 2px solid blue;
+    width: 60px;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 60px;
+}
+.home-tuto-box .line {
+    background-color: blue;
+    width: 8%;
+    height: 2px;
+}
+.home-tuto-box .text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid blue;
+    width: 15%;
+    padding: 10px;
+    border-radius: 50px;
+}
