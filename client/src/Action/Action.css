@@ -1,3 +1,24 @@
+.twitter-icon {
+    color: #00acee;
+    width: 40px;
+    height: 40px;
+}
+
+.twitch-icon {
+    color: #6441a5;
+    width: 40px;
+    height: 40px;
+}
+
+.epitech-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.reddit-icon {
+    color: #FF5700;
+}
+
 .action-page {
     display: flex;
     flex-direction: column;
@@ -8,7 +29,36 @@
     text-align: center;
     margin: 50px 0;
     font-size: 48px;
-    font-weight: 400;
+    font-weight: bold;  
+}
+
+.action-icons {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    width: 30%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.action-background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fafafa;
+    width: 75px;
+    height: 75px;
+    border-radius: 50px;
+    border: 1px solid green;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease;
+}
+
+.action-background:hover {
+    transform: scale(1.05);
+    transition: 0.3s ease;
 }
 
 .action-boxes {
