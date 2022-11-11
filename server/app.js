@@ -12,7 +12,6 @@ const ActionReaction = require("./models/v1/actionreaction");
 const https = require("https");
 const fs = require("fs");
 const session = require("express-session");
-const db_json = require("./db.json");
 const utils = require("./utils.js");
 
 require("./auth/auth");
@@ -63,30 +62,47 @@ if (process.env.HTTPS === "true") {
 
 async function build_db(file) {
   try {
-    file.services.forEach(async (service) => {
-      const arr = await Services.find({name: service.name})
-      if (arr.length === 0)
-        await utils.addService({name: service.name, desc: service.desc, appKeys: service.appKeys})
-        .then(() => {
-      service.actions.forEach(async (action) => {
-        action.service = service.name
-        const arr = await Actions.find({name: service.name})
+    fs.readFile("db.json", "utf-8", (err, file) => {
+      if (err && err.errno != -2) throw err
+      if (!file || !file.services || err.errno != -2) {
+        console.error("Problem in db.json, generating new file")
+        if (file) {
+          console.error("Faulty file db.json backed up in db.json.old")
+          fs.writeFile("db.json.old", file, (err) => {
+            if (err) throw err;
+          })
+        }
+        fs.writeFile("db.json", "{\"services\":[]}", (err) => {
+          if (err) throw err;
+          console.log("Created new db.json")
+        })
+        return
+      }
+      file.services.forEach(async (service) => {
+        const arr = await Services.find({name: service.name})
         if (arr.length === 0)
-          await utils.addAction(action)
+          await utils.addService({name: service.name, desc: service.desc, appKeys: service.appKeys})
+          .then(() => {
+        service.actions.forEach(async (action) => {
+          action.service = service.name
+          const arr = await Actions.find({name: service.name})
+          if (arr.length === 0)
+            await utils.addAction(action)
+        })
+        service.reactions.forEach(async (reaction) => {
+          reaction.service = service.name
+          const arr = await Reactions.find({name: service.name})
+          if (arr.length === 0)
+            utils.addReaction(reaction)
+        })})
       })
-      service.reactions.forEach(async (reaction) => {
-        reaction.service = service.name
-        const arr = await Reactions.find({name: service.name})
-        if (arr.length === 0)
-          utils.addReaction(reaction)
-      })})
     })
   } catch (error) {
     console.log("Server was unable to build database")
     return
   }
 }
-build_db(db_json);
+build_db("./db.json");
 
 console.log(`Server listening on port ${port}`);
 
