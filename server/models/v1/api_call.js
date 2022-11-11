@@ -118,7 +118,7 @@ async function get_headers(action, user, service) {
   return header;
 }
 
-function complete_url(url, params) {
+function complete_string(url, params) {
   params.forEach((p) => {
     url = url.replaceAll("{" + p.name + "}", p.value);
   });
@@ -129,12 +129,12 @@ Api_call.methods.check = async function (user, service, ar) {
   try {
     const params = ar.action_params
     console.log("Checking for action " + ar.action.name);
-    complete_url(this.endpointUrl, params)
+    complete_string(this.endpointUrl, params)
     return await check_response(
       this,
       await axios({
         method: this.method,
-        url: complete_url(this.endpointUrl, params),
+        url: complete_string(this.endpointUrl, params),
         headers: await get_headers(this, user, service),
         data: this.body,
       }),

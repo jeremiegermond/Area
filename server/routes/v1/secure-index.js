@@ -156,39 +156,44 @@ function complete_param(url, params) {
 }
 
 async function linkWebhook(webhook, params) {
-  console.log("\n\n\n")
-  console.log(webhook)
-  const target_type = complete_param(webhook.target_type, params)
-  const webhook_type = complete_param(webhook.webhook_type, params)
-  const condition_value = complete_param(webhook.condition_value, params)
-  let id = await check_current_subscription(target_type, webhook_type, condition_value);
-  console.log(condition_value)
-  if (id != '') {
-    console.log("Webhook already exists")
-    return id
-  }
-  const data = {
-    type: webhook.webhook_type,
-    version: "1",
-    condition: {},
-    transport: {
-    method: "webhook",
-    callback: "https://359a-163-5-2-51.eu.ngrok.io/twitch/webhook",
-    secret: crypto.randomBytes(10).toString("hex"),
-    },
-  };
-  data["condition"][target_type] = condition_value;
-  axios({
-      method: "post",
-      url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-      headers: {
-      Authorization: `Bearer ${await get_twitch_bearer()}`,
-      "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe",
+  try {
+    console.log("\n\n\n")
+    console.log(webhook)
+    const target_type = complete_param(webhook.target_type, params)
+    const webhook_type = complete_param(webhook.webhook_type, params)
+    const condition_value = complete_param(webhook.condition_value, params)
+    let id = await check_current_subscription(target_type, webhook_type, condition_value);
+    console.log(condition_value)
+    if (id != '') {
+      console.log("Webhook already exists")
+      return id
+    }
+    const data = {
+      type: webhook.webhook_type,
+      version: "1",
+      condition: {},
+      transport: {
+      method: "webhook",
+      callback: "https://359a-163-5-2-51.eu.ngrok.io/twitch/webhook",
+      secret: crypto.randomBytes(10).toString("hex"),
       },
-      data: data
-  }).then(async (r) => {
-    return r.data['data']['id']
-  })
+    };
+    data["condition"][target_type] = condition_value;
+    await axios({
+        method: "post",
+        url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+        headers: {
+        Authorization: `Bearer ${await get_twitch_bearer()}`,
+        "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe",
+        },
+        data: data
+    }).then(async (r) => {
+      return r.data['data']['id']
+    })
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 router.post("/addActionReaction", async (req, res) => {

@@ -51,7 +51,7 @@ async function get_headers(action, user, service) {
   return header
 }
 
-function complete_url(url, params) {
+function complete_string(url, params) {
   params.forEach((p) => {
     url = url.replaceAll("{" + p.name + "}", p.value)
   })
@@ -65,7 +65,7 @@ Reaction.methods.exec = async function (user, params) {
     await this.populate("service")
     await axios({
       method: this.method,
-      url: complete_url(this.endpointUrl, params),
+      url: complete_string(this.endpointUrl, params),
       headers: await get_headers(this, user, this.service),
       data: this.body,
     })

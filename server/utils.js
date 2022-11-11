@@ -54,9 +54,12 @@ async function addWebhookAction (body) {
 exports.addAction = async (body) => {
   try {
     const {service, name, desc, method, endpointUrl, header, rbody, trigger, userKey, options} = body;
+    const serv = await Services.findOne({name: service})
+    console.log(serv)
     const newAction = new Action({
       name: name,
       description: desc,
+      service: serv._id,
       options: JSON.parse(options ?? '[]'),
       webhook: !method ? await addWebhookAction(body) : null,
       api_call: method ? await addApiAction(body) : null
@@ -86,6 +89,7 @@ exports.addReaction = async (body) => {
     const newReaction = new Reaction({
       name: name,
       description: desc,
+      service: await Services.findOne({name: service})._id,
       method: method,
       endpointUrl: endpointUrl,
       header: header,
