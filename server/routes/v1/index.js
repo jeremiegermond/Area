@@ -12,8 +12,7 @@ var fs = require('fs');
 
 const router = express.Router();
 
-router.post(
-  "/signup",
+router.post("/signup",
   passport.authenticate("signup", { session: false }),
   async (req, res) => {
     const user = req.user;
@@ -141,7 +140,7 @@ router.post("/addReaction", async (req, res) => {
     .addReaction(req.body)
     .then(() => {
       try {
-        const {service, name, desc, method, options, endpointUrl, header, body, trigger, userKey} = req.body;
+        const {service, name, desc, method, options, endpointUrl, header, body, userKey} = req.body;
         fs.readFile("db.json", "utf-8", (err, data) => {
           if (err) throw err
           new_action = {
@@ -193,7 +192,7 @@ router.delete("/removeService/:service", async (req, res) => {
         console.log(`${service} was removed from db.json`);
       })
       res.status(201).json({
-        message: `${service} was removed from db.json`,
+        message: `${service} was removed.`,
       })
     })
   } catch (error) {
@@ -226,7 +225,7 @@ router.delete("/removeAction/:service/:action", async (req, res) => {
         console.log(`${service} was removed from db.json`);
       })
       res.status(201).json({
-        message: `${service} was removed from db.json`,
+        message: `${action} was removed from ${service}.`,
       })
     })
   } catch (error) {
@@ -259,7 +258,7 @@ router.delete("/removeReaction/:service/:reaction", async (req, res) => {
         console.log(`${service} was removed from db.json`);
       })
       res.status(201).json({
-        message: `${service} was removed from db.json`,
+        message: `${reaction} was removed from ${service}.`,
       })
     })
   } catch (error) {
@@ -269,25 +268,6 @@ router.delete("/removeReaction/:service/:reaction", async (req, res) => {
     });
   }
 })
-
-router.get("/ping", async (req, res) => {
-  try {
-    let result = await db.collection("services").findOne({ name: "test" });
-    console.log(result);
-    let ping = await db
-      .collection("actions")
-      .findOne({ _id: result.actions[0] });
-    console.log(ping);
-    res.status(201).json({
-      message: `Ping "test".actions !`,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      error: error,
-    });
-  }
-});
 
 router.get("/ping2", async (req, res) => {
   return res.status(200).json(true);
@@ -329,10 +309,6 @@ router.get("/about.json", async (req, res) => {
     console.log(error);
     return res.status(200).json(error);
   }
-});
-
-router.get("/", (req, res) => {
-  res.status(200).send("It works");
 });
 
 router.post("/webhooks/twitter", (req, res) => {

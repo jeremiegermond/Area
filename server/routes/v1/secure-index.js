@@ -21,13 +21,6 @@ router.use("/reddit", reddit);
 router.use("/epitech", epitech);
 router.use("/", api);
 
-router.get("/profile", async (req, res) => {
-  res.json({
-    message: "You made it to the secure route",
-    user: req.user,
-  });
-});
-
 router.get("/getActions", async (req, res) => {
   let data = [];
   try {
@@ -72,7 +65,6 @@ router.get("/getReactions", async (req, res) => {
 });
 
 router.get("/getActionReaction", async (req, res) => {
-  // needs to be updated with new table
   try {
     const { actionReaction } = await User.findOne({
       username: req.user.username,
