@@ -1,5 +1,4 @@
 .epitech-page {
-    background-color: #f5f5f5;
     display: flex;
     height: 100vh;
     align-items: center;
@@ -17,19 +16,25 @@
     margin-top: 3vh;
     width: 40%;
     height: 4vh;
-    border-radius: 50px;
-    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    background-color: #6aa8f8;
     font-size: 16px;
     cursor: pointer;
     transition: 0.3s ease;
-    border: 1px solid black;
+    text-decoration: none;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.epitech-page h4 {
+    margin-top: 20px;
+}
+
 .epitech-page .how-to a:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     transition: 0.3s ease;
 }
 
@@ -41,23 +46,34 @@
 .epitech-page .epitech-form .text-input {
     height: 4vh;
     border-radius: 50px;
+    border: 2px solid #ac6af8;
 }
 
 .epitech-page .epitech-form .button {
     margin-top: 3vh;
     height: 4vh;
-    border-radius: 50px;
-    background-color: transparent;
+    border-radius: 10px;
+    border: none;
+    background-color: #ac6af8;
     font-size: 16px;
     cursor: pointer;
     transition: 0.3s ease;
-    border: 1px solid black;
+    text-decoration: none;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .epitech-page .epitech-form .button:hover {
-     transform: scale(1.1);
-     transition: 0.3s ease;
+    transform: scale(1.05);
+    transition: 0.3s ease;
+}
+
+.epitech-form h5 {
+    color: #ac6af8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
 }
