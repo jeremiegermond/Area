@@ -118,6 +118,17 @@ async function get_headers(action, user, service) {
   return header;
 }
 
+async function complete_url(user, service, str, params) {
+  str = complete_string(str, params)
+  await user.populate("keys")
+  let keys = await user.keys.find((e) => e.service === service.name);
+  console.log("debug\n\n")
+  console.log(params)
+  console.log(keys)
+  console.log(str)
+  return str;
+}
+
 function complete_string(str, params) {
   if(str && params)
     params.forEach((p) => {
@@ -135,7 +146,7 @@ Api_call.methods.check = async function (user, service, ar) {
       this,
       await axios({
         method: this.method,
-        url: complete_string(this.endpointUrl, params),
+        url: await complete_url(user, service, this.endpointUrl, params),
         headers: await get_headers(this, user, service),
         data: complete_string(this.body, params),
       }),

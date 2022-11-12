@@ -60,21 +60,22 @@ if (process.env.HTTPS === "true") {
   app.listen(port);
 }
 
-async function build_db(file) {
+async function build_db(file_path) {
   try {
-    fs.readFile("db.json", "utf-8", (err, file) => {
+    fs.readFile(file_path, "utf-8", (err, file_content) => {
+      file = JSON.parse(file_content)
       if (err && err.errno != -2) throw err
-      if (!file || !file.services || err.errno != -2) {
-        console.error("Problem in db.json, generating new file")
+      if (!file || !file.services || (err && err.errno === -2)) {
+        console.error(`Problem in ${file_path}, generating new file`)
         if (file) {
-          console.error("Faulty file db.json backed up in db.json.old")
-          fs.writeFile("db.json.old", file, (err) => {
+          console.error(`Faulty file ${file_path} backed up in ${file_path}.old`)
+          fs.writeFile(`$file_path}.old`, JSON.stringify(file), (err) => {
             if (err) throw err;
           })
         }
-        fs.writeFile("db.json", "{\"services\":[]}", (err) => {
+        fs.writeFile(file_path, "{\"services\":[]}", (err) => {
           if (err) throw err;
-          console.log("Created new db.json")
+          console.log(`Created new ${file}`)
         })
         return
       }
@@ -98,7 +99,7 @@ async function build_db(file) {
       })
     })
   } catch (error) {
-    console.log("Server was unable to build database")
+    console.log("Server was unable to build database: " + error)
     return
   }
 }
@@ -121,9 +122,12 @@ async function checkActions() {
               if (ar.action != null) {
                 if (ar.webhook_uid === "")
                   if ((await ar.action.check(user, ar)) === true)
-                    ar.populate("reaction").then(async () => {
-                      await ar.reaction.exec(user ,ar.reaction_params);
-                    });
+                      ar.populate("reaction").then(async () => {
+                        if (ar.reaction != null)
+                          await ar.reaction.exec(user ,ar.reaction_params);
+                        else
+                          await ActionReaction.deleteOne({_id: ar._id})
+                      });
               } else
                 await ActionReaction.deleteOne({_id: ar._id})
             });

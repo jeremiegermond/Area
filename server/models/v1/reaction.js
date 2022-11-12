@@ -51,6 +51,19 @@ async function get_headers(action, user, service) {
   return header
 }
 
+async function complete_url(user, service, str, params) {
+  complete_string(str, params)
+  await user.populate("keys")
+  let keys = await user.keys.find((e) => e.service === service.name);
+  console.log("debug\n\n")
+  keys.keys.forEach((val, key) => {
+    console.log(str)
+    console.log(key)
+    str = str.replaceAll("{" + key + "}", val);
+  });
+  return str;
+}
+
 function complete_string(str, params) {
   if(str && params)
     params.forEach((p) => {
@@ -66,7 +79,7 @@ Reaction.methods.exec = async function (user, params) {
     await this.populate("service")
     console.log(await axios({
       method: this.method,
-      url: complete_string(this.endpointUrl, params),
+      url: await complete_url(user, this.service, this.endpointUrl, params),
       headers: await get_headers(this, user, this.service),
       data: complete_string(this.body, params),
     }))
