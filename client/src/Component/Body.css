@@ -5,11 +5,5 @@
 
 body {
     background-image: url(./background.svg);
-}
-
-@-moz-document url-prefix(){
-    body {
-        background: url(./background-firefox.png);
-        background-size: cover;
-    }
+    background-repeat: no-repeat;
 }
