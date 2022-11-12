@@ -103,8 +103,12 @@ export default function Register() {
           </p>
         </div>
         <div className="phone">
-          <Link className="phone-link" to="base.apk" >
-            <input type="submit" className=" phone-input" value="Redirect to apk" />
+          <Link className="phone-link" to="base.apk">
+            <input
+              type="submit"
+              className=" phone-input"
+              value="Download mobile client"
+            />
           </Link>
         </div>
       </div>

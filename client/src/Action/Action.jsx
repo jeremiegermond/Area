@@ -8,72 +8,93 @@ import { useNavigate } from "react-router-dom";
 function Action() {
   const navigate = useNavigate();
   const [list, setList] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [twitch, setTwitch] = useState(false);
+  const [twitter, setTwitter] = useState(false);
+  const [reddit, setReddit] = useState(false);
+  const [epitech, setEpitech] = useState(false);
+  const [spotify, setSpotify] = useState(false);
 
   useEffect(() => {
     getServer("user/getActions")
-      .then((r) => setList(r.data))
+      .then((r) => {
+        setList(r.data);
+        setFiltered(r.data);
+      })
       .catch(() => console.log("Can't get action list"));
+    const hasApi = (api, setter) => {
+      getServer("user/hasApi/" + api)
+        .then((res) => {
+          setter(res.data);
+        })
+        .catch(() => console.log(`Couldn't get ${api} status`));
+    };
+    hasApi("reddit", setReddit);
+    hasApi("twitter", setTwitter);
+    hasApi("twitch", setTwitch);
+    hasApi("epitech", setEpitech);
+    hasApi("spotify", setSpotify);
   }, []);
-
-  const [showResults, setShowResults] = useState(false);
-  const setChange = (serviceName) => {
-    const allWithClass = Array.from(
-      document.getElementsByClassName(serviceName)
-    );
-    const btnWithClass = Array.from(
-      document.getElementsByClassName(serviceName + "-button")
-    );
-
-    allWithClass.forEach((element) => {
-      element.style.display = "none";
-    });
-
-    if (showResults) {
-      allWithClass.forEach((element) => {
-        element.style.display = "none";
-      });
-      btnWithClass.forEach((element) => {
-        element.style.border = "2px solid red";
-        element.style.transform = "scale(1.00)";
-      });
-      setShowResults(false);
-    } else {
-      allWithClass.forEach((element) => {
-        element.style.display = "flex";
-      });
-      btnWithClass.forEach((element) => {
-        element.style.border = "2px solid green";
-        element.style.transform = "scale(1.1)";
-      });
-      setShowResults(true);
-    }
-  };
+  useEffect(() => {
+    const filterByApi = (data) => {
+      return data.filter(
+        ({ service }) =>
+          (twitch || service.name !== "twitch") &&
+          (twitter || service.name !== "twitter") &&
+          (reddit || service.name !== "reddit") &&
+          (epitech || service.name !== "epitech") &&
+          (spotify || service.name !== "spotify")
+      );
+    };
+    const filteredData = filterByApi(list);
+    setFiltered(filteredData);
+  }, [twitch, twitter, reddit, epitech, spotify]);
 
   return (
     <div className="action-page">
       <h1 className="action-title">When ___</h1>
       <div className="action-icons">
         <button
-          onClick={() => setChange("twitch")}
+          onClick={() => setTwitch(!twitch)}
           className="action-background twitch-icon twitch-button"
+          style={
+            twitch
+              ? { border: "2px solid red" }
+              : { border: "2px solid green", transform: "scale(1.1)" }
+          }
         >
           <FaTwitch size={40} className="twitch-icon action-icon" />
         </button>
         <button
-          onClick={() => setChange("twitter")}
+          onClick={() => setTwitter(!twitter)}
           className="action-background twitter-icon twitter-button"
+          style={
+            twitter
+              ? { border: "2px solid red" }
+              : { border: "2px solid green", transform: "scale(1.1)" }
+          }
         >
           <FaTwitter size={40} className="twitter-icon action-icon" />
         </button>
         <button
-          onClick={() => setChange("reddit")}
+          onClick={() => setReddit(!reddit)}
           className="action-background reddit-icon reddit-button"
+          style={
+            reddit
+              ? { border: "2px solid red" }
+              : { border: "2px solid green", transform: "scale(1.1)" }
+          }
         >
           <FaReddit size={40} className="reddit-icon action-icon" />
         </button>
         <button
-          onClick={() => setChange("epitech")}
+          onClick={() => setEpitech(!epitech)}
           className="action-background epitech-icon epitech-button"
+          style={
+            epitech
+              ? { border: "2px solid red" }
+              : { border: "2px solid green", transform: "scale(1.1)" }
+          }
         >
           <img
             src="/epitechlogo.png"
@@ -82,8 +103,13 @@ function Action() {
           />
         </button>
         <button
-          onClick={() => setChange("spotify")}
+          onClick={() => setSpotify(!spotify)}
           className="action-background spotify-icon spotify-button"
+          style={
+            spotify
+              ? { border: "2px solid red" }
+              : { border: "2px solid green", transform: "scale(1.1)" }
+          }
         >
           <SocialIcon
             network="spotify"
@@ -93,7 +119,7 @@ function Action() {
         </button>
       </div>
       <div className="action-boxes">
-        {list.map((action) => {
+        {filtered.map((action) => {
           const optionSet = action.options?.every((o) => o?.value?.length > 0);
           const handleClick = () => {
             if (optionSet) {
@@ -105,10 +131,8 @@ function Action() {
           return (
             <div
               className={`action-box${optionSet ? " enabled" : ""} ${
-                showResults
-                  ? action.service.name + "-show"
-                  : action.service.name + "-hide"
-              } ${action.service.name}`}
+                action.service.name
+              }`}
               key={action._id}
               onClick={handleClick}
             >

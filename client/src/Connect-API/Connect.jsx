@@ -33,6 +33,7 @@ export default function Connect() {
     hasApi("twitter", setTwitter);
     hasApi("twitch", setTwitch);
     hasApi("epitech", setEpitech);
+    hasApi("spotify", setSpotify);
   }, []);
 
   return (
