@@ -2,10 +2,11 @@ const express = require("express");
 const utils = require("../../../utils");
 const Actions = require("../../../models/v1/action");
 const Reactions = require("../../../models/v1/reaction");
+const dbUtils = require("../../../db_utils");
 const router = express.Router();
 
 router.post("/addAction", (req, res) => {
-  utils
+  dbUtils
     .addAction(req.body)
     .then(() => {
       try {
@@ -56,7 +57,7 @@ router.post("/addAction", (req, res) => {
 });
 
 router.post("/addReaction", async (req, res) => {
-  utils
+  dbUtils
     .addReaction(req.body)
     .then(() => {
       try {

@@ -21,6 +21,7 @@ mongodb.initDbConnection().then(() => console.log("MongoDb connected"));
 const routes = require("./routes/v1/index");
 const secureRoute = require("./routes/v1/secure-index");
 const Services = require("./models/v1/services");
+const dbUtils = require("./db_utils");
 
 const app = express();
 app.use(passport.initialize());
@@ -68,7 +69,7 @@ async function build_db(file_path) {
     for (const dbService of data.services) {
       const service = await Services.find({ name: dbService.name });
       if (service.length === 0)
-        await utils.addService({
+        await dbUtils.addService({
           name: dbService.name,
           desc: dbService.desc,
           appKeys: dbService.appKeys,
@@ -76,12 +77,12 @@ async function build_db(file_path) {
       for (const action of dbService.actions) {
         action.service = dbService.name;
         const arr = await Actions.find({ name: action.name });
-        if (arr.length === 0) await utils.addAction(action);
+        if (arr.length === 0) await dbUtils.addAction(action);
       }
       for (const reaction of dbService.reactions) {
         reaction.service = dbService.name;
         const arr = await Reactions.find({ name: reaction.name });
-        if (arr.length === 0) await utils.addReaction(reaction);
+        if (arr.length === 0) await dbUtils.addReaction(reaction);
       }
     }
   } catch (error) {
