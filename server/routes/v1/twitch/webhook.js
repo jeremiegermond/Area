@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const ActionReaction = require("../../../models/v1/actionreaction.js");
+const axios = require("axios");
+const crypto = require("crypto");
+const twitch = require("./index");
+const utils = require("../../../utils");
 
 router.post("/webhook", async (req, res) => {
   const messageType = req.header("Twitch-Eventsub-Message-Type");
@@ -9,18 +13,21 @@ router.post("/webhook", async (req, res) => {
     console.log("callback verification", challenge);
     res.send(challenge);
   } else if (messageType === "notification") {
-    console.log("twitch webhook triggered");
-    console.log(req.body);
+    const { subscription } = req.body;
+    console.log("twitch webhook triggered for", subscription);
     await ActionReaction.find(
-      { webhook_uid: req.body.subscription.id },
-      (err, ars) => {
+      { webhook_uid: subscription.id },
+      (err, linkedReactions) => {
         if (err) console.log(err);
-        console.log(ars);
-        ars.forEach((ar) => {
-          ar.populate("reaction").then(async () => {
-            await ar.populate("user");
-            console.log(ar.user);
-            await ar.reaction.exec(ar.user, ar.reaction_params);
+        console.log(linkedReactions);
+        linkedReactions.forEach((reaction) => {
+          reaction.populate("reaction").then(async () => {
+            await reaction.populate("user");
+            console.log(reaction.user);
+            await reaction.reaction.exec(
+              reaction.user,
+              reaction.reaction_params
+            );
           });
         });
       }
@@ -29,9 +36,73 @@ router.post("/webhook", async (req, res) => {
   }
 });
 
-router.post("/create-webhook", async (req, res) => {
-  //.then((r) => {
-  //  res.status(200).send(r.data['data']['id']);
-  //});
+function get_twitch_bearer() {
+  const uri = twitch.twitchUrl();
+  uri.searchParams.append("grant_type", "client_credentials");
+  try {
+    console.log("Get bearer");
+    return axios({
+      method: "post",
+      url: uri,
+    }).then((r) => {
+      return r.data["access_token"];
+    });
+  } catch (e) {
+    console.log("error getting bearer", e.response.data);
+    throw Error("Bearer failed");
+  }
+}
+
+router.post("/link-webhook", async (req, res) => {
+  try {
+    const { webhook, params } = req.body;
+    console.log("Linking webhook twitch", { webhook, params });
+    const webhook_header = {
+      Authorization: `Bearer ${await get_twitch_bearer()}`,
+      "Client-ID": process.env.TWITCH_APP_ID,
+    };
+    const target_type = utils.fillParams(webhook.target_type, params);
+    const webhook_type = utils.fillParams(webhook.webhook_type, params);
+    const targetId = utils.fillParams(webhook.condition_value, params);
+
+    const { data } = await axios.get(
+      "https://api.twitch.tv/helix/eventsub/subscriptions",
+      { headers: webhook_header }
+    );
+    const id =
+      data.data.forEach((webhook) => {
+        if (
+          webhook["status"] === "enabled" &&
+          webhook["type"] === webhook_type &&
+          webhook["condition"][target_type] === targetId
+        )
+          return webhook["id"];
+      }) ?? "";
+    if (id !== "") {
+      console.log("Webhook already exists");
+      res.status(200).send(id);
+    }
+    await axios
+      .post(
+        "https://api.twitch.tv/helix/eventsub/subscriptions",
+        {
+          type: webhook.webhook_type,
+          version: "1",
+          condition: { target_type: targetId },
+          transport: {
+            method: "webhook",
+            callback: `${process.env.WEBHOOK_URL}/twitch/webhook`,
+            secret: crypto.randomBytes(10).toString("hex"),
+          },
+        },
+        { headers: webhook_header }
+      )
+      .then((r) => {
+        res.status(200).send(r.data["data"]["id"]);
+      });
+  } catch (e) {
+    console.log("Twitch link-webhook failed", e?.response?.data);
+    res.status(500).send("Twitch link-webhook failed");
+  }
 });
 module.exports = router;

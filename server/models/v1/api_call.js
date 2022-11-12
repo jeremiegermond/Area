@@ -1,5 +1,6 @@
 const axios = require("axios");
 const mongoose = require("mongoose");
+const utils = require("../../utils");
 const Schema = mongoose.Schema;
 
 const Api_call = new Schema({
@@ -21,7 +22,7 @@ const Api_call = new Schema({
   userKey: {
     type: Boolean,
   },
-})
+});
 
 async function check_trigger(trig, memory, res, data) {
   if (typeof data === "undefined") return false;
@@ -58,24 +59,29 @@ async function check_response(action, res, ar) {
     //console.log(action.trigger);
     //console.log(res.data);
     if (data.errors)
-      throw new Error("TypeError: Cannot read properties of undefined")
+      throw new Error("TypeError: Cannot read properties of undefined");
     let mem_index = 0;
-    await action.trigger.forEach(async (trig, i) => {
-      if (trig[0] === "&&" || trig[0] === "||") {
-        results[i] = trig[0];
-        return;
+    for (const [index, trigger] of action.trigger.entries()) {
+      // console.log({ index, trigger });
+      if (trigger[0] === "&&" || trigger[0] === "||") {
+        results[index] = trigger[0];
+        continue;
       }
-      if (~trig[0].indexOf("data"))
-        trig[1].split(".").forEach((elem) => {
+      if (~trigger[0].indexOf("data"))
+        trigger[1].split(".").forEach((elem) => {
           data = data[elem];
         });
       else data = res.status;
       newmem.push(data);
-      let ret = await check_trigger(trig, ar.memory[mem_index], res, data);
-      results[i] = ret;
+      results[index] = await check_trigger(
+        trigger,
+        ar.memory[mem_index],
+        res,
+        data
+      );
       mem_index++;
-    });
-    //console.log(newmem);
+    }
+    // console.log("mem", newmem);
     ar.memory = newmem;
     await ar.save();
     for (let i = 0; typeof results[i + 2] !== "undefined"; i += 2) {
@@ -97,56 +103,23 @@ async function check_response(action, res, ar) {
     //console.log(results);
     return results[0];
   } catch (err) {
-    console.log(err)
-    return false
+    console.log(err);
+    return false;
   }
-}
-
-async function get_headers(action, user, service) {
-  const header = {};
-  await user.populate("keys");
-  let keys = await user.keys.find((e) => e.service === service.name);
-  action.header.split(",").forEach((element) => {
-    let type = element.split(":");
-    let data = keys.keys.get(type[type.length - 1]);
-    if (typeof data === "undefined")
-      data = service.appKeys.get(type[type.length - 1]);
-    header[type[0]] =
-      typeof data === "undefined" ? element : data;
-  });
-  return header;
-}
-
-async function complete_url(user, service, str, params) {
-  complete_string(str, params)
-  await user.populate("keys")
-  const keys = await user.keys.find((e) => e.service === service.name);
-  keys.keys.forEach((val, key) => {
-    str = str.replaceAll("{" + key + "}", val);
-  });
-  return str;
-}
-
-function complete_string(str, params) {
-  if(str && params)
-    params.forEach((p) => {
-      str = str.replaceAll("{" + p.name + "}", p.value);
-    });
-  return str;
 }
 
 Api_call.methods.check = async function (user, service, ar) {
   try {
-    const params = ar.action_params
+    const params = ar.action_params;
     console.log("Checking for action " + ar.action.name);
-    complete_string(this.endpointUrl, params)
+    utils.fillParams(this.endpointUrl, params);
     return await check_response(
       this,
       await axios({
         method: this.method,
-        url: await complete_url(user, service, this.endpointUrl, params),
-        headers: await get_headers(this, user, service),
-        data: complete_string(this.body, params),
+        url: await utils.completeUrl(user, service, this.endpointUrl, params),
+        headers: await utils.getHeaders(this, user, service),
+        data: utils.fillParams(this.body, params),
       }),
       ar
     );

@@ -1,7 +1,5 @@
-const axios = require("axios")
-const mongoose = require("mongoose")
-const actionreaction = require("./actionreaction")
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const Action = new Schema({
   name: {
@@ -18,31 +16,28 @@ const Action = new Schema({
   },
   webhook: {
     type: Schema.ObjectId,
-    ref: "Webhook"
+    ref: "Webhook",
   },
   api_call: {
     type: Schema.ObjectId,
-    ref: "Api_call"
+    ref: "Api_call",
   },
   options: {
     type: Array,
   },
-})
+});
 
 Action.methods.isWebhook = function () {
-  if (typeof this.webhook === 'undefined')
-    return false
-  return true
-}
+  return typeof this.webhook !== "undefined";
+};
 
 Action.methods.check = async function (user, ar) {
   try {
-    await this.populate("api_call")
-    await this.populate("service")
-    return await this.api_call.check(user, this.service, ar)
+    const action = await this.populate("api_call service");
+    return await action.api_call.check(user, this.service, ar);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-module.exports = mongoose.model("Action", Action)
+module.exports = mongoose.model("Action", Action);

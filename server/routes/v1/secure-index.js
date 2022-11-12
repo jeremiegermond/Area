@@ -5,7 +5,6 @@ const User = require("../../models/v1/user.js");
 const ActionReaction = require("../../models/v1/actionreaction.js");
 const Action = require("../../models/v1/action.js");
 const Reaction = require("../../models/v1/reaction.js");
-const crypto = require("crypto");
 
 const twitter = require("./twitter");
 const twitch = require("./twitch");
@@ -30,85 +29,6 @@ router.get("/profile", async (req, res) => {
   });
 });
 
-function get_twitch_bearer() {
-  const uri = twitch.twitchUrl();
-  uri.searchParams.append("grant_type", "client_credentials");
-  try {
-    console.log("Get bearer");
-    return axios({
-      method: "post",
-      url: uri,
-    }).then((r) => {
-      return r.data["access_token"];
-    });
-  } catch (e) {
-    console.log("error getting bearer", e.response.data);
-    throw Error("Bearer failed");
-  }
-}
-
-function complete_param(url, params) {
-  params.forEach((p) => {
-    url = url.replaceAll("{" + p.name + "}", p.value);
-  });
-  return url;
-}
-
-async function linkWebhook(webhook, params) {
-  console.log("\n\n\n");
-  console.log(webhook);
-  const webhook_header = {
-    Authorization: `Bearer ${await get_twitch_bearer()}`,
-    "Client-ID": process.env.TWITCH_APP_ID,
-  };
-  const target_type = complete_param(webhook.target_type, params);
-  const webhook_type = complete_param(webhook.webhook_type, params);
-  const condition_value = complete_param(webhook.condition_value, params);
-
-  const { data } = await axios({
-    method: "get",
-    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-    headers: webhook_header,
-  });
-  const id =
-    data.data.forEach((webhook) => {
-      console.log(webhook);
-      if (
-        webhook["status"] === "enabled" &&
-        webhook["type"] === webhook_type &&
-        webhook["condition"][target_type] === condition_value
-      )
-        return webhook["id"];
-    }) ?? "";
-  if (id !== "") {
-    console.log("Webhook already exists");
-    return id;
-  }
-  const newWebhookData = {
-    type: webhook.webhook_type,
-    version: "1",
-    condition: { target_type: condition_value },
-    transport: {
-      method: "webhook",
-      callback: `${process.env.WEBHOOK_URL}/twitch/webhook`,
-      secret: crypto.randomBytes(10).toString("hex"),
-    },
-  };
-  return axios({
-    method: "post",
-    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-    headers: webhook_header,
-    data: newWebhookData,
-  })
-    .then((r) => {
-      return r.data["data"]["id"];
-    })
-    .catch((e) => {
-      console.log("Post Webhook error", e.response.data);
-      throw Error("Couldn't post twitch webhook");
-    });
-}
-
 router.post("/addActionReaction", async (req, res) => {
   try {
     const split_params = (params, dest) => {
@@ -131,13 +51,16 @@ router.post("/addActionReaction", async (req, res) => {
     });
     split_params(action_params, newAR.action_params);
     split_params(reaction_params, newAR.reaction_params);
-    console.log(action.webhook);
     if (action.webhook) {
-      await action.populate("webhook");
-      newAR.webhook_uid = await linkWebhook(
-        action.webhook,
-        newAR.action_params
+      await action.populate("webhook service");
+      newAR.webhook_uid = await axios.post(
+        `${process.env.BASE_URL}:8080/${action.service.name}/link-webhook`,
+        {
+          webhook: action.webhook,
+          params: newAR.action_params,
+        }
       );
+      console.log(newAR.webhook_uid);
     }
     newAR.save().then(() => {
       user.actionReaction.push(newAR);
@@ -148,9 +71,9 @@ router.post("/addActionReaction", async (req, res) => {
       });
     });
   } catch (error) {
-    console.log(error);
+    console.log("error adding ActionReaction", error?.response?.data);
     res.status(400).json({
-      error: error,
+      error: error?.response?.data,
     });
   }
 });
