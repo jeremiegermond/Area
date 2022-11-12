@@ -10,5 +10,6 @@ body {
 @-moz-document url-prefix(){
     body {
         background: url(./background-firefox.png);
+        background-size: cover;
     }
 }
