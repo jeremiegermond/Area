@@ -21,14 +21,16 @@ function Reaction() {
       <h1 className="action-title">Do ___</h1>
       <div className="action-boxes">
         {list.map((reaction) => {
-          const optionSet = reaction.options.every((o) => o?.value?.length > 0);
+          const optionSet = reaction.options?.every(
+            (o) => o?.value?.length > 0
+          );
           const handleClick = () => {
             if (optionSet) {
               postServer("user/addActionReaction", {
                 action_id: location.state.id,
                 reaction_id: reaction._id,
                 action_params: convertParams(location.state.options),
-                reaction_params: convertParams(reaction.options),
+                reaction_params: convertParams(reaction.options ?? []),
               })
                 .then(() => navigate("/home"))
                 .catch(() => console.log("Error adding action-reaction"));
@@ -45,7 +47,7 @@ function Reaction() {
                 <div>{reaction.name}</div>
               </div>
               <div className="option-boxes">
-                {reaction.options.map((option) => {
+                {reaction.options?.map((option) => {
                   const handleChange = (e) => {
                     setList(
                       list.map((item) => {
