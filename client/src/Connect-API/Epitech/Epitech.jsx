@@ -18,12 +18,14 @@ export default function Epitech() {
   return (
     <div className="epitech-page">
       <div className="how-to">
-        <img src="/get_cookies.png" alt="How to get your cookie" />
+        <img src="/get_cookie.png" alt="How to get your cookie" />
+        <h4>To open your console, right click and click on "Inspect".</h4>
         <a href="https://intra.epitech.eu" target="_blank" rel="noreferrer">
-          Get your cookie
+          Get my cookie
         </a>
       </div>
       <div className="epitech-form">
+        <h5>Paste it here !</h5>
         <input
           className="text-input"
           type="text"
