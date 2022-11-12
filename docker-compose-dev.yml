@@ -48,6 +48,7 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-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}
       - SPOTIFY_APP_ID=${SPOTIFY_APP_ID:-27c89047c1a5470a972174a1f19b54c4}
       - SPOTIFY_APP_SECRET=${SPOTIFY_APP_SECRET:-b1c0e71d34dd4b3f858561bc2d3ab229}
+      - WEBHOOK_URL=${WEBHOOK_URL:-inserer_url_ici}
 
   mongo:
     container_name: mongo-dev
