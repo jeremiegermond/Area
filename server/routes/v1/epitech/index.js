@@ -4,7 +4,6 @@ const axios = require("axios");
 const router = express.Router();
 
 router.post("/callback", async (req, res) => {
-  console.log(req.body);
   const { user_cookie } = req.body;
   try {
     const user = await User.findOne({ username: req.user.username });
