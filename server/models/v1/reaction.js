@@ -47,14 +47,13 @@ async function get_headers(action, user, service) {
     header[type[0]] =
       typeof data === "undefined" ? element : data
   })
-  console.log(header)
   return header
 }
 
 async function complete_url(user, service, str, params) {
   complete_string(str, params)
   await user.populate("keys")
-  let keys = await user.keys.find((e) => e.service === service.name);
+  const keys = await user.keys.find((e) => e.service === service.name);
   keys.keys.forEach((val, key) => {
     str = str.replaceAll("{" + key + "}", val);
   });

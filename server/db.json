@@ -1,1 +1,77 @@
-{"services":[]}
+{
+  "services": [
+    {
+      "name": "epitech",
+      "desc": "Epitech intranet service that can be notified of schedules and units changes and modify the user's account",
+      "appKeys": "",
+      "actions": [
+        {
+          "name": "New mark",
+          "desc": "A new mark was added to user",
+          "options": "[]",
+          "method": "get",
+          "endpointUrl": "https://intra.epitech.eu/user/{email}/notes/?format=json",
+          "header": "Cookie:user_cookie",
+          "body": "",
+          "trigger": "dataChanged,notes.length&&codeIs,200",
+          "userKey": true
+        },
+        {
+          "name": "Acquired credits updated",
+          "desc": "The user's acquired credits amount changed",
+          "options": "[]",
+          "method": "get",
+          "endpointUrl": "https://intra.epitech.eu/user/?format=json",
+          "header": "Cookie:user_cookie",
+          "body": "",
+          "trigger": "dataChanged,credits&&codeIs,200",
+          "userKey": true
+        },
+        {
+          "name": "GPA updated",
+          "desc": "The user's GPA changed",
+          "options": "[]",
+          "method": "get",
+          "endpointUrl": "https://intra.epitech.eu/user/?format=json",
+          "header": "Cookie:user_cookie",
+          "body": "",
+          "trigger": "dataChanged,gpa.0.gpa&&codeIs,200",
+          "userKey": true
+        }
+      ],
+      "reactions": []
+    },
+    {
+      "name": "twitter",
+      "desc": "Twitter.com service can gather informations on a user's tweets and profile",
+      "appKeys": "appkey:Bearer AAAAAAAAAAAAAAAAAAAAAOj6hwEAAAAAdyivOyWoWoLBNBFGdgccYLpF%2FBM%3DeTsVAZmJD8fZV9PbEOhiny1QDNXmOeGwaz2mglLl7417OJlWwQ",
+      "actions": [],
+      "reactions": []
+    },
+    {
+      "name": "reddit",
+      "desc": "Reddit.com service that can lookup subreddits and create new posts",
+      "appKeys": "appkey:Bearer 1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA",
+      "actions": [],
+      "reactions": [
+        {
+          "name": "reddit test",
+          "desc": "post on r/test",
+          "options": "[]",
+          "method": "post",
+          "endpointUrl": "https://oauth.reddit.com/api/submit?sr=test&text=Un tweet a  été posté&title=le titre&kind=self",
+          "header": "Authorization:access_token",
+          "body": "{\"resubmit\" : \"true\",\n    \"send_replies\" : \"true\",\n    \"api_type\" : \"json\"\n}",
+          "userKey": false
+        }
+      ]
+    },
+    {
+      "name": "twitch",
+      "desc": "Twitch webhook handler that can notify of changes on a user's profile and make updates",
+      "appKeys": "",
+      "actions": [],
+      "reactions": []
+    }
+  ]
+}

@@ -83,19 +83,18 @@ async function build_db(file_path) {
         const arr = await Services.find({name: service.name})
         if (arr.length === 0)
           await utils.addService({name: service.name, desc: service.desc, appKeys: service.appKeys})
-          .then(() => {
         service.actions.forEach(async (action) => {
           action.service = service.name
-          const arr = await Actions.find({name: service.name})
+          const arr = await Actions.find({name: action.name})
           if (arr.length === 0)
             await utils.addAction(action)
         })
         service.reactions.forEach(async (reaction) => {
           reaction.service = service.name
-          const arr = await Reactions.find({name: service.name})
+          const arr = await Reactions.find({name: reaction.name})
           if (arr.length === 0)
             utils.addReaction(reaction)
-        })})
+        })
       })
     })
   } catch (error) {
@@ -116,6 +115,7 @@ async function checkActions() {
       }
       users.forEach((user) => {
         try {
+          console.log(user.username + " :")
           user.populate("actionReaction").then(() => {
             user.actionReaction.forEach(async (ar) => {
               await ar.populate("action");
