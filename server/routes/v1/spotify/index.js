@@ -24,6 +24,7 @@ router.post("/callback", async (req, res) => {
         redirect_uri: `${process.env.BASE_URL}:8081/connect-api/spotify`,
       },
     }).then((r) => {
+      console.log(r.data["access_token"].toString())
       const map = new Map([
         ["access_token", "Bearer " + r.data["access_token"].toString()],
         ["refresh_token", "Bearer " + r.data["refresh_token"].toString()],
