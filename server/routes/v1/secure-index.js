@@ -9,15 +9,15 @@ const crypto = require("crypto");
 
 const twitter = require("./twitter");
 const twitch = require("./twitch");
-const spotify = require("./spotify");
 const reddit = require("./reddit");
 const epitech = require("./epitech");
+const spotify = require("./spotify");
 const api = require("./api");
 
 router.use("/twitter", twitter);
 router.use("/twitch", twitch);
-router.use("/spotify", spotify);
 router.use("/reddit", reddit);
+router.use("/spotify", spotify)
 router.use("/epitech", epitech);
 router.use("/", api);
 
@@ -155,44 +155,39 @@ function complete_param(url, params) {
 }
 
 async function linkWebhook(webhook, params) {
-  try {
-    console.log("\n\n\n")
-    console.log(webhook)
-    const target_type = complete_param(webhook.target_type, params)
-    const webhook_type = complete_param(webhook.webhook_type, params)
-    const condition_value = complete_param(webhook.condition_value, params)
-    let id = await check_current_subscription(target_type, webhook_type, condition_value);
-    console.log(condition_value)
-    if (id != '') {
-      console.log("Webhook already exists")
-      return id
-    }
-    const data = {
-      type: webhook.webhook_type,
-      version: "1",
-      condition: {},
-      transport: {
-      method: "webhook",
-      callback: "https://359a-163-5-2-51.eu.ngrok.io/twitch/webhook",
-      secret: crypto.randomBytes(10).toString("hex"),
-      },
-    };
-    data["condition"][target_type] = condition_value;
-    await axios({
-        method: "post",
-        url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-        headers: {
-        Authorization: `Bearer ${await get_twitch_bearer()}`,
-        "Client-ID": "vi9za74j91x41dxvhmdsyjzau002xe",
-        },
-        data: data
-    }).then(async (r) => {
-      return r.data['data']['id']
-    })
-  } catch (error) {
-    console.log(error)
-    throw error
+  console.log("\n\n\n")
+  console.log(webhook)
+  const target_type = complete_param(webhook.target_type, params)
+  const webhook_type = complete_param(webhook.webhook_type, params)
+  const condition_value = complete_param(webhook.condition_value, params)
+  let id = await check_current_subscription(target_type, webhook_type, condition_value);
+  console.log(condition_value)
+  if (id != '') {
+    console.log("Webhook already exists")
+    return id
   }
+  const data = {
+    type: webhook.webhook_type,
+    version: "1",
+    condition: {},
+    transport: {
+    method: "webhook",
+    callback: `${process.env.WEBHOOK_URL}/twitch/webhook`,
+    secret: crypto.randomBytes(10).toString("hex"),
+    },
+  };
+  data["condition"][target_type] = condition_value;
+  axios({
+      method: "post",
+      url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+      headers: {
+      Authorization: `Bearer ${await get_twitch_bearer()}`,
+      "Client-ID": process.env.TWITCH_APP_ID,
+      },
+      data: data
+  }).then(async (r) => {
+    return r.data['data']['id']
+  })
 }
 
 router.post("/addActionReaction", async (req, res) => {
@@ -205,7 +200,7 @@ router.post("/addActionReaction", async (req, res) => {
       });
     };
     const { action_id, reaction_id, action_params, reaction_params } = req.body;
-    const user = await User.findOne({ username: req.user.username });
+    const user = await User.findOne({ name: req.user.username });
     const action = await Action.findById(action_id);
     const reaction = await Reaction.findById(reaction_id);
     const newAR = new ActionReaction({
