@@ -14,10 +14,9 @@ const epitech = require("./epitech");
 const spotify = require("./spotify");
 const area = require("./area");
 const api = require("./api");
-const { twitchUrl } = require("./twitch");
 
 router.use("/twitter", twitter);
-router.use("/twitch", twitch);
+router.use("/twitch", twitch.router);
 router.use("/reddit", reddit);
 router.use("/spotify", spotify);
 router.use("/epitech", epitech);
@@ -32,14 +31,20 @@ router.get("/profile", async (req, res) => {
 });
 
 function get_twitch_bearer() {
-  const uri = twitchUrl();
+  const uri = twitch.twitchUrl();
   uri.searchParams.append("grant_type", "client_credentials");
-  return axios({
-    method: "post",
-    url: uri,
-  }).then((r) => {
-    return r.data["access_token"];
-  });
+  try {
+    console.log("Get bearer");
+    return axios({
+      method: "post",
+      url: uri,
+    }).then((r) => {
+      return r.data["access_token"];
+    });
+  } catch (e) {
+    console.log("error getting bearer", e.response.data);
+    throw Error("Bearer failed");
+  }
 }
 
 function complete_param(url, params) {
@@ -97,14 +102,20 @@ async function linkWebhook(webhook, params) {
       secret: crypto.randomBytes(10).toString("hex"),
     },
   };
-  axios({
-    method: "post",
-    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-    headers: webhook_header,
-    data: newWebhookData,
-  }).then(async (r) => {
-    return r.data["data"]["id"];
-  });
+  try {
+    console.log("post subscription");
+
+    axios({
+      method: "post",
+      url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+      headers: webhook_header,
+      data: newWebhookData,
+    }).then(async (r) => {
+      return r.data["data"]["id"];
+    });
+  } catch (e) {
+    console.log("Axios fail", e.response.data);
+  }
 }
 
 router.post("/addActionReaction", async (req, res) => {

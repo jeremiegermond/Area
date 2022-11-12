@@ -52,4 +52,4 @@ router.get("/addAccount", async (req, res) => {
   res.status(200).json({ path: uri.href });
 });
 
-module.exports = router;
+module.exports = { router: router, twitchUrl: twitchUrl };
