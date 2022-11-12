@@ -102,6 +102,11 @@ export default function Register() {
             You already have an account ? Go to <Link to="/login">login</Link>
           </p>
         </div>
+        <div className="phone">
+          <Link className="phone-link" to="base.apk" >
+            <input type="submit" className=" phone-input" value="Redirect to apk" />
+          </Link>
+        </div>
       </div>
     </>
   );

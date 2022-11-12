@@ -105,6 +105,11 @@ export default function Login() {
             <Link to="/register">register</Link>
           </p>
         </div>
+        <div className="phone">
+          <Link className="phone-link" to="/base.apk" >
+            <input type="submit" className="phone-input" value="Redirect to apk" />
+          </Link>
+        </div>
       </div>
     </>
   );
