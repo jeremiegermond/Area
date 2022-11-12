@@ -55,10 +55,7 @@ async function complete_url(user, service, str, params) {
   complete_string(str, params)
   await user.populate("keys")
   let keys = await user.keys.find((e) => e.service === service.name);
-  console.log("debug\n\n")
   keys.keys.forEach((val, key) => {
-    console.log(str)
-    console.log(key)
     str = str.replaceAll("{" + key + "}", val);
   });
   return str;

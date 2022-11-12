@@ -119,13 +119,12 @@ async function get_headers(action, user, service) {
 }
 
 async function complete_url(user, service, str, params) {
-  str = complete_string(str, params)
+  complete_string(str, params)
   await user.populate("keys")
   let keys = await user.keys.find((e) => e.service === service.name);
-  console.log("debug\n\n")
-  console.log(params)
-  console.log(keys)
-  console.log(str)
+  keys.keys.forEach((val, key) => {
+    str = str.replaceAll("{" + key + "}", val);
+  });
   return str;
 }
 
