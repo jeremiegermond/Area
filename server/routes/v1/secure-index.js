@@ -80,14 +80,6 @@ async function linkWebhook(webhook, params) {
       )
         return webhook["id"];
     }) ?? "";
-  console.log("id", id);
-
-  // const id = await check_current_subscription(
-  //   target_type,
-  //   webhook_type,
-  //   condition_value
-  // );
-  console.log(condition_value);
   if (id !== "") {
     console.log("Webhook already exists");
     return id;
@@ -102,20 +94,19 @@ async function linkWebhook(webhook, params) {
       secret: crypto.randomBytes(10).toString("hex"),
     },
   };
-  try {
-    console.log("post subscription");
-
-    axios({
-      method: "post",
-      url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-      headers: webhook_header,
-      data: newWebhookData,
-    }).then(async (r) => {
+  return axios({
+    method: "post",
+    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+    headers: webhook_header,
+    data: newWebhookData,
+  })
+    .then((r) => {
       return r.data["data"]["id"];
+    })
+    .catch((e) => {
+      console.log("Post Webhook error", e.response.data);
+      throw Error("Couldn't post twitch webhook");
     });
-  } catch (e) {
-    console.log("Axios fail", e.response.data);
-  }
 }
 
 router.post("/addActionReaction", async (req, res) => {
