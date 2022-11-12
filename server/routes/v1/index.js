@@ -311,6 +311,10 @@ router.get("/about.json", async (req, res) => {
   }
 });
 
+router.get("/", (req, res) => {
+  res.status(200).send("It works");
+});
+
 router.post("/webhooks/twitter", (req, res) => {
   const { crc_token } = req.query;
   const crc_response = crypto

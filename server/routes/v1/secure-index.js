@@ -21,6 +21,13 @@ router.use("/reddit", reddit);
 router.use("/epitech", epitech);
 router.use("/", api);
 
+router.get("/profile", async (req, res) => {
+  res.json({
+    message: "You made it to the secure route",
+    user: req.user,
+  });
+});
+
 router.get("/getActions", async (req, res) => {
   let data = [];
   try {
