@@ -326,7 +326,7 @@ web & module clients through a REST API.
 ##  Database
 The database uses MongoDB to store user's and services' data.
 Here is a schema of the tables and their relations :
-![database schema](https://imgur.com/a/ei6R7U5) 
+![database schema](https://imgur.com/p0U5KCo) 
 
 
 <!-- Links -->
