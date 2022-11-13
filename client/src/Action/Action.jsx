@@ -1,9 +1,10 @@
 import "./Action.css";
 import { useEffect, useState } from "react";
 import { getServer } from "../api";
-import { FaReddit, FaTwitch, FaTwitter } from "react-icons/fa";
+import { FaLink, FaReddit, FaTwitch, FaTwitter } from "react-icons/fa";
 import { SocialIcon } from "react-social-icons";
 import { useNavigate } from "react-router-dom";
+import { Box } from "../Component/Home-Box";
 
 function Action() {
   const navigate = useNavigate();
@@ -14,7 +15,18 @@ function Action() {
   const [reddit, setReddit] = useState(false);
   const [epitech, setEpitech] = useState(false);
   const [spotify, setSpotify] = useState(false);
+  const [hidden, setHidden] = useState(undefined);
+  const [updated, setUpdated] = useState(false);
 
+  const styles = {
+    on: {
+      border: "2px solid green",
+      transform: "scale(1.1)",
+    },
+    off: {
+      border: "2px solid red",
+    },
+  };
   useEffect(() => {
     getServer("user/getActions")
       .then((r) => {
@@ -22,19 +34,27 @@ function Action() {
         setFiltered(r.data);
       })
       .catch(() => console.log("Can't get action list"));
-    const hasApi = (api, setter) => {
-      getServer("user/hasApi/" + api)
+    const hasApi = async (api, setter) => {
+      return await getServer("user/hasApi/" + api)
         .then((res) => {
           setter(res.data);
         })
         .catch(() => console.log(`Couldn't get ${api} status`));
     };
-    hasApi("reddit", setReddit);
-    hasApi("twitter", setTwitter);
-    hasApi("twitch", setTwitch);
-    hasApi("epitech", setEpitech);
-    hasApi("spotify", setSpotify);
+    const getAll = async () => {
+      await hasApi("reddit", setReddit);
+      await hasApi("twitter", setTwitter);
+      await hasApi("twitch", setTwitch);
+      await hasApi("epitech", setEpitech);
+      await hasApi("spotify", setSpotify);
+    };
+    getAll().then(() => setUpdated(true));
   }, []);
+
+  useEffect(() => {
+    console.log("updated trigg", { twitch, twitter, reddit, epitech, spotify });
+    setHidden({ twitch, twitter, reddit, epitech, spotify });
+  }, [updated]);
 
   const filterByApi = (data) => {
     return data.filter(
@@ -59,9 +79,11 @@ function Action() {
           onClick={() => setTwitch(!twitch)}
           className="action-background twitch-icon twitch-button"
           style={
-            twitch
-              ? { border: "2px solid red" }
-              : { border: "2px solid green", transform: "scale(1.1)" }
+            !hidden?.twitch
+              ? { display: "none" }
+              : twitch
+              ? styles.on
+              : styles.off
           }
         >
           <FaTwitch size={40} className="twitch-icon action-icon" />
@@ -70,9 +92,11 @@ function Action() {
           onClick={() => setTwitter(!twitter)}
           className="action-background twitter-icon twitter-button"
           style={
-            twitter
-              ? { border: "2px solid red" }
-              : { border: "2px solid green", transform: "scale(1.1)" }
+            !hidden?.twitter
+              ? { display: "none" }
+              : twitter
+              ? styles.on
+              : styles.off
           }
         >
           <FaTwitter size={40} className="twitter-icon action-icon" />
@@ -81,9 +105,11 @@ function Action() {
           onClick={() => setReddit(!reddit)}
           className="action-background reddit-icon reddit-button"
           style={
-            reddit
-              ? { border: "2px solid red" }
-              : { border: "2px solid green", transform: "scale(1.1)" }
+            !hidden?.reddit
+              ? { display: "none" }
+              : reddit
+              ? styles.on
+              : styles.off
           }
         >
           <FaReddit size={40} className="reddit-icon action-icon" />
@@ -92,9 +118,11 @@ function Action() {
           onClick={() => setEpitech(!epitech)}
           className="action-background epitech-icon epitech-button"
           style={
-            epitech
-              ? { border: "2px solid red" }
-              : { border: "2px solid green", transform: "scale(1.1)" }
+            !hidden?.epitech
+              ? { display: "none" }
+              : epitech
+              ? styles.on
+              : styles.off
           }
         >
           <img
@@ -107,9 +135,11 @@ function Action() {
           onClick={() => setSpotify(!spotify)}
           className="action-background spotify-icon spotify-button"
           style={
-            spotify
-              ? { border: "2px solid red" }
-              : { border: "2px solid green", transform: "scale(1.1)" }
+            !spotify?.epitech
+              ? { display: "none" }
+              : spotify
+              ? styles.on
+              : styles.off
           }
         >
           <SocialIcon
@@ -119,6 +149,13 @@ function Action() {
           />
         </button>
       </div>
+      {!filtered?.length > 0 ? (
+        <Box onClick={() => navigate("/connect-api")}>
+          <FaLink size={80} />
+        </Box>
+      ) : (
+        <></>
+      )}
       <div className="action-boxes">
         {filtered.map((action) => {
           const optionSet = action.options?.every((o) => o?.value?.length > 0);
