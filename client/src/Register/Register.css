@@ -157,6 +157,10 @@
 }
 
 @media screen and (max-width: 500px) {
+    .home .login-box {
+        display: none;
+    }
+
     .phone {
         display: flex;
         justify-content: center;
