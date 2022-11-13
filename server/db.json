@@ -270,7 +270,7 @@
           "method": "put",
           "endpointUrl": "https://api.spotify.com/v1/me/player/play",
           "header": "Authorization:access_token",
-          "body": "\"context_uri\":\"spotify:album:{Album}\"",
+          "body": "JSON:{\"context_uri\":\"spotify:album:{Album}\"}",
           "userKey": true
         }
       ]
