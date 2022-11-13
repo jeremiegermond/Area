@@ -3,9 +3,27 @@
 Bussiness application connecting services to automate tasks between them.<br>
 Developed in React, Express and MongoDB.
 
+[Live demo][6]
+
+[Release APK][7]
+
 # Usage
 
 It is assumed that the user already has a working [Docker installation][1] on their machine.
+
+You have to add a `.env` to the root of the folder.
+
+Refer to the following example (more can be found in `docker-compose.yml`):
+
+```shell
+HTTPS=boolean                     # default false
+SSL_CRT_FILE=path                 # default none
+SSL_CRT_FILE=path                 # default none
+BASE_URL=url                      # default http://localhost
+{SERVICE}_APP_ID=id               # default id for localhost only
+{SERVICE}_APP_SECRET=id           # default secret for localhost only
+WEBHOOK_URL=unset                 # must be set for webhooks to work (explained below)
+```
 
 ## Building from source
 
@@ -22,7 +40,7 @@ Compilation only: `docker-compose build`
 ## Open the application
 
 - Open your browser and go to [http://localhost:8081][2]
-- Download amd install the [mobile application][3]
+- Download and install the [mobile application][3]
 
 # About the project
 
@@ -137,3 +155,5 @@ ngrok http 8080
 [3]:http://localhost:8081/client.apk
 [4]:https://ngrok.com
 [5]:https://ngrok.com/download
+[6]:https://brumai.re:8081
+[7]:https://brumai.re:8081/client.apk

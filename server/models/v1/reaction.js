@@ -43,8 +43,8 @@ const twitter_call = async (user, service, url) => {
   await user.populate("keys");
   const {keys} = await user.keys.find((e) => e.service === service.name);
   const client = new Twitter({
-    consumer_key: service.appKeys.get("APIkey"),
-    consumer_secret: service.appKeys.get("APIsecret"),
+    consumer_key: process.env.TWITTER_APP_ID,
+    consumer_secret: process.env.TWITTER_APP_SECRET,
     access_token_key: keys.get("public"),
     access_token_secret: keys.get("secret")
   })
