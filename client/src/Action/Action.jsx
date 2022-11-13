@@ -18,16 +18,6 @@ function Action() {
   const [hidden, setHidden] = useState(undefined);
   const [updated, setUpdated] = useState(false);
 
-  const styles = {
-    on: {
-      border: "2px solid green",
-      transform: "scale(1.1)",
-    },
-    off: {
-      border: "2px solid red",
-    },
-  };
-
   useEffect(() => {
     getServer("user/getActions")
       .then((r) => {
@@ -234,6 +224,17 @@ export const icons = {
   epitech: (
     <img className="epitech-logo" src="/epitechlogo.png" alt="epitech" />
   ),
+};
+
+export const styles = {
+  on: {
+    border: "2px solid green",
+    transform: "scale(1.1)",
+  },
+  off: {
+    border: "2px solid red",
+    filter: "brightness(80%)"
+  },
 };
 
 export default Action;

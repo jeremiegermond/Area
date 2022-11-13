@@ -3,9 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getServer, postServer } from "../api";
 import { icons } from "../Action/Action";
+import { styles } from "../Action/Action";
 import { FaLink, FaReddit, FaTwitch, FaTwitter } from "react-icons/fa";
 import { SocialIcon } from "react-social-icons";
 import { Box } from "../Component/Home-Box";
+
 
 function Reaction() {
   const navigate = useNavigate();
@@ -19,16 +21,6 @@ function Reaction() {
   const [spotify, setSpotify] = useState(false);
   const [hidden, setHidden] = useState(undefined);
   const [updated, setUpdated] = useState(false);
-
-  const styles = {
-    on: {
-      border: "2px solid green",
-      transform: "scale(1.1)",
-    },
-    off: {
-      border: "2px solid red",
-    },
-  };
 
   useEffect(() => {
     getServer("user/getReactions")
