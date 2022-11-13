@@ -143,22 +143,23 @@ function Action() {
               <div className="option-boxes">
                 {action.options?.map((option) => {
                   const handleChange = (e) => {
-                    setList(
-                      list.map((item) => {
-                        if (item._id === action._id) {
-                          return {
-                            ...item,
-                            options: action.options.map((newOption) => {
-                              if (newOption.name === option.name) {
-                                return { ...newOption, value: e.target.value };
-                              }
-                              return newOption;
-                            }),
-                          };
-                        }
-                        return item;
-                      })
-                    );
+                    const newList = list.map((item) => {
+                      if (item._id === action._id) {
+                        return {
+                          ...item,
+                          options: action.options.map((newOption) => {
+                            if (newOption.name === option.name) {
+                              return { ...newOption, value: e.target.value };
+                            }
+                            return newOption;
+                          }),
+                        };
+                      }
+                      return item;
+                    });
+
+                    setList(newList);
+                    setFiltered(filterByApi(newList));
                   };
                   return (
                     <div
