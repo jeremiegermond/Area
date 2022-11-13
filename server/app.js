@@ -57,6 +57,14 @@ if (process.env.HTTPS === "true") {
   app.listen(port);
 }
 
+function addKeys(str) {
+  while (str.indexOf("{") != -1 && str) {
+    substr = str.substring(str.indexOf("{") + 1, str.indexOf("}"))
+    str = str.replaceAll("{" + substr + "}", process.env[substr])
+  }
+  return str
+}
+
 async function build_db(file_path) {
   try {
     const data = utils.getDb();
@@ -72,7 +80,7 @@ async function build_db(file_path) {
         await dbUtils.addService({
           name: dbService.name,
           desc: dbService.desc,
-          appKeys: dbService.appKeys,
+          appKeys: addKeys(dbService.appKeys),
         });
       for (const action of dbService.actions) {
         action.service = dbService.name;
