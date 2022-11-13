@@ -15,6 +15,12 @@
     height: 40px;
 }
 
+.spotify-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+}
+
 .epitech-logo {
     width: 40px;
     height: 40px;
@@ -59,7 +65,7 @@
     background-color: white;
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
     transition: 0.3s ease;
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .action-background:hover {
@@ -99,7 +105,7 @@
 
 .action-boxes .action-box.enabled:hover {
     border: 1px solid blue;
-    transform: scale(1.1);
+    transform: scale(1.05);
     transition: 0.3s ease;
     background-color: white;
 }
@@ -123,6 +129,11 @@
     gap: 15px;
     flex: 1;
     font-size: large;
+}
+
+.action-boxes .action-box .action-info-name {
+    width: 80%;
+    height: 100%;
 }
 
 .action-boxes .action-box .option-boxes {
