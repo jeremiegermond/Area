@@ -135,7 +135,7 @@ function Action() {
           onClick={() => setSpotify(!spotify)}
           className="action-background spotify-icon spotify-button"
           style={
-            !spotify?.epitech
+            !hidden?.spotify
               ? { display: "none" }
               : spotify
               ? styles.on
