@@ -35,5 +35,8 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+          cache: 'pip'
+      - name: Pip requests
+        run: pip install requests
       - name: Test extended
         run: python testing/run_test.py
