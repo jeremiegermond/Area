@@ -27,6 +27,7 @@ function Action() {
       border: "2px solid red",
     },
   };
+
   useEffect(() => {
     getServer("user/getActions")
       .then((r) => {
@@ -66,6 +67,7 @@ function Action() {
         (spotify || service.name !== "spotify")
     );
   };
+  
   useEffect(() => {
     const filteredData = filterByApi(list);
     setFiltered(filteredData);
@@ -176,7 +178,7 @@ function Action() {
             >
               <div className={"action-info"}>
                 {icons[action.service.name]}
-                <div>{action.name}</div>
+                <div className="action-info-name">{action.name}</div>
               </div>
               <div className="option-boxes">
                 {action.options?.map((option) => {
@@ -228,7 +230,7 @@ export const icons = {
   twitter: <FaTwitter size={40} className="twitter-icon" />,
   reddit: <FaReddit size={40} className="reddit-icon" />,
   twitch: <FaTwitch size={40} className="twitch-icon" />,
-  spotify: <SocialIcon network="spotify" size={40} className="spotify-icon" />,
+  spotify: <SocialIcon network="spotify" size={30} className="spotify-icon" />,
   epitech: (
     <img className="epitech-logo" src="/epitechlogo.png" alt="epitech" />
   ),
