@@ -107,14 +107,13 @@ router.post("/addActionReaction", async (req, res) => {
     split_params(reaction_params, newAR.reaction_params);
     if (action.webhook) {
       await action.populate("webhook service");
-      newAR.webhook_uid = await axios.post(
+      await axios.post(
         `${process.env.BASE_URL}:8080/${action.service.name}/link-webhook`,
         {
           webhook: action.webhook,
           params: newAR.action_params,
         }
-      );
-      console.log(newAR.webhook_uid);
+      ).then((r) => newAR.webhook_uid = r.data);
     }
     newAR.save().then(() => {
       user.actionReaction.push(newAR);

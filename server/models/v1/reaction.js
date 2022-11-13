@@ -48,11 +48,7 @@ const twitter_call = async (user, service, url) => {
     access_token_key: keys.get("public"),
     access_token_secret: keys.get("secret")
   })
-  client.post(uri.pathname.replace("/1.1", "").replace("/2", ""), Object.fromEntries(uri.searchParams), (err, tweet, res) => {
-    if (!error) {
-      console.log("Twitter successfull");
-    }
-  })
+  client.post(uri.pathname.replace("/1.1", "").replace("/2", ""), Object.fromEntries(uri.searchParams), () => {})
 }
 
 Reaction.methods.exec = async function (user, params) {

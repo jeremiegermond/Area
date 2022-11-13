@@ -69,26 +69,31 @@ router.post("/link-webhook", async (req, res) => {
       "https://api.twitch.tv/helix/eventsub/subscriptions",
       { headers: webhook_header }
     );
-    const id =
-      data.data.forEach((webhook) => {
-        if (
-          webhook["status"] === "enabled" &&
-          webhook["type"] === webhook_type &&
-          webhook["condition"][target_type] === targetId
-        )
-          return webhook["id"];
-      }) ?? "";
+    console.log(data.data);
+    console.log({webhook_type,target_type, targetId })
+    let id = "";
+    data.data.forEach((webhook) => {
+      console.log(webhook["status"] === "enabled" , webhook["type"] === webhook_type, webhook["condition"][target_type] === targetId);
+      if (
+        webhook["status"] === "enabled" &&
+        webhook["type"] === webhook_type &&
+        webhook["condition"][target_type] === targetId
+      )
+        id = webhook["id"];
+    });
+    console.log(`id is '${id}'`)
     if (id !== "") {
       console.log("Webhook already exists");
       res.status(200).send(id);
+      return;
     }
     await axios
       .post(
         "https://api.twitch.tv/helix/eventsub/subscriptions",
         {
-          type: webhook.webhook_type,
+          type: webhook_type,
           version: "1",
-          condition: { target_type: targetId },
+          condition: { [target_type]: targetId },
           transport: {
             method: "webhook",
             callback: `${process.env.WEBHOOK_URL}/twitch/webhook`,
@@ -100,7 +105,15 @@ router.post("/link-webhook", async (req, res) => {
       .then((r) => {
         res.status(200).send(r.data["data"]["id"]);
       });
+      /**
+       * {
+        "webhook_type" : "channel.follow"
+        "condition_value" : {ID}
+        "target_type" : "broadcaster_user_id"
+        }
+      */
   } catch (e) {
+    console.log(e);
     console.log("Twitch link-webhook failed", e?.response?.data);
     res.status(500).send("Twitch link-webhook failed");
   }
