@@ -4,6 +4,44 @@ const axios = require("axios");
 const crypto = require("crypto");
 const router = express.Router();
 
+function getAuth() {
+  return `Basic ${Buffer.from(
+    `${process.env.SPOTIFY_APP_ID}:${process.env.SPOTIFY_APP_SECRET}`
+  ).toString("base64")}`;
+}
+
+router.post("/refresh", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.user.username });
+    const { refresh } = req.body;
+    await axios
+      .post(
+        "https://accounts.spotify.com/api/token",
+        {
+          grant_type: "refresh_token",
+          refresh_token: refresh,
+        },
+        {
+          headers: {
+            Authorization: getAuth(),
+            "content-type": "application/x-www-form-urlencoded",
+          },
+        }
+      )
+      .then((r) => {
+        const map = new Map([
+          ["access_token", "Bearer " + r.data["access_token"]],
+          ["refresh_token", refresh],
+          ["expires_in", Date.now() + r.data["expires_in"] * 1000],
+        ]);
+        user.updateApiKey(map, "spotify").then((e) => res.status(201).send(e));
+      });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("Couldn't refresh");
+  }
+});
+
 router.post("/callback", async (req, res) => {
   const { code } = req.body;
   try {
@@ -12,9 +50,7 @@ router.post("/callback", async (req, res) => {
       method: "post",
       url: "https://accounts.spotify.com/api/token",
       headers: {
-        Authorization: `Basic ${Buffer.from(
-          `${process.env.SPOTIFY_APP_ID}:${process.env.SPOTIFY_APP_SECRET}`
-        ).toString("base64")}`,
+        Authorization: getAuth(),
         "content-type": "application/x-www-form-urlencoded",
       },
       data: {
@@ -25,7 +61,7 @@ router.post("/callback", async (req, res) => {
     }).then((r) => {
       const map = new Map([
         ["access_token", "Bearer " + r.data["access_token"]],
-        ["refresh_token", "Bearer " + r.data["refresh_token"]],
+        ["refresh_token", r.data["refresh_token"] * 1000],
         ["expires_in", Date.now() + r.data["expires_in"]],
       ]);
       user.addApiKey(map, "spotify").then((e) => res.status(201).send(e));

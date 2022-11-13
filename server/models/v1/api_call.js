@@ -1,8 +1,10 @@
 const axios = require("axios");
 const mongoose = require("mongoose");
 const utils = require("../../utils");
+const jwt = require("jsonwebtoken");
 const Schema = mongoose.Schema;
 
+// const Users = require("./user");
 const Api_call = new Schema({
   method: {
     type: String,
@@ -65,8 +67,8 @@ async function check_response(action, res, ar) {
     //console.log(action.trigger);
     //console.log(res.data);
     if (data.errors) {
-      console.error(data.errors)
-      throw new Error("TypeError: Cannot read properties of undefined")
+      console.error(data.errors);
+      throw new Error("TypeError: Cannot read properties of undefined");
     }
     let mem_index = 0;
     for (const [index, trigger] of action.trigger.entries()) {
@@ -89,7 +91,7 @@ async function check_response(action, res, ar) {
       );
       mem_index++;
     }
-    // console.log("mem", newmem);
+    console.log("mem", newmem);
     ar.memory = newmem;
     await ar.save();
     for (let i = 0; typeof results[i + 2] !== "undefined"; i += 2) {
@@ -120,6 +122,24 @@ Api_call.methods.check = async function (user, service, ar) {
   try {
     const params = ar.action_params;
     console.log("Checking for action " + ar.action.name);
+    await user.populate("keys");
+    const { keys } = user.keys.find(
+      ({ service: keyService }) => keyService === service.name
+    );
+    const refresh = keys.get("expires_in");
+    if (!!refresh && refresh <= Date.now()) {
+      await axios.post(
+        `${process.env.BASE_URL}:8080/user/${service.name}/refresh`,
+        {
+          refresh: keys.get("refresh_token"),
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + jwt.sign({ user: user }, "TOP_SECRET"),
+          },
+        }
+      );
+    }
     utils.fillParams(this.endpointUrl, params);
     return await check_response(
       this,

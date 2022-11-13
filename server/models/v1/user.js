@@ -54,7 +54,17 @@ User.methods.addApiKey = async function (key, service) {
     await user.save();
     return `${service} key added to ${user.username}`;
   } catch (e) {
-    throw `Couldn't add ${service}`;
+    throw `Couldn't add ${service} key`;
+  }
+};
+
+User.methods.updateApiKey = async function (newKeys, service) {
+  try {
+    await UserKeys.findOneAndUpdate({ service: service }, { keys: newKeys });
+    return `${service} key updated`;
+  } catch (e) {
+    console.log(e);
+    throw `Couldn't update ${service} key`;
   }
 };
 
