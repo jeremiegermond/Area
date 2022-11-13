@@ -116,7 +116,24 @@ For the front-end and client side we use React a Javascript framework, we choose
 MongoDB is an open source NoSQL database used to store our Actions-Reactions data and our users.
 we use to store structured or unstructured data. It uses a JSON-like format to store documents in object which makes it really fast and easy to use by deleting the "normalization of the data" process which can take a lot of time in large-scale applications
 
+### Usage of Webhooks
+
+To make sure we recieve webhooks alerts locally we will use a command-line application to deploy our localhost to the internet
+the tool used is called [NGROK][4]
+
+1. Go to the [download page][5]
+2. Sign up
+3. Follow [the instructions][5] to add your token
+4. Launch Ngrok on port 8080
+```bash
+ngrok http 8080
+```
+5. Then you simply have to paste the *Forwarding* url in the project env on the WEBHOOK_URL key
+
+
 <!-- Links -->
 [1]:https://docs.docker.com/get-docker/
 [2]:http://localhost:8081
 [3]:http://localhost:8081/client.apk
+[4]:https://ngrok.com
+[5]:https://ngrok.com/download
