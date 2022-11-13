@@ -13,10 +13,6 @@ Developed with React, Express js and MongoDB.
 
 [Release APK][7]
 
-[Live demo][6]
-
-[Release APK][7]
-
 # Usage
 
   
