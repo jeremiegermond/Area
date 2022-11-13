@@ -113,7 +113,7 @@ router.post("/addActionReaction", async (req, res) => {
           webhook: action.webhook,
           params: newAR.action_params,
         }
-      ).then((r) => newAR.webhook_uid = r.data);
+      ).then((r) => {console.log(r.data); newAR.webhook_uid = r.data});
     }
     newAR.save().then(() => {
       user.actionReaction.push(newAR);

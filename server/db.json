@@ -87,6 +87,46 @@
       "desc": "Twitch webhook handler that can notify of changes on a user's profile and make updates",
       "appKeys": "Client-ID:vi9za74j91x41dxvhmdsyjzau002xe",
       "actions": [
+        {
+          "name": "New channel follower",
+          "desc": "Someone followed the user's channel",
+          "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitch streamer id\",\"keyboard\":\"default\"}]",
+          "webhook_type": "channel.follow",
+          "condition_value": "{ID}",
+          "target_type": "broadcaster_user_id"
+        },
+        {
+          "name": "Stream online",
+          "desc": "User started streaming",
+          "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitch streamer id\",\"keyboard\":\"default\"}]",
+          "webhook_type": "stream.online",
+          "condition_value": "{ID}",
+          "target_type": "broadcaster_user_id"
+        },
+        {
+          "name": "Stream offline",
+          "desc": "User stoped streaming",
+          "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitch streamer id\",\"keyboard\":\"default\"}]",
+          "webhook_type": "stream.offline",
+          "condition_value": "{ID}",
+          "target_type": "broadcaster_user_id"
+        },
+        {
+          "name": "Channel updated",
+          "desc": "User changed their stream details",
+          "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitch streamer id\",\"keyboard\":\"default\"}]",
+          "webhook_type": "channel.update",
+          "condition_value": "{ID}",
+          "target_type": "broadcaster_user_id"
+        },
+        {
+          "name": "Profile updated",
+          "desc": "User changed their profile details",
+          "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitch streamer id\",\"keyboard\":\"default\"}]",
+          "webhook_type": "user.update",
+          "condition_value": "{ID}",
+          "target_type": "user_id"
+        }
       ],
       "reactions": [
         {

@@ -77,6 +77,7 @@ router.post("/link-webhook", async (req, res) => {
       if (
         webhook["status"] === "enabled" &&
         webhook["type"] === webhook_type &&
+        webhook["transport"]["callback"] === `${process.env.WEBHOOK_URL}/twitch/webhook` &&
         webhook["condition"][target_type] === targetId
       )
         id = webhook["id"];
@@ -87,6 +88,7 @@ router.post("/link-webhook", async (req, res) => {
       res.status(200).send(id);
       return;
     }
+    console.log("request")
     await axios
       .post(
         "https://api.twitch.tv/helix/eventsub/subscriptions",
@@ -103,15 +105,9 @@ router.post("/link-webhook", async (req, res) => {
         { headers: webhook_header }
       )
       .then((r) => {
-        res.status(200).send(r.data["data"]["id"]);
+        console.log(r.data["data"][0]["id"])
+        res.status(200).send(r.data["data"][0]["id"]);
       });
-      /**
-       * {
-        "webhook_type" : "channel.follow"
-        "condition_value" : {ID}
-        "target_type" : "broadcaster_user_id"
-        }
-      */
   } catch (e) {
     console.log(e);
     console.log("Twitch link-webhook failed", e?.response?.data);

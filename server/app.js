@@ -107,7 +107,7 @@ async function checkActions() {
             user.actionReaction.forEach(async (ar) => {
               await ar.populate("action");
               if (ar.action != null) {
-                if (ar.webhook_uid === "")
+                if (!ar.webhook_uid)
                   if ((await ar.action.check(user, ar)) === true)
                     ar.populate("reaction").then(async () => {
                       if (ar.reaction != null)
