@@ -35,13 +35,21 @@ export default function Home() {
           <div className="circle circle-1">
             <h5>1</h5>
           </div>
+          <div className="line line-0"></div>
+          <div className="text text-0">
+            <h5>Connect your api</h5>
+          </div>
+          <div className="line line-0"></div>
+          <div className="circle circle-1">
+            <h5>2</h5>
+          </div>
           <div className="line line-1"></div>
           <div className="text text-1">
             <h5>Click on the "+"</h5>
           </div>
           <div className="line line-1"></div>
           <div className="circle circle-2">
-            <h5>2</h5>
+            <h5>3</h5>
           </div>
           <div className="line line-2"></div>
           <div className="text text-2">
@@ -49,7 +57,7 @@ export default function Home() {
           </div>
           <div className="line line-1"></div>
           <div className="circle circle-3">
-            <h5>3</h5>
+            <h5>4</h5>
           </div>
           <div className="line line-3"></div>
           <div className="text text-3">
