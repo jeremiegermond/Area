@@ -55,7 +55,7 @@
     {
       "name": "reddit",
       "desc": "Reddit.com service that can lookup subreddits and create new posts",
-      "appKeys": "appkey:Bearer 1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA",
+      "appKeys": "",
       "actions": [
         {
           "name": "New post on subreddit",
@@ -85,7 +85,7 @@
     {
       "name": "twitch",
       "desc": "Twitch webhook handler that can notify of changes on a user's profile and make updates",
-      "appKeys": "Client-ID:vi9za74j91x41dxvhmdsyjzau002xe",
+      "appKeys": "Client-ID:{TWITCH_APP_ID}",
       "actions": [
         {
           "name": "New channel follower",
@@ -154,7 +154,7 @@
     {
       "name": "twitter",
       "desc": "Twitter.com service can gather informations on a user's tweets and profile",
-      "appKeys": "appkey:Bearer AAAAAAAAAAAAAAAAAAAAAOj6hwEAAAAAqDAWk2ZFsbGaYNUEXxXredwR55M%3DeWYhAARg76grcLUT5e7EKqpZ3otkk0ZtULFf9zQzwoH3p6mhJP,APIkey:pxeTacjpO5tTbBnvy7aYzC3UF,APIsecret:LK4zIBmTPqvn36egbtP9HmJ6NrfHBFudHCC0PjV7iBB15tmyKD",
+      "appKeys": "appkey:Bearer {TWITTER_AUTH},APIkey:{TWITTER_APP_ID},APIsecret:{TWITTER_APP_SECRET}",
       "actions": [
         {
           "name": "New tweet posted",
