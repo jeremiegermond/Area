@@ -32,3 +32,5 @@ jobs:
         run: curl 172.17.0.1:8081
       - name: Test server
         run: curl 172.17.0.1:8080
+      - name: Test extended
+        run: python testing/run_test.py
