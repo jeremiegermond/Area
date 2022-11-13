@@ -83,7 +83,7 @@ router.get("/addAccount", async (req, res) => {
   uri.searchParams.append("response_type", "code");
   uri.searchParams.append(
     "scope",
-    "playlist-read-private playlist-read-collaborative user-read-private"
+    "playlist-read-private playlist-read-collaborative user-read-private user-modify-playback-state app-remote-control"
   );
   uri.searchParams.append("state", state);
   res.status(200).json({ path: uri.href });
