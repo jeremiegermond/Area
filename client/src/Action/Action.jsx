@@ -35,17 +35,18 @@ function Action() {
     hasApi("epitech", setEpitech);
     hasApi("spotify", setSpotify);
   }, []);
+
+  const filterByApi = (data) => {
+    return data.filter(
+      ({ service }) =>
+        (twitch || service.name !== "twitch") &&
+        (twitter || service.name !== "twitter") &&
+        (reddit || service.name !== "reddit") &&
+        (epitech || service.name !== "epitech") &&
+        (spotify || service.name !== "spotify")
+    );
+  };
   useEffect(() => {
-    const filterByApi = (data) => {
-      return data.filter(
-        ({ service }) =>
-          (twitch || service.name !== "twitch") &&
-          (twitter || service.name !== "twitter") &&
-          (reddit || service.name !== "reddit") &&
-          (epitech || service.name !== "epitech") &&
-          (spotify || service.name !== "spotify")
-      );
-    };
     const filteredData = filterByApi(list);
     setFiltered(filteredData);
   }, [twitch, twitter, reddit, epitech, spotify]);
