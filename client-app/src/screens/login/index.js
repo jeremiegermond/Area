@@ -35,9 +35,9 @@ const LoginScreen = ({handleLogin}) => {
   const handleBrowserEvent = async ({nativeEvent}) => {
     console.log('hanlde', nativeEvent.url);
     if (nativeEvent.url.startsWith(ip + ':8081/login')) {
-      const params = getParams(nativeEvent.url);
-      console.log('logged In', params);
-      setToken(params.jwt).then(handleLogin);
+      setModal(false);
+      const {jwt} = getParams(nativeEvent.url);
+      setToken(jwt).then(handleLogin);
     } else if (nativeEvent.url.startsWith('http://localhost')) {
       const newUrl = nativeEvent.url.replace('http://localhost', ip);
       setUrl(newUrl);
