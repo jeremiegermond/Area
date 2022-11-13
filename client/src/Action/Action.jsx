@@ -10,11 +10,11 @@ function Action() {
   const navigate = useNavigate();
   const [list, setList] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [twitch, setTwitch] = useState(false);
-  const [twitter, setTwitter] = useState(false);
-  const [reddit, setReddit] = useState(false);
-  const [epitech, setEpitech] = useState(false);
-  const [spotify, setSpotify] = useState(false);
+  const [twitch, setTwitch] = useState(true);
+  const [twitter, setTwitter] = useState(true);
+  const [reddit, setReddit] = useState(true);
+  const [epitech, setEpitech] = useState(true);
+  const [spotify, setSpotify] = useState(true);
   const [hidden, setHidden] = useState(undefined);
   const [updated, setUpdated] = useState(false);
 
@@ -43,7 +43,6 @@ function Action() {
   }, []);
 
   useEffect(() => {
-    console.log("updated trigg", { twitch, twitter, reddit, epitech, spotify });
     setHidden({ twitch, twitter, reddit, epitech, spotify });
   }, [updated]);
 
@@ -57,7 +56,7 @@ function Action() {
         (spotify || service.name !== "spotify")
     );
   };
-  
+
   useEffect(() => {
     const filteredData = filterByApi(list);
     setFiltered(filteredData);
@@ -141,7 +140,7 @@ function Action() {
           />
         </button>
       </div>
-      {!filtered?.length > 0 ? (
+      {updated && !filtered?.length > 0 ? (
         <Box onClick={() => navigate("/connect-api")}>
           <FaLink size={80} />
         </Box>
@@ -233,7 +232,7 @@ export const styles = {
   },
   off: {
     border: "2px solid red",
-    filter: "brightness(80%)"
+    filter: "brightness(80%)",
   },
 };
 

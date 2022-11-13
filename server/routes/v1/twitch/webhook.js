@@ -48,7 +48,7 @@ function get_twitch_bearer() {
       return r.data["access_token"];
     });
   } catch (e) {
-    console.log("error getting bearer", e.response.data);
+    console.log("error getting bearer", e?.response?.data);
     throw Error("Bearer failed");
   }
 }
@@ -69,11 +69,8 @@ router.post("/link-webhook", async (req, res) => {
       "https://api.twitch.tv/helix/eventsub/subscriptions",
       { headers: webhook_header }
     );
-    console.log(data.data);
-    console.log({webhook_type,target_type, targetId })
     let id = "";
     data.data.forEach((webhook) => {
-      console.log(webhook["status"] === "enabled" , webhook["type"] === webhook_type, webhook["condition"][target_type] === targetId);
       if (
         webhook["status"] === "enabled" &&
         webhook["type"] === webhook_type &&
@@ -82,9 +79,7 @@ router.post("/link-webhook", async (req, res) => {
       )
         id = webhook["id"];
     });
-    console.log(`id is '${id}'`)
     if (id !== "") {
-      console.log("Webhook already exists");
       res.status(200).send(id);
       return;
     }

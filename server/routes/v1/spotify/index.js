@@ -61,8 +61,8 @@ router.post("/callback", async (req, res) => {
     }).then((r) => {
       const map = new Map([
         ["access_token", "Bearer " + r.data["access_token"]],
-        ["refresh_token", r.data["refresh_token"] * 1000],
-        ["expires_in", Date.now() + r.data["expires_in"]],
+        ["refresh_token", r.data["refresh_token"]],
+        ["expires_in", Date.now() + r.data["expires_in"] * 1000],
       ]);
       user.addApiKey(map, "spotify").then((e) => res.status(201).send(e));
     });
@@ -83,7 +83,7 @@ router.get("/addAccount", async (req, res) => {
   uri.searchParams.append("response_type", "code");
   uri.searchParams.append(
     "scope",
-    "playlist-read-private playlist-read-collaborative user-read-private"
+    "playlist-read-private playlist-read-collaborative user-read-private user-modify-playback-state app-remote-control"
   );
   uri.searchParams.append("state", state);
   res.status(200).json({ path: uri.href });

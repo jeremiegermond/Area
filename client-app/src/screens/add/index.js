@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import DefaultBox from '../../components/DefaultBox';
 import DefaultView from '../../components/DefaultView';
 import {
   faReddit,
+  faSpotify,
   faTwitch,
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
@@ -111,7 +112,9 @@ const AddScreen = ({navigation}) => {
                   onPress={() => {
                     handleItemClick(item);
                   }}>
-                  {icons[item.service.name]}
+                  <View style={styles.arIconDiv}>
+                    {icons[item.service.name]}
+                  </View>
                   <Text style={styles.arText}>{item.name}</Text>
                 </DefaultPressable>
               </DefaultBox>
@@ -143,7 +146,17 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 30,
   },
-  arIcon: {flex: 1, margin: 10},
+  arIconDiv: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  arIcon: {
+    flex: 1,
+    margin: 10,
+    height: 60,
+    width: 60,
+    resizeMode: 'center',
+  },
   arText: {flex: 3, color: 'black', fontSize: 30},
   greenBg: {backgroundColor: 'lightgreen'},
   connectApiBox: {width: '100%', height: '100%', borderRadius: 40},
@@ -153,6 +166,10 @@ const icons = {
   twitter: <FontAwesomeIcon icon={faTwitter} size={50} style={styles.arIcon} />,
   reddit: <FontAwesomeIcon icon={faReddit} size={50} style={styles.arIcon} />,
   twitch: <FontAwesomeIcon icon={faTwitch} size={50} style={styles.arIcon} />,
+  spotify: <FontAwesomeIcon icon={faSpotify} size={50} style={styles.arIcon} />,
+  epitech: (
+    <Image source={require('./epitechlogo.png')} style={styles.arIcon} />
+  ),
 };
 
 export default AddScreen;

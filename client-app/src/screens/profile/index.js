@@ -5,6 +5,7 @@ import PressableIcon from '../../components/PressableIcon';
 import {faRightFromBracket} from '@fortawesome/free-solid-svg-icons/faRightFromBracket';
 import {
   faReddit,
+  faSpotify,
   faTwitch,
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons';
@@ -122,6 +123,24 @@ const ProfileScreen = ({handleLogin, navigation}) => {
             }}>
             <SvgXml xml={xml} width="100%" height="100%" />
           </DefaultPressable>
+        </DefaultBox>
+        <DefaultBox
+          padding={0}
+          style={{backgroundColor: spotify ? 'lightgreen' : 'lightgray'}}>
+          <PressableIcon
+            icon={faSpotify}
+            size={80}
+            style={styles.apiBtn}
+            onPress={() => {
+              if (spotify) {
+                deleteApi('spotify').then(() =>
+                  updateApi('spotify', setSpotify),
+                );
+              } else {
+                connectApi('spotify', navigation).then();
+              }
+            }}
+          />
         </DefaultBox>
         <DefaultBox padding={0}>
           <PressableIcon

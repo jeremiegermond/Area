@@ -2,23 +2,21 @@ import "../Action/Action.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getServer, postServer } from "../api";
-import { icons } from "../Action/Action";
-import { styles } from "../Action/Action";
+import { icons, styles } from "../Action/Action";
 import { FaLink, FaReddit, FaTwitch, FaTwitter } from "react-icons/fa";
 import { SocialIcon } from "react-social-icons";
 import { Box } from "../Component/Home-Box";
-
 
 function Reaction() {
   const navigate = useNavigate();
   const location = useLocation();
   const [list, setList] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [twitch, setTwitch] = useState(false);
-  const [twitter, setTwitter] = useState(false);
-  const [reddit, setReddit] = useState(false);
-  const [epitech, setEpitech] = useState(false);
-  const [spotify, setSpotify] = useState(false);
+  const [twitch, setTwitch] = useState(true);
+  const [twitter, setTwitter] = useState(true);
+  const [reddit, setReddit] = useState(true);
+  const [epitech, setEpitech] = useState(true);
+  const [spotify, setSpotify] = useState(true);
   const [hidden, setHidden] = useState(undefined);
   const [updated, setUpdated] = useState(false);
 
@@ -35,15 +33,15 @@ function Reaction() {
           setter(res.data);
         })
         .catch(() => console.log(`Couldn't get ${api} status`));
-      };
-      const getAll = async () => {
-        await hasApi("reddit", setReddit);
-        await hasApi("twitter", setTwitter);
-        await hasApi("twitch", setTwitch);
-        await hasApi("epitech", setEpitech);
-        await hasApi("spotify", setSpotify);
-      };
-      getAll().then(() => setUpdated(true));
+    };
+    const getAll = async () => {
+      await hasApi("reddit", setReddit);
+      await hasApi("twitter", setTwitter);
+      await hasApi("twitch", setTwitch);
+      await hasApi("epitech", setEpitech);
+      await hasApi("spotify", setSpotify);
+    };
+    getAll().then(() => setUpdated(true));
   }, []);
 
   const convertParams = (arr: []) => {
@@ -51,7 +49,6 @@ function Reaction() {
   };
 
   useEffect(() => {
-    console.log("updated trigg", { twitch, twitter, reddit, epitech, spotify });
     setHidden({ twitch, twitter, reddit, epitech, spotify });
   }, [updated]);
 
@@ -149,7 +146,7 @@ function Reaction() {
           />
         </button>
       </div>
-      {!filtered?.length > 0 ? (
+      {updated && !filtered?.length > 0 ? (
         <Box onClick={() => navigate("/connect-api")}>
           <FaLink size={80} />
         </Box>
@@ -169,8 +166,8 @@ function Reaction() {
                 action_params: convertParams(location.state.options),
                 reaction_params: convertParams(reaction.options ?? []),
               })
-              .then(() => navigate("/home"))
-              .catch(() => console.log("Error adding action-reaction"));
+                .then(() => navigate("/home"))
+                .catch(() => console.log("Error adding action-reaction"));
             }
           };
           return (

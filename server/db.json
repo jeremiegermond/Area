@@ -203,7 +203,7 @@
         {
           "name": "New follower",
           "desc": "The user got a new follower",
-          "options": "[{\"name\":\"Username\",\"placeholder\":\"Twitter username\",\"keyboard\":\"number-pad\"}]",
+          "options": "[{\"name\":\"Username\",\"placeholder\":\"Twitter username\",\"keyboard\":\"default\"}]",
           "method": "get",
           "endpointUrl": "https://api.twitter.com/2/users/by/username/{Username}?user.fields=public_metrics",
           "header": "Authorization:appkey",

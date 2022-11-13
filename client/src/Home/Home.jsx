@@ -16,7 +16,7 @@ export default function Home() {
   };
   return (
     <div className="home-content">
-      <h1>Select or edit your AREA</h1>{" "}
+      <h1>Select or edit your AREA</h1>
       <div className="home-container">
         {list.map((e) => {
           return (
@@ -32,17 +32,29 @@ export default function Home() {
       <div className="home-tuto">
         <h1>How to create an AREA ?</h1>
         <div className="home-tuto-box">
-          <div className="circle circle-1"><h5>1</h5></div>
+          <div className="circle circle-1">
+            <h5>1</h5>
+          </div>
           <div className="line line-1"></div>
-          <div className="text text-1"><h5>Click on the "+"</h5></div>
+          <div className="text text-1">
+            <h5>Click on the "+"</h5>
+          </div>
           <div className="line line-1"></div>
-          <div className="circle circle-2"><h5>2</h5></div>
+          <div className="circle circle-2">
+            <h5>2</h5>
+          </div>
           <div className="line line-2"></div>
-          <div className="text text-2"><h5>Select an action</h5></div>
+          <div className="text text-2">
+            <h5>Select an action</h5>
+          </div>
           <div className="line line-1"></div>
-          <div className="circle circle-3"><h5>3</h5></div>
+          <div className="circle circle-3">
+            <h5>3</h5>
+          </div>
           <div className="line line-3"></div>
-          <div className="text text-3"><h5>Select a reaction</h5></div>
+          <div className="text text-3">
+            <h5>Select a reaction</h5>
+          </div>
         </div>
         <h3>And that's it !</h3>
       </div>
