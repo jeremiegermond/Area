@@ -93,7 +93,7 @@ router.post("/addActionReaction", async (req, res) => {
       });
     };
     const { action_id, reaction_id, action_params, reaction_params } = req.body;
-    const user = await User.findOne({ name: req.user.username });
+    const user = await User.findOne({ username: req.user.username });
     const action = await Action.findById(action_id);
     const reaction = await Reaction.findById(reaction_id);
     const newAR = await new ActionReaction({
@@ -107,13 +107,18 @@ router.post("/addActionReaction", async (req, res) => {
     split_params(reaction_params, newAR.reaction_params);
     if (action.webhook) {
       await action.populate("webhook service");
-      await axios.post(
-        `${process.env.BASE_URL}:8080/${action.service.name}/link-webhook`,
-        {
-          webhook: action.webhook,
-          params: newAR.action_params,
-        }
-      ).then((r) => {console.log(r.data); newAR.webhook_uid = r.data});
+      await axios
+        .post(
+          `${process.env.BASE_URL}:8080/${action.service.name}/link-webhook`,
+          {
+            webhook: action.webhook,
+            params: newAR.action_params,
+          }
+        )
+        .then((r) => {
+          console.log(r.data);
+          newAR.webhook_uid = r.data;
+        });
     }
     newAR.save().then(() => {
       user.actionReaction.push(newAR);
