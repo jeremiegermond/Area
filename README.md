@@ -511,74 +511,44 @@ The application server is the only one to embed the business logic of the projec
 
 #### User (all User requests except /signup & /login require JWT as Authorization header)
 
-| Description | Method | Endpoint | Body params (x-www-form-urlencoded) | Return |
 
+| Description                            | Method | Endpoint                        | Body params (x-www-form-urlencoded)                        | Return                                                                                       |
 | -------------------------------------- | ------ | ------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-
-| Signup user | POST | /signup | username, password | 200, message: "Signup successful",<br>token, |
-
-| Login user | POST | /login | username, password | 200, token |
-
-| Logout user | GET | /logout | | 200, "Goodbye!" |
-
-| Get actions from user's services | GET | /user/getActions | | 200, JSON with list of actions available |
-
-| Get reactions from user's services | GET | /user/getReactions | | 200, JSON with list of reactions available |
-
-| Get user's registered action/reactions | GET | /user/getActionReaction | | 200, JSON with list of user reactions/reactions |
-
-| Unlink action/reaction from user | DELETE | /user/deleteActionReaction/{id} | | 200, "ar deleted" |
-
-| Create actionReaction table for user | POST | /user/addActionReaction | action\_id, reaction\_id, action\_params, reaction\_params | 201, "action {actionName} and reaction {reactionName} successfully added to user {username}" |
-
-| Remove API from user's linked APIs | DELETE | /user/deleteAPI/{api} | | 200, "Api deleted" |
-
-| Get API status from user's linked APIs | GET | /user/hasApi/{api} | | 200, boolean |
-
+| Signup user                            | POST   | /signup                         | username, password                                         | 200, message: "Signup successful",<br>token,                                                 |
+| Login user                             | POST   | /login                          | username, password                                         | 200, token                                                                                   |
+| Logout user                            | GET    | /logout                         |                                                            | 200, "Goodbye!"                                                                              |
+| Get actions from user's services       | GET    | /user/getActions                |                                                            | 200, JSON with list of actions available                                                     |
+| Get reactions from user's services     | GET    | /user/getReactions              |                                                            | 200, JSON with list of reactions available                                                   |
+| Get user's registered action/reactions | GET    | /user/getActionReaction         |                                                            | 200, JSON with list of user reactions/reactions                                              |
+| Unlink action/reaction from user       | DELETE | /user/deleteActionReaction/{id} |                                                            | 200, "ar deleted"                                                                            |
+| Create actionReaction table for user   | POST   | /user/addActionReaction         | action\_id, reaction\_id, action\_params, reaction\_params | 201, "action {actionName} and reaction {reactionName} successfully added to user {username}" |
+| Remove API from user's linked APIs     | DELETE | /user/deleteAPI/{api}           |                                                            | 200, "Api deleted"                                                                           |
+| Get API status from user's linked APIs | GET    | /user/hasApi/{api}              |                                                            | 200, boolean                                                                                 |
   
 
 #### Services, Actions, Reactions
-
-| Description | Method | Endpoint | Body params (x-www-form-urlencoded) | Return |
-
+| Add new service                     | POST   | /addService                          | name, desc, appKeys                                                                    | 201 "Service saved successfully!"                        |
 | ----------------------------------- | ------ | ------------------------------------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-
-| Add new service | POST | /addService | name, desc, appKeys | 201 "Service saved successfully!" |
-
-| Add new API action to service | POST | /addAction | service, name, desc, method, options,<br>endpointUrl, header, body, trigger, userKey | 201, "Action added successfully to service {service}!" |
-
-| Add new Webhook action to service | POST | /addAction | service, name, desc, method, options,<br>target\_type, webhook\_type, condition\_value | 201, "Action added successfully to service {service}!" |
-
-| Add new reaction to service | POST | /addReaction | service, name, desc, method, options,<br>endpointUrl, header, body, userKey | 201, "Reaction added successfully to service {service}!" |
-
-| Remove service | DELETE | /removeService/{service} | | 201; "{service} was removed." |
-
-| Remove action from service | DELETE | /removeAction/{service}/{action} | | 201; "{action} was removed from {service}." |
-
-| Remove reaction from service | DELETE | /removeReaction/{service}/{reaction} | | 201; "{reaction} was removed from {service}." |
-
-| Get {service} authentification page | GET | /user/{service}/addAccount | | 200; JSON with an URL path {path: "google.com"} |
-
-| Add {service} authentification keys | POST | /user/{service}/callback | {service} return parameters | 201; "{service} key added to {user}" |
-
+| Add new API action to service       | POST   | /addAction                           | service, name, desc, method, options,<br>endpointUrl, header, body, trigger, userKey   | 201, "Action added successfully to service {service}!"   |
+| Add new Webhook action to service   | POST   | /addAction                           | service, name, desc, method, options,<br>target\_type, webhook\_type, condition\_value | 201, "Action added successfully to service {service}!"   |
+| Add new reaction to service         | POST   | /addReaction                         | service, name, desc, method, options,<br>endpointUrl, header, body, userKey            | 201, "Reaction added successfully to service {service}!" |
+| Remove service                      | DELETE | /removeService/{service}             |                                                                                        | 201; "{service} was removed."                            |
+| Remove action from service          | DELETE | /removeAction/{service}/{action}     |                                                                                        | 201; "{action} was removed from {service}."              |
+| Remove reaction from service        | DELETE | /removeReaction/{service}/{reaction} |                                                                                        | 201; "{reaction} was removed from {service}."            |
+| Get {service} authentification page | GET    | /user/{service}/addAccount           |                                                                                        | 200; JSON with an URL path {path: "google.com"}          |
+| Add {service} authentification keys | POST   | /user/{service}/callback             | {service} return parameters                                                            | 201; "{service} key added to {user}"                     |
   
 
 #### Others
 
-| Description | Method | Endpoint | Body params (x-www-form-urlencoded) | Return |
 
+| Description                      | Method | Endpoint         | Body params (x-www-form-urlencoded) | Return                                                      |
 | -------------------------------- | ------ | ---------------- | ----------------------------------- | ----------------------------------------------------------- |
-
-| Display infos about the server | GET | /about.json | | 200, JSON with list of services, actions & reactions |
-
-| Check server state | GET | /ping2 | | 200; true |
-
-| Check server state for Github CI | GET | / | | 200; "It works" |
-
-| Oauth2 with google | GET | /google | | Redirects to google auth page |
-
-| Oauth2 callback | GET | /google/callback | | Redirects to login page with jwt token has search parameter |
-
+| Display infos about the server   | GET    | /about.json      |                                     | 200, JSON with list of services, actions & reactions        |
+| Check server state               | GET    | /ping2           |                                     | 200; true                                                   |
+| Check server state for Github CI | GET    | /                |                                     | 200; "It works"                                             |
+| Oauth2 with google               | GET    | /google          |                                     | Redirects to google auth page                               |
+| Oauth2 callback                  | GET    | /google/callback |                                     | Redirects to login page with jwt token has search parameter |
   
 
 ## Database
