@@ -24,6 +24,7 @@ const fillParams = (str, params) => {
 };
 
 const getHeaders = async (action, user, service) => {
+  if (!action.header) return ""
   const header = {};
   await user.populate("keys");
   let keys = await user.keys.find((e) => e.service === service.name);
@@ -32,14 +33,15 @@ const getHeaders = async (action, user, service) => {
     let data = keys.keys.get(type[type.length - 1]);
     if (typeof data === "undefined")
       data = service.appKeys.get(type[type.length - 1]);
-    header[type[0]] = typeof data === "undefined" ? element : data;
+    header[type[0]] =
+      typeof data === "undefined" ? element : data;
   });
   return header;
 };
 
 const completeUrl = async (user, service, str, params) => {
-  fillParams(str, params);
-  await user.populate("keys");
+  str = fillParams(str, params)
+  await user.populate("keys")
   const keys = await user.keys.find((e) => e.service === service.name);
   keys.keys.forEach((val, key) => {
     str = str.replaceAll("{" + key + "}", val);

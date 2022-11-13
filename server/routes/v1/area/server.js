@@ -30,9 +30,9 @@ router.post("/addAction", (req, res) => {
               }
             : {
                 ...newAction,
-                webhook_type: req.body.target_type,
-                condition_value: req.body.webhook_type,
-                target_type: req.body.condition_value,
+                webhook_type: req.body.webhook_type,
+                condition_value: req.body.condition_value,
+                target_type: req.body.target_type,
               };
         newData.services
           .filter((serv) => {

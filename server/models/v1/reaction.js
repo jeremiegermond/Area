@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const axios = require("axios");
+const Twitter = require("twitter");
 const utils = require("../../utils");
 const Schema = mongoose.Schema;
 
@@ -36,27 +37,43 @@ const Reaction = new Schema({
   },
 });
 
+
+const twitter_call = async (user, service, url) => {
+  const uri = new URL(url);
+  await user.populate("keys");
+  const {keys} = await user.keys.find((e) => e.service === service.name);
+  const client = new Twitter({
+    consumer_key: service.appKeys.get("APIkey"),
+    consumer_secret: service.appKeys.get("APIsecret"),
+    access_token_key: keys.get("public"),
+    access_token_secret: keys.get("secret")
+  })
+  client.post(uri.pathname.replace("/1.1", "").replace("/2", ""), Object.fromEntries(uri.searchParams), (err, tweet, res) => {
+    if (!error) {
+      console.log("Twitter successfull");
+    }
+  })
+}
+
 Reaction.methods.exec = async function (user, params) {
   console.log("\n\nreaction\n\n");
   try {
     console.log(`${user.username} : Triggered reaction ${this.name}`);
     await this.populate("service");
+    const uri = await utils.completeUrl(user, this.service, this.endpointUrl, params)
+    if (this.service.name === "twitter")
+      return twitter_call( user, this.service, uri)
     console.log(
       await axios({
         method: this.method,
-        url: await utils.completeUrl(
-          user,
-          this.service,
-          this.endpointUrl,
-          params
-        ),
+        url: uri,
         headers: await utils.getHeaders(this, user, this.service),
-        data: utils.fillParams(this.body, params),
+        data: this.body.slice(0, 5) === "JSON:" ? JSON.parse(utils.fillParams(this.body.slice(5), params)) : utils.fillParams(this.body, params)
       })
     );
-    console.log(this.body);
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(error?.config);
+    console.log(error?.response?.data);
   }
 };
 

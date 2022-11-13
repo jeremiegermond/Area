@@ -39,29 +39,45 @@
           "userKey": true
         }
       ],
-      "reactions": []
-    },
-    {
-      "name": "twitter",
-      "desc": "Twitter.com service can gather informations on a user's tweets and profile",
-      "appKeys": "appkey:Bearer AAAAAAAAAAAAAAAAAAAAAOj6hwEAAAAAdyivOyWoWoLBNBFGdgccYLpF%2FBM%3DeTsVAZmJD8fZV9PbEOhiny1QDNXmOeGwaz2mglLl7417OJlWwQ",
-      "actions": [],
-      "reactions": []
+      "reactions": [
+        {
+          "name": "Update bio website",
+          "desc": "Update the adress of the website registered in user's bio ",
+          "options": "[{\"name\":\"Website\",\"placeholder\":\"google.com\",\"keyboard\":\"url\"}]",
+          "method": "post",
+          "endpointUrl": "https://intra.epitech.eu/user/{email}/edit/save?format=json",
+          "header": "Cookie:user_cookie",
+          "body": "website[value]={Website}&website[public]=on&website[adm]=on",
+          "userKey": true
+        }
+      ]
     },
     {
       "name": "reddit",
       "desc": "Reddit.com service that can lookup subreddits and create new posts",
       "appKeys": "appkey:Bearer 1134249758389-cuHXyTP4jpJji6K369Xg_qe61mceRA",
-      "actions": [],
+      "actions": [
+        {
+          "name": "New post on subreddit",
+          "desc": "A new post was created on the subreddit",
+          "options": "[{\"name\" : \"Subreddit\",\"placeholder\": \"name of the subreddit\",\"keyboard\":\"default\"}]",
+          "method": "get",
+          "endpointUrl": "https://www.reddit.com/r/{Subreddit}/new.json",
+          "header": "",
+          "body": "",
+          "trigger": "dataChanged,data.children.0.data.created_utc&&codeIs,200",
+          "userKey": false
+        }
+      ],
       "reactions": [
         {
-          "name": "reddit test",
-          "desc": "post on r/test",
-          "options": "[]",
+          "name": "New post",
+          "desc": "Create new post on subreddit",
+          "options": "[{\"name\":\"Subreddit\",\"placeholder\":\"Subreddit\",\"keyboard\":\"default\"},{\"name\":\"Text\",\"placeholder\":\"Text to post\",\"keyboard\":\"default\"},{\"name\":\"Title\",\"placeholder\":\"Titile of the post\",\"keyboard\":\"default\"}]",
           "method": "post",
-          "endpointUrl": "https://oauth.reddit.com/api/submit?sr=test&text=Un tweet a  été posté&title=le titre&kind=self",
+          "endpointUrl": "https://oauth.reddit.com/api/submit?sr={Subreddit}&text={Text}&title={Title}&kind=self",
           "header": "Authorization:access_token",
-          "body": "{\"resubmit\" : \"true\",\n    \"send_replies\" : \"true\",\n    \"api_type\" : \"json\"\n}",
+          "body": "{\"resubmit\" : \"true\", \"send_replies\" : \"true\", \"api_type\" : \"json\"\n}",
           "userKey": false
         }
       ]
@@ -69,9 +85,115 @@
     {
       "name": "twitch",
       "desc": "Twitch webhook handler that can notify of changes on a user's profile and make updates",
-      "appKeys": "",
-      "actions": [],
-      "reactions": []
+      "appKeys": "Client-ID:vi9za74j91x41dxvhmdsyjzau002xe",
+      "actions": [
+      ],
+      "reactions": [
+        {
+          "name": "Change bio",
+          "desc": "Change user's bio",
+          "options": "[{\"name\":\"Bio\",\"placeholder\":\"New bio text\",\"keyboard\":\"default\"}]",
+          "method": "put",
+          "endpointUrl": "https://api.twitch.tv/helix/users?description={Bio}",
+          "header": "Authorization:access_token,Client-ID:Client-ID",
+          "body": "",
+          "userKey": true
+        },
+        {
+          "name": "Change stream title",
+          "desc": "Change user's stream title",
+          "options": "[{\"name\":\"broadcaster_id\",\"placeholder\":\"ID\",\"keyboard\":\"default\"},{\"name\":\"Title\",\"placeholder\":\"Titre du stream\",\"keyboard\":\"default\"}]",
+          "method": "patch",
+          "endpointUrl": "https://api.twitch.tv/helix/channels?broadcaster_id={broadcaster_id}",
+          "header": "Authorization:access_token,Client-ID:Client-ID",
+          "body": "JSON:{\"title\": \"{Title}\"}",
+          "userKey": true
+        }
+      ]
+    },
+    {
+      "name": "twitter",
+      "desc": "Twitter.com service can gather informations on a user's tweets and profile",
+      "appKeys": "appkey:Bearer AAAAAAAAAAAAAAAAAAAAAOj6hwEAAAAAqDAWk2ZFsbGaYNUEXxXredwR55M%3DeWYhAARg76grcLUT5e7EKqpZ3otkk0ZtULFf9zQzwoH3p6mhJP,APIkey:pxeTacjpO5tTbBnvy7aYzC3UF,APIsecret:LK4zIBmTPqvn36egbtP9HmJ6NrfHBFudHCC0PjV7iBB15tmyKD",
+      "actions": [
+        {
+          "name": "New tweet posted",
+          "desc": "User posted a new tweet",
+          "options": "[{\"name\":\"ID\",\"placeholder\":\"Twitter account id\",\"keyboard\":\"number-pad\"}]",
+          "method": "get",
+          "endpointUrl": "https://api.twitter.com/2/users/{ID}/tweets?tweet.fields=public_metrics",
+          "header": "Authorization:appkey",
+          "body": "",
+          "trigger": "dataChanged,meta.newest_id&&codeIs,200",
+          "userKey": false
+        },
+        {
+          "name": "New like on tweet",
+          "desc": "The tweet was liked",
+          "options": "[{ \"name\":\"ID\",\"placeholder\":\"Tweet ID\",\"keyboard\":\"number-pad\" }]",
+          "method": "get",
+          "endpointUrl": "https://api.twitter.com/2/tweets/{ID}?tweet.fields=public_metrics",
+          "header": "Authorization:appkey",
+          "body": "",
+          "trigger": "dataUp,data.public_metrics.like_count&&codeIs,200",
+          "userKey": false
+        },
+        {
+          "name": "New retweet on tweet",
+          "desc": "The tweet was retweeted",
+          "options": "[{ \"name\":\"ID\",\"placeholder\":\"Tweet ID\",\"keyboard\":\"number-pad\" }]",
+          "method": "get",
+          "endpointUrl": "https://api.twitter.com/2/tweets/{ID}?tweet.fields=public_metrics",
+          "header": "Authorization:appkey",
+          "body": "",
+          "trigger": "dataUp,data.public_metrics.retweet_count&&codeIs,200",
+          "userKey": false
+        },
+        {
+          "name": "New response on tweet",
+          "desc": "The tweet got a new response",
+          "options": "[{ \"name\":\"ID\",\"placeholder\":\"Tweet ID\",\"keyboard\":\"number-pad\" }]",
+          "method": "get",
+          "endpointUrl": "https://api.twitter.com/2/tweets/{ID}?tweet.fields=public_metrics",
+          "header": "Authorization:appkey",
+          "body": "",
+          "trigger": "dataUp,data.public_metrics.reply_count&&codeIs,200",
+          "userKey": false
+        },
+        {
+          "name": "New follower",
+          "desc": "The user got a new follower",
+          "options": "[{\"name\":\"Username\",\"placeholder\":\"Twitter username\",\"keyboard\":\"number-pad\"}]",
+          "method": "get",
+          "endpointUrl": "https://api.twitter.com/2/users/by/username/{Username}?user.fields=public_metrics",
+          "header": "Authorization:appkey",
+          "body": "",
+          "trigger": "dataChanged,data.public_metrics.followers_count&&codeIs,200",
+          "userKey": false
+        }
+      ],
+      "reactions": [
+        {
+          "name": "Update bio",
+          "desc": "Change user's bio",
+          "options": "[{\"name\":\"Bio\",\"placeholder\":\"New bio text\",\"keyboard\":\"default\"}]",
+          "method": "post",
+          "endpointUrl": "https://api.twitter.com/1.1/account/update_profile?description={Bio}",
+          "header": "",
+          "body": "",
+          "userKey": false
+        },
+        {
+          "name": "Post tweet",
+          "desc": "Post a new tweet",
+          "options": "[{\"name\":\"Text\",\"placeholder\":\"Tweet\",\"keyboard\":\"default\"}]",
+          "method": "post",
+          "endpointUrl": "https://api.twitter.com/1.1/statuses/update?status={Text}",
+          "header": "",
+          "body": "",
+          "userKey": false
+        }
+      ]
     }
   ]
 }

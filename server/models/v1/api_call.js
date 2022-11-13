@@ -30,6 +30,12 @@ async function check_trigger(trig, memory, res, data) {
     case "dataChanged":
       if (data !== memory && memory !== "unset") return true;
       break;
+    case "dataUp":
+      if (data > memory && memory !== "unset") return true;
+      break;
+    case "dataDown":
+      if (data < memory && memory !== "unset") return true;
+      break;
     case "dataIs":
       if (data === trig[2]) return true;
       break;
@@ -58,8 +64,10 @@ async function check_response(action, res, ar) {
     let data = res.data;
     //console.log(action.trigger);
     //console.log(res.data);
-    if (data.errors)
-      throw new Error("TypeError: Cannot read properties of undefined");
+    if (data.errors) {
+      console.error(data.errors)
+      throw new Error("TypeError: Cannot read properties of undefined")
+    }
     let mem_index = 0;
     for (const [index, trigger] of action.trigger.entries()) {
       // console.log({ index, trigger });

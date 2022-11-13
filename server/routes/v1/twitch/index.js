@@ -26,8 +26,8 @@ router.post("/callback", async (req, res) => {
       url: uri,
     }).then((r) => {
       const map = new Map([
-        ["access_token", r.data["access_token"].toString()],
-        ["refresh_token", r.data["refresh_token"].toString()],
+        ["access_token", "Bearer " + r.data["access_token"].toString()],
+        ["refresh_token", "Bearer " + r.data["refresh_token"].toString()],
       ]);
       user.addApiKey(map, "twitch").then((e) => res.status(201).send(e));
     });
