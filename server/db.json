@@ -194,6 +194,36 @@
           "userKey": false
         }
       ]
+    },
+    {
+      "name": "spotify",
+      "desc": "Spotify service can get playlist information and control audio playback",
+      "appKeys": "",
+      "actions": [
+        {
+          "name": "New follow on Playlist",
+          "desc": "New follower on the playlist {ID}",
+          "options": "[{\"name\":\"ID\",\"placeholder\":\"Playlist id\",\"keyboard\":\"default\"}]",
+          "method": "get",
+          "endpointUrl": "https://api.spotify.com/v1/playlists/{ID}",
+          "header": "Authorization:access_token",
+          "body": "",
+          "trigger": "dataChanged,followers.total&&codeIs,200",
+          "userKey": true
+        }
+      ],
+      "reactions": [
+        {
+          "name": "Resume Playback (premium only)",
+          "desc": "Resume current playback your active device",
+          "options": "[]",
+          "method": "put",
+          "endpointUrl": "https://api.spotify.com/v1/me/player/play",
+          "header": "Authorization:access_token",
+          "body": "",
+          "userKey": true
+        }
+      ]
     }
   ]
 }
