@@ -258,7 +258,7 @@
           "desc": "Resume current playback your active device",
           "options": "[]",
           "method": "put",
-          "endpointUrl": "https://api.spotify.com/v1/me/player/play",
+          "endpointUrl": "https://api.spotify.com/v1/me/player/play?device_id={device_id}",
           "header": "Authorization:access_token",
           "body": "",
           "userKey": true
@@ -268,7 +268,7 @@
           "desc": "Play an {Album} on your active device",
           "options": "[{\"name\":\"Album\",\"placeholder\":\"Album Id\",\"keyboard\":\"default\"}]",
           "method": "put",
-          "endpointUrl": "https://api.spotify.com/v1/me/player/play",
+          "endpointUrl": "https://api.spotify.com/v1/me/player/play?device_id={device_id}",
           "header": "Authorization:access_token",
           "body": "JSON:{\"context_uri\":\"spotify:album:{Album}\"}",
           "userKey": true

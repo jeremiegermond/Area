@@ -59,12 +59,22 @@ router.post("/callback", async (req, res) => {
         redirect_uri: `${process.env.BASE_URL}:8081/connect-api/spotify`,
       },
     }).then((r) => {
-      const map = new Map([
-        ["access_token", "Bearer " + r.data["access_token"]],
-        ["refresh_token", r.data["refresh_token"]],
-        ["expires_in", Date.now() + r.data["expires_in"] * 1000],
-      ]);
-      user.addApiKey(map, "spotify").then((e) => res.status(201).send(e));
+      axios
+        .get("https://api.spotify.com/v1/me/player/devices", {
+          headers: { Authorization: "Bearer " + r.data["access_token"] },
+        })
+        .then((d) => {
+          console.log("got devices");
+          const { devices } = d.data;
+          const deviceId = devices[0].id;
+          const map = new Map([
+            ["access_token", "Bearer " + r.data["access_token"]],
+            ["refresh_token", r.data["refresh_token"]],
+            ["expires_in", Date.now() + r.data["expires_in"] * 1000],
+            ["device_id", deviceId],
+          ]);
+          user.addApiKey(map, "spotify").then((e) => res.status(201).send(e));
+        });
     });
   } catch (e) {
     console.log(e);
@@ -83,7 +93,7 @@ router.get("/addAccount", async (req, res) => {
   uri.searchParams.append("response_type", "code");
   uri.searchParams.append(
     "scope",
-    "playlist-read-private playlist-read-collaborative user-read-private user-modify-playback-state app-remote-control"
+    "playlist-read-private playlist-read-collaborative user-read-private user-modify-playback-state app-remote-control user-read-playback-state"
   );
   uri.searchParams.append("state", state);
   res.status(200).json({ path: uri.href });
