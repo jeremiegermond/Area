@@ -63,6 +63,8 @@ print(post("user/addActionReaction", {
 
 
 print("\n==TEST GET ACTIONREACTION==")
-
 ar = get("user/getActionReaction", user)
 print(ar)
+
+print("\n==TEST DELETE ACTIONREACTION==")
+print(delete("user/deleteActionReaction/" + ar[0]['_id'], user, False))
