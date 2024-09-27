@@ -22,7 +22,7 @@
     "express-session": "^1.17.3",
     "install": "^0.13.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.6.2",
+    "mongoose": "^8.6.4",
     "mongoose-findorcreate": "^3.0.0",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
