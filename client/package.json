@@ -16,7 +16,7 @@
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
     "react-social-icons": "^5.15.0",
-    "universal-cookie": "^4.0.4",
+    "universal-cookie": "^7.2.1",
     "web-vitals": "^3.0.4"
   },
   "scripts": {
